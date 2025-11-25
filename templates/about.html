@@ -1,0 +1,584 @@
+{% extends "base.html" %} {% block title %}Nosotros - PG Wawalu{% endblock %} {%
+block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section
+  class="about-hero flex items-center justify-center text-white text-center"
+>
+  <div class="relative z-10 px-4 reveal">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Nosotros</h1>
+    <p class="text-xl md:text-2xl opacity-90">
+      Descubre quiénes somos y nuestra pasión por la educación temprana
+    </p>
+  </div>
+</section>
+
+<!-- Who We Are Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 reveal">
+      ¿QUIÉNES SOMOS?
+    </h2>
+    <div class="flex items-center justify-center gap-8 mb-8 reveal delay-100">
+      <img src="{{ url_for('static', filename='image/logo/logo.png') }}" alt="Wawalu" class="h-24"
+      />
+      <span class="text-4xl text-gray-400">+</span>
+      <div
+        class="bg-blue-800 text-white rounded-full h-24 w-24 flex items-center justify-center text-center text-xs font-bold p-2"
+      >
+        REGGIO<br />EMILIA
+      </div>
+    </div>
+    <div class="text-center reveal delay-200">
+      <h3 class="text-xl font-bold text-gray-800 mb-2">CONSORCIO EDUCATIVO</h3>
+      <p class="text-blue-600 font-bold">
+        REGGIO EMILIA CAÑETE <span class="text-gray-500">&</span>
+        <span class="text-pink-500">WAWALU</span>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 max-w-4xl mx-auto">
+      <div
+        class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-blue-500 text-left"
+      >
+        <p class="text-gray-700">
+          <span class="font-bold text-blue-600"
+            >REGGIO EMILIA CAÑETE y WAWALU</span
+          >
+          se unen en favor de la educación infantil en Cañete.
+        </p>
+      </div>
+      <div
+        class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-green-500 text-left"
+      >
+        <p class="text-gray-700">
+          Inspirados en la
+          <span class="font-bold text-purple-600"
+            >filosofía educativa italiana</span
+          >, donde el niño es el constructor de su propio aprendizaje.
+        </p>
+      </div>
+      <div
+        class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-pink-500 text-left md:col-span-2"
+      >
+        <p class="text-gray-700">
+          Somos una
+          <span class="font-bold text-green-600">escuela cálida y amable</span>,
+          que vive con alegría el día a día.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div
+        class="stat-card bg-white p-8 rounded-xl shadow-md text-center reveal"
+      >
+        <h3 class="text-4xl font-bold text-blue-600 mb-2">100+</h3>
+        <p class="text-gray-600 font-medium">Niños Graduados</p>
+      </div>
+      <div
+        class="stat-card bg-white p-8 rounded-xl shadow-md text-center reveal delay-100"
+      >
+        <h3 class="text-4xl font-bold text-blue-600 mb-2">98%</h3>
+        <p class="text-gray-600 font-medium">Satisfacción de Padres</p>
+      </div>
+      <div
+        class="stat-card bg-white p-8 rounded-xl shadow-md text-center reveal delay-200"
+      >
+        <h3 class="text-4xl font-bold text-blue-600 mb-2">15+</h3>
+        <p class="text-gray-600 font-medium">Reconocimientos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mission, Vision, Objectives -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Mission -->
+      <div
+        class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 reveal"
+      >
+        <div class="flex items-center mb-4">
+          <span class="material-symbols-outlined text-blue-600 text-3xl mr-2"
+            >flag</span
+          >
+          <h3 class="text-xl font-bold text-gray-800">Misión</h3>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Brindar una educación temprana de excelencia basada en la metodología
+          Reggio Emilia, formando niños seguros, creativos y autónomos en un
+          ambiente cálido y estimulante, que promueva el desarrollo integral y
+          el amor por el aprendizaje.
+        </p>
+      </div>
+      <!-- Vision -->
+      <div
+        class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 reveal delay-100"
+      >
+        <div class="flex items-center mb-4">
+          <span class="material-symbols-outlined text-blue-600 text-3xl mr-2"
+            >visibility</span
+          >
+          <h3 class="text-xl font-bold text-gray-800">Visión</h3>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Ser reconocidos como la institución líder en educación temprana en la
+          región, destacando por nuestra innovación pedagógica, compromiso con
+          el desarrollo integral de los niños y la formación de ciudadanos
+          conscientes y comprometidos con su entorno.
+        </p>
+      </div>
+      <!-- Objectives -->
+      <div
+        class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 reveal delay-200"
+      >
+        <div class="flex items-center mb-4">
+          <h3 class="text-xl font-bold text-gray-800">Objetivos</h3>
+        </div>
+        <ul class="space-y-4">
+          <li class="flex items-start text-sm text-gray-600">
+            <span
+              class="material-symbols-outlined text-blue-600 text-lg mr-2 mt-1"
+              >check_circle</span
+            >
+            <span
+              >Fomentar el desarrollo integral de cada niño respetando su ritmo
+              individual.</span
+            >
+          </li>
+          <li class="flex items-start text-sm text-gray-600">
+            <span
+              class="material-symbols-outlined text-blue-600 text-lg mr-2 mt-1"
+              >check_circle</span
+            >
+            <span
+              >Crear un ambiente seguro y estimulante para el aprendizaje
+              activo.</span
+            >
+          </li>
+          <li class="flex items-start text-sm text-gray-600">
+            <span
+              class="material-symbols-outlined text-blue-600 text-lg mr-2 mt-1"
+              >check_circle</span
+            >
+            <span
+              >Promover la participación familiar en el proceso educativo.</span
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- History Section -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 reveal">
+      Nuestra Historia
+    </h2>
+    <div class="timeline">
+      <!-- Item 1 -->
+      <div class="timeline-container timeline-left reveal delay-100">
+        <div class="timeline-content">
+          <div class="flex flex-col md:flex-row gap-6 items-center">
+            <img
+              src="{{ url_for('static', filename='image/galery/imagen9.jpg') }}"
+              alt="Inicios"
+              class="w-full md:w-1/3 rounded-lg object-cover h-32"
+            />
+            <div>
+              <div class="flex items-center mb-2">
+                <span class="material-symbols-outlined text-blue-600 mr-2"
+                  >history_edu</span
+                >
+                <h3 class="font-bold text-lg text-gray-800">
+                  Los Inicios (2013)
+                </h3>
+              </div>
+              <p class="text-sm text-gray-600">
+                Nuestra guardería abrió sus puertas en 2013, convirtiéndose en
+                pionera en educación inicial en la zona. Desde entonces, hemos
+                acompañado a cientos de familias en el desarrollo de sus
+                pequeños.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Item 2 -->
+      <div class="timeline-container timeline-right reveal delay-200">
+        <div class="timeline-content">
+          <div class="flex flex-col md:flex-row gap-6 items-center">
+            <img
+              src="{{ url_for('static', filename='image/galery/imagen10.jpg') }}"
+              alt="Primeros Pasos"
+              class="w-full md:w-1/3 rounded-lg object-cover h-32"
+            />
+            <div>
+              <div class="flex items-center mb-2">
+                <span class="material-symbols-outlined text-blue-600 mr-2"
+                  >school</span
+                >
+                <h3 class="font-bold text-lg text-gray-800">
+                  Primeros Pasos (2021-2022)
+                </h3>
+              </div>
+              <p class="text-sm text-gray-600">
+                Comenzamos con un pequeño grupo y la firme convicción de ofrecer
+                una educación diferente.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Item 3 -->
+      <div class="timeline-container timeline-left reveal delay-300">
+        <div class="timeline-content">
+          <div class="flex flex-col md:flex-row gap-6 items-center">
+            <img
+              src="{{ url_for('static', filename='image/galery/imagen11.jpg') }}"
+              alt="Crecimiento"
+              class="w-full md:w-1/3 rounded-lg object-cover h-32"
+            />
+            <div>
+              <div class="flex items-center mb-2">
+                <span class="material-symbols-outlined text-blue-600 mr-2"
+                  >trending_up</span
+                >
+                <h3 class="font-bold text-lg text-gray-800">
+                  Crecimiento y Evolución (2023-2025)
+                </h3>
+              </div>
+              <p class="text-sm text-gray-600">
+                El éxito de nuestro enfoque educativo nos permitió expandirnos y
+                mejorar nuestras instalaciones. Incorporamos nuevos espacios de
+                aprendizaje, incluyendo nuestra innovadora sala de
+                psicomotricidad.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-12 reveal">
+      Nuestros Valores
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div
+        class="value-card reveal"
+        style="background-image: url('{{ url_for('static', filename='image/galery/imagen1.jpg') }}')"
+      >
+        <div class="value-card-overlay">
+          <div class="flex items-center mb-2">
+            <span class="material-symbols-outlined text-white mr-2"
+              >favorite</span
+            >
+            <h3 class="text-white font-bold text-lg">Amor</h3>
+          </div>
+          <p class="text-white text-xs text-left">
+            Trabajamos con pasión y dedicación, brindando cariño y atención
+            personalizada a cada niño.
+          </p>
+        </div>
+      </div>
+      <div
+        class="value-card reveal delay-100"
+        style="background-image: url('{{ url_for('static', filename='image/galery/imagen2.jpg') }}')"
+      >
+        <div class="value-card-overlay">
+          <div class="flex items-center mb-2">
+            <span class="material-symbols-outlined text-white mr-2"
+              >palette</span
+            >
+            <h3 class="text-white font-bold text-lg">Creatividad</h3>
+          </div>
+          <p class="text-white text-xs text-left">
+            Fomentamos la imaginación y la expresión libre como herramientas
+            fundamentales de aprendizaje.
+          </p>
+        </div>
+      </div>
+      <div
+        class="value-card reveal delay-200"
+        style="background-image: url('{{ url_for('static', filename='image/galery/imagen3.jpg') }}')"
+      >
+        <div class="value-card-overlay">
+          <div class="flex items-center mb-2">
+            <span class="material-symbols-outlined text-white mr-2"
+              >diversity_3</span
+            >
+            <h3 class="text-white font-bold text-lg">Respeto</h3>
+          </div>
+          <p class="text-white text-xs text-left">
+            Valoramos la diversidad y unicidad de cada niño, respetando sus
+            ritmos y formas de aprender.
+          </p>
+        </div>
+      </div>
+      <div
+        class="value-card reveal delay-300"
+        style="background-image: url('{{ url_for('static', filename='image/galery/imagen4.jpg') }}')"
+      >
+        <div class="value-card-overlay">
+          <div class="flex items-center mb-2">
+            <span class="material-symbols-outlined text-white mr-2"
+              >handshake</span
+            >
+            <h3 class="text-white font-bold text-lg">Compromiso</h3>
+          </div>
+          <p class="text-white text-xs text-left">
+            Nos dedicamos a la excelencia educativa y al desarrollo sostenible
+            de nuestra comunidad.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+      Nuestro Equipo Directivo
+    </h2>
+    <p class="text-gray-600 max-w-2xl mx-auto mb-16">
+      Un equipo comprometido con la excelencia educativa, combinando experiencia
+      local con metodologías innovadoras internacionales para ofrecer la mejor
+      educación a nuestros pequeños.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Team Member 1 -->
+      <div
+        class="team-card director bg-white rounded-xl shadow-lg p-8 pt-0 mt-12 relative reveal"
+      >
+        <div class="team-avatar bg-pink-500">
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <div
+          class="absolute top-4 right-4 bg-pink-500 text-white p-2 rounded-full shadow-md"
+        >
+          <span class="material-symbols-outlined text-sm">star</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mt-4">
+          Nelida Carnica Valentín
+        </h3>
+        <p class="text-pink-500 font-bold text-sm mb-4">DIRECTORA GENERAL</p>
+        <p class="text-gray-600 text-sm mb-6">
+          Líder educativo con amplia experiencia en gestión pedagógica y
+          administrativa del centro educativo.
+        </p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span class="bg-pink-100 text-pink-600 text-xs px-3 py-1 rounded-full"
+            >Gestión</span
+          >
+          <span
+            class="bg-purple-100 text-purple-600 text-xs px-3 py-1 rounded-full"
+            >Liderazgo</span
+          >
+          <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full"
+            >Administración</span
+          >
+        </div>
+      </div>
+
+      <!-- Team Member 2 -->
+      <div
+        class="team-card reggio bg-white rounded-xl shadow-lg p-8 pt-0 mt-12 relative reveal delay-100"
+      >
+        <div class="team-avatar bg-blue-500">
+          <span class="material-symbols-outlined">lightbulb</span>
+        </div>
+        <div
+          class="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full shadow-md"
+        >
+          <span class="material-symbols-outlined text-sm">emoji_objects</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mt-4">Mercedes Cahuas</h3>
+        <p class="text-blue-500 font-bold text-sm mb-4">
+          PROMOTORA DE REGGIO EMILIA
+        </p>
+        <p class="text-gray-600 text-sm mb-6">
+          Especialista en la filosofía educativa Reggio Emilia, promoviendo el
+          aprendizaje como construcción activa del conocimiento.
+        </p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full"
+            >Reggio Emilia</span
+          >
+          <span class="bg-cyan-100 text-cyan-600 text-xs px-3 py-1 rounded-full"
+            >Metodología</span
+          >
+          <span
+            class="bg-indigo-100 text-indigo-600 text-xs px-3 py-1 rounded-full"
+            >Pedagogía</span
+          >
+        </div>
+      </div>
+
+      <!-- Team Member 3 -->
+      <div
+        class="team-card wawalu bg-white rounded-xl shadow-lg p-8 pt-0 mt-12 relative reveal delay-200"
+      >
+        <div class="team-avatar bg-green-500">
+          <span class="material-symbols-outlined">child_care</span>
+        </div>
+        <div
+          class="absolute top-4 right-4 bg-green-500 text-white p-2 rounded-full shadow-md"
+        >
+          <span class="material-symbols-outlined text-sm">favorite</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mt-4">Ana</h3>
+        <p class="text-green-500 font-bold text-sm mb-4">PROMOTORA DE WAWALU</p>
+        <p class="text-gray-600 text-sm mb-6">
+          Especialista en educación infantil, enfocada en crear ambientes
+          cálidos y seguros que fomenten el desarrollo integral de los niños.
+        </p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span
+            class="bg-green-100 text-green-600 text-xs px-3 py-1 rounded-full"
+            >Wawalu</span
+          >
+          <span class="bg-teal-100 text-teal-600 text-xs px-3 py-1 rounded-full"
+            >Desarrollo Infantil</span
+          >
+          <span
+            class="bg-emerald-100 text-emerald-600 text-xs px-3 py-1 rounded-full"
+            >Educación Temprana</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- A Day at Wawalu Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-12 reveal">
+      Un Día en Wawalu
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="rounded-xl overflow-hidden shadow-lg h-64 reveal">
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen5.jpg') }}"
+          alt="Actividad 1"
+          class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+        />
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-lg h-64 reveal delay-100">
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen6.jpg') }}"
+          alt="Actividad 2"
+          class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+        />
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-lg h-64 reveal delay-200">
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen7.jpg') }}"
+          alt="Actividad 3"
+          class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Collaborative Work Section -->
+<section class="py-20 bg-yellow-50">
+  <div class="container mx-auto px-4 text-center">
+    <div class="flex items-center justify-center mb-4 reveal">
+      <span class="material-symbols-outlined text-yellow-500 text-4xl mr-2"
+        >handshake</span
+      >
+      <h2 class="text-3xl font-bold text-gray-800">Trabajo Colaborativo</h2>
+    </div>
+    <p class="text-gray-600 max-w-3xl mx-auto mb-12 reveal delay-100">
+      El
+      <span class="font-bold text-blue-600"
+        >Consorcio Educativo Reggio Emilia Cañete & Wawalu</span
+      >
+      representa la unión de dos fuerzas dedicadas a la educación infantil de
+      calidad en nuestra región.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div
+        class="bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-500 reveal delay-200"
+      >
+        <div class="flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-blue-500 text-3xl"
+            >flag</span
+          >
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">Misión Conjunta</h3>
+        <p class="text-sm text-gray-600">
+          Brindar educación de calidad inspirada en la filosofía Reggio Emilia.
+        </p>
+      </div>
+      <div
+        class="bg-white p-8 rounded-xl shadow-md border-t-4 border-green-500 reveal delay-300"
+      >
+        <div class="flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-green-500 text-3xl"
+            >sentiment_satisfied</span
+          >
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">Ambiente Cálido</h3>
+        <p class="text-sm text-gray-600">
+          Crear espacios seguros y alegres para el desarrollo infantil.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-blue-600 text-white text-center">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+      ¡Sé parte de nuestra comunidad!
+    </h2>
+    <p class="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+      Únete a Wawalu y descubre cómo podemos ayudar en el desarrollo integral de
+      tu pequeño.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a
+        href="#"
+        class="bg-white text-blue-600 font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined mr-2">calendar_month</span>
+        Agendar Visita
+      </a>
+      <a
+        href="#"
+        class="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white hover:text-blue-600 transition-colors flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined mr-2">call</span>
+        Contactar Ahora
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/about.js') }}"></script>
+{% endblock %}

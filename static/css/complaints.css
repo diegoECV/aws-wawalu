@@ -1,0 +1,179 @@
+/* Complaints Page Styles */
+
+.complaints-header {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); /* blue-800 to blue-500 */
+    color: white;
+    padding: 4rem 1rem 6rem; /* Added bottom padding for overlap effect */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.complaints-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: rotate 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.complaints-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+.info-box {
+    background-color: #fffbeb; /* yellow-50 */
+    border-left: 4px solid #f59e0b; /* yellow-500 */
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.1), 0 2px 4px -1px rgba(245, 158, 11, 0.06);
+    transition: transform 0.3s ease;
+}
+
+.info-box:hover {
+    transform: translateY(-2px);
+}
+
+.form-section {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(229, 231, 235, 0.5); /* gray-200 */
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    transform: translateY(-2px);
+}
+
+.form-section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1e3a8a; /* blue-900 */
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 2px solid #eff6ff; /* blue-50 */
+    padding-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151; /* gray-700 */
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.01em;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e5e7eb; /* gray-200 */
+    border-radius: 0.75rem;
+    background-color: #f9fafb; /* gray-50 */
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #3b82f6; /* blue-500 */
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.radio-group {
+    display: flex;
+    gap: 2rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.radio-label:hover {
+    background-color: #eff6ff; /* blue-50 */
+}
+
+.radio-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #3b82f6;
+    accent-color: #3b82f6;
+}
+
+.btn-submit {
+    background: linear-gradient(to right, #dc2626, #b91c1c); /* red-600 to red-700 */
+    color: white;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+}
+
+.btn-submit:hover {
+    background: linear-gradient(to right, #b91c1c, #991b1b);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.4);
+}
+
+.btn-clear {
+    background-color: white;
+    color: #4b5563; /* gray-600 */
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid #d1d5db; /* gray-300 */
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-clear:hover {
+    background-color: #f3f4f6; /* gray-100 */
+    border-color: #9ca3af; /* gray-400 */
+    color: #1f2937; /* gray-800 */
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }

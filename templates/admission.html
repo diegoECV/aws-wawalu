@@ -1,0 +1,230 @@
+{% extends "base.html" %} {% block title %}Solicitud de Admisión - PG Wawalu{%
+endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/admission.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Header Section -->
+<div class="admission-header animate-fade-in">
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Solicitud de Admisión</h1>
+    <p class="text-blue-100 text-lg max-w-2xl mx-auto">
+      Completa los datos para solicitar la admisión a nuestros programas
+    </p>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 pb-20">
+  <div
+    class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 -mt-10 relative z-10 animate-slide-up"
+  >
+    <form
+      id="admissionForm"
+      class="space-y-8"
+      novalidate
+      method="POST"
+      action="{{ url_for('admission') }}"
+    >
+      <!-- Section 1: Parent/Guardian Data -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span class="material-symbols-outlined text-blue-600">person</span>
+          Datos del Apoderado
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group md:col-span-2">
+            <label for="parent_name" class="form-label"
+              >Nombres y Apellidos *</label
+            >
+            <input
+              type="text"
+              id="parent_name"
+              name="parent_name"
+              class="form-input"
+              placeholder="Ej: Juan Pérez"
+              required
+            />
+          </div>
+
+          <div class="form-group md:col-span-2">
+            <label for="email" class="form-label">Correo electrónico *</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="ejemplo@correo.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">Teléfono</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="form-input"
+              placeholder="999999999"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="parent_dob" class="form-label"
+              >Fecha de nacimiento</label
+            >
+            <input
+              type="date"
+              id="parent_dob"
+              name="parent_dob"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group md:col-span-2">
+            <label for="program" class="form-label"
+              >Programa de Interés *</label
+            >
+            <input
+              type="text"
+              id="program"
+              name="program"
+              class="form-input"
+              placeholder="Ej: Programa de Robótica"
+              required
+            />
+          </div>
+
+          <div class="form-group md:col-span-2">
+            <label for="message" class="form-label">Mensaje adicional</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              class="form-textarea"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Child Data -->
+      <div class="form-section animate-fade-in-up delay-100">
+        <div class="form-section-title">
+          <span class="material-symbols-outlined text-blue-600"
+            >child_care</span
+          >
+          Datos del niño
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label for="child_name" class="form-label"
+              >Nombres del niño *</label
+            >
+            <input
+              type="text"
+              id="child_name"
+              name="child_name"
+              class="form-input"
+              placeholder="Ej: Ana"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="child_lastname" class="form-label"
+              >Apellidos del niño *</label
+            >
+            <input
+              type="text"
+              id="child_lastname"
+              name="child_lastname"
+              class="form-input"
+              placeholder="Ej: García"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="child_dob" class="form-label"
+              >Fecha de nacimiento del niño *</label
+            >
+            <input
+              type="date"
+              id="child_dob"
+              name="child_dob"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="allergies" class="form-label">Alergias *</label>
+            <input
+              type="text"
+              id="allergies"
+              name="allergies"
+              class="form-input"
+              placeholder="Ej: Sin alergias / Alergia a lactosa"
+              required
+            />
+          </div>
+
+          <div class="form-group md:col-span-2">
+            <label for="medical_observations" class="form-label"
+              >Observaciones médicas *</label
+            >
+            <textarea
+              id="medical_observations"
+              name="medical_observations"
+              rows="3"
+              class="form-textarea"
+              placeholder="Describe cualquier condición médica importante o escribe 'Ninguna'"
+              required
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="info-box animate-fade-in-up delay-200">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-yellow-600 text-xl mt-0.5"
+            >info</span
+          >
+          <div>
+            <h3 class="font-bold text-yellow-800 text-sm mb-1">
+              Información Importante
+            </h3>
+            <ul class="text-xs text-yellow-900 space-y-1 list-disc list-inside">
+              <li>
+                La solicitud será revisada y respondida en un plazo de 24-48
+                horas.
+              </li>
+              <li>
+                Recibirás un correo electrónico de confirmación con los
+                siguientes pasos.
+              </li>
+              <li>
+                La admisión está sujeta a la disponibilidad de vacantes y
+                verificación de datos.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="animate-fade-in-up delay-200 pt-4">
+        <button type="submit" class="btn-submit">
+          <span class="material-symbols-outlined">send</span>
+          Enviar Solicitud
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/admission.js') }}"></script>
+{% endblock %}

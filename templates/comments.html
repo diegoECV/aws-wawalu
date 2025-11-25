@@ -1,0 +1,145 @@
+{% extends "base.html" %} {% block title %}Comentarios de Padres - PG Wawalu{%
+endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/comments.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section class="comments-hero">
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      La Voz de Nuestra Familia
+    </h1>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+      Descubre las experiencias de otros padres y comparte tu propia historia
+      con la comunidad Wawalu.
+    </p>
+  </div>
+</section>
+
+<!-- Comments Grid -->
+<section class="container mx-auto px-4 mb-20">
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-2xl font-bold text-gray-800">Todos los Comentarios</h2>
+    <button
+      onclick="document.getElementById('comment-modal').classList.remove('hidden')"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition-colors flex items-center shadow-md"
+    >
+      <span class="material-symbols-outlined mr-2">add_comment</span>
+      Compartir Experiencia
+    </button>
+  </div>
+
+  <div class="comments-grid">
+    {% for comment in comments %}
+    <div class="comment-card">
+      <div class="comment-header">
+        <div class="comment-avatar">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="comment-author">
+          <h4>{{ comment.name }}</h4>
+          <p>{{ comment.relation }}</p>
+        </div>
+      </div>
+      <div class="comment-body">"{{ comment.comment }}"</div>
+      <div class="comment-date">
+        {{ comment.created_at.strftime('%d %b, %Y') }}
+      </div>
+    </div>
+    {% else %}
+    <div class="col-span-full text-center py-12">
+      <div class="inline-block p-4 rounded-full bg-gray-100 mb-4">
+        <span class="material-symbols-outlined text-4xl text-gray-400"
+          >chat_bubble_outline</span
+        >
+      </div>
+      <h3 class="text-xl font-bold text-gray-700 mb-2">
+        Aún no hay comentarios
+      </h3>
+      <p class="text-gray-500">
+        ¡Sé el primero en compartir tu experiencia con nosotros!
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Floating Action Button for Mobile -->
+<div
+  class="md:hidden add-comment-fab"
+  onclick="document.getElementById('comment-modal').classList.remove('hidden')"
+>
+  <span class="material-symbols-outlined">add</span>
+</div>
+
+<!-- Comment Modal (Reused) -->
+<div
+  id="comment-modal"
+  class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 hidden flex"
+>
+  <div
+    class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative animate-slide-in-up"
+  >
+    <button
+      onclick="document.getElementById('comment-modal').classList.add('hidden')"
+      class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+      Agregar Comentario
+    </h3>
+    <form action="{{ url_for('add_comment') }}" method="POST">
+      <input type="hidden" name="next" value="{{ request.path }}" />
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="name"
+          >Nombre</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Tu nombre"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="relation"
+          >Relación</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+          id="relation"
+          name="relation"
+          type="text"
+          placeholder="Ej: Mamá de..."
+          required
+        />
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="comment"
+          >Comentario</label
+        >
+        <textarea
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 h-32"
+          id="comment"
+          name="comment"
+          placeholder="Escribe tu experiencia..."
+          required
+        ></textarea>
+      </div>
+      <div class="flex items-center justify-center">
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full focus:outline-none focus:shadow-outline transition-colors w-full"
+          type="submit"
+        >
+          Enviar Comentario
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

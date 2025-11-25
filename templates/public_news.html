@@ -1,0 +1,83 @@
+{% extends "base.html" %} {% block title %}Noticias - Wawalu{% endblock %} {%
+block content %}
+<!-- Header Banner -->
+<div class="bg-gradient-to-r from-green-500 to-teal-600 text-white py-16">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
+        Noticias y Novedades
+      </h1>
+      <p class="text-xl text-green-100 animate-fade-in-delay">
+        Mantente al día con todo lo que sucede en nuestra comunidad
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- News Grid -->
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  {% if news_items %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for item in news_items %}
+    <article
+      class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group border border-gray-100"
+    >
+      <!-- Image -->
+      <div class="h-56 overflow-hidden relative">
+        <img
+          src="{{ url_for('static', filename='image/galery/' + item.image_url) }}"
+          alt="{{ item.title }}"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div class="absolute top-4 left-4">
+          <span
+            class="bg-white/90 backdrop-blur-sm text-green-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
+          >
+            Novedad
+          </span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 flex-1 flex flex-col">
+        <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base"
+            >calendar_today</span
+          >
+          {{ item.created_at.strftime('%d %b, %Y') }}
+        </div>
+
+        <h2
+          class="text-xl font-bold text-gray-800 mb-3 group-hover:text-green-600 transition-colors line-clamp-2"
+        >
+          {{ item.title }}
+        </h2>
+
+        <p class="text-gray-600 mb-6 line-clamp-3 flex-1">{{ item.content }}</p>
+
+        <a
+          href="{{ url_for('news_detail', news_id=item.id) }}"
+          class="inline-flex items-center text-green-600 font-bold hover:text-green-700 transition-colors group/link"
+        >
+          Leer más
+          <span
+            class="material-symbols-outlined ml-1 transition-transform group-hover/link:translate-x-1"
+            >arrow_forward</span
+          >
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-20">
+    <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
+      >newspaper</span
+    >
+    <p class="text-gray-500 text-xl">
+      No hay noticias publicadas recientemente.
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,412 @@
+{% extends "base.html" %} {% block title %}Libro de Reclamaciones - PG Wawalu{%
+endblock %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/complaints.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Header Section -->
+<div class="complaints-header animate-fade-in">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-center mb-4">
+      <span class="material-symbols-outlined text-5xl">gavel</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Libro de Reclamaciones</h1>
+    <p class="text-blue-100 text-lg max-w-2xl mx-auto mb-8">
+      Su opinión es importante para nosotros. Presente su reclamo o queja de
+      forma fácil y segura.
+    </p>
+    <div
+      class="bg-blue-800/50 inline-block px-6 py-3 rounded-lg backdrop-blur-sm border border-blue-400/30"
+    >
+      <div class="flex items-center gap-2 text-sm md:text-base">
+        <span class="material-symbols-outlined">info</span>
+        <span
+          >Conforme a lo establecido en el Código de Protección y Defensa del
+          Consumidor (Ley N° 29571)</span
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-12 max-w-4xl -mt-12 relative z-10">
+  <!-- Info Box -->
+  <div class="info-box shadow-lg animate-fade-in-up">
+    <div class="flex items-start gap-3">
+      <span class="material-symbols-outlined text-yellow-600 text-3xl"
+        >warning</span
+      >
+      <div>
+        <h3 class="font-bold text-yellow-800 text-lg mb-2">
+          Información Importante
+        </h3>
+        <ul class="text-sm text-yellow-900 space-y-1 list-disc list-inside">
+          <li>
+            El presente libro de reclamaciones se encuentra a disposición de
+            todos nuestros usuarios.
+          </li>
+          <li>
+            Su reclamo será atendido en un plazo máximo de
+            <span class="font-bold">15 días hábiles</span>.
+          </li>
+          <li>
+            La presentación de esta hoja de reclamación no impide acudir a otras
+            vías de solución de controversias.
+          </li>
+          <li>
+            Para resolver su reclamo, no se exigirá la compra de algún bien o la
+            contratación de algún servicio.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-xl p-8 animate-fade-in-up delay-100">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-gray-800">
+        Formulario de Reclamación
+      </h2>
+      <p class="text-gray-500 mt-2">
+        Complete todos los campos obligatorios marcados con (*)
+      </p>
+    </div>
+
+    <form
+      id="complaintsForm"
+      class="space-y-8"
+      novalidate
+      method="POST"
+      action="{{ url_for('complaints') }}"
+    >
+      <!-- Section 1: Consumer Data -->
+      <div class="form-section border border-gray-100">
+        <div class="form-section-title">
+          <span class="material-symbols-outlined text-blue-600">person</span>
+          1. Datos del Consumidor Reclamante
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label for="name" class="form-label">Nombres *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-input"
+              placeholder="Ingrese sus nombres"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastname" class="form-label">Apellidos *</label>
+            <input
+              type="text"
+              id="lastname"
+              name="lastname"
+              class="form-input"
+              placeholder="Ingrese sus apellidos"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="doc_type" class="form-label">Tipo de Documento *</label>
+            <select id="doc_type" name="doc_type" class="form-select" required>
+              <option value="">Seleccione...</option>
+              <option value="DNI">DNI</option>
+              <option value="CE">Carné de Extranjería</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="document_number" class="form-label"
+              >Número de Documento *</label
+            >
+            <input
+              type="number"
+              id="document_number"
+              name="document_number"
+              class="form-input"
+              placeholder="Ingrese el número"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="phone" class="form-label">Teléfono *</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="form-input"
+              placeholder="+51 999 999 999"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">Correo Electrónico *</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="ejemplo@correo.com"
+              required
+            />
+          </div>
+          <div class="form-group md:col-span-2">
+            <label for="address" class="form-label">Dirección *</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              class="form-input"
+              placeholder="Ingrese su dirección completa"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Contracted Good -->
+      <div class="form-section border border-gray-100">
+        <div class="form-section-title">
+          <span class="material-symbols-outlined text-green-600"
+            >shopping_cart</span
+          >
+          2. Identificación del Bien Contratado
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label class="form-label">Tipo *</label>
+            <div class="flex gap-6 mt-2">
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="good_type"
+                  value="producto"
+                  class="radio-input"
+                  required
+                />
+                <span>Producto</span>
+              </label>
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="good_type"
+                  value="servicio"
+                  class="radio-input"
+                  required
+                />
+                <span>Servicio</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="amount" class="form-label">Monto Reclamado *</label>
+            <div class="relative">
+              <span class="absolute left-3 top-3 text-gray-500">S/.</span>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                class="form-input !pl-12"
+                placeholder="0.00"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group md:col-span-2">
+            <label for="good_description" class="form-label"
+              >Descripción *</label
+            >
+            <textarea
+              id="good_description"
+              name="good_description"
+              rows="2"
+              class="form-textarea"
+              placeholder="Describa detalladamente el producto o servicio..."
+              required
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Claim Detail -->
+      <div class="form-section border border-gray-100">
+        <div class="form-section-title">
+          <span class="material-symbols-outlined text-red-600"
+            >report_problem</span
+          >
+          3. Detalle de la Reclamación
+        </div>
+
+        <div class="form-group mb-6" id="claimTypeContainer">
+          <label class="form-label">Tipo *</label>
+          <div class="space-y-3 mt-2">
+            <label
+              class="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+            >
+              <input
+                type="radio"
+                name="claim_type"
+                value="reclamo"
+                class="radio-input mt-1"
+              />
+              <div>
+                <span class="font-bold block text-gray-800">Reclamo</span>
+                <span class="text-xs text-gray-500"
+                  >Disconformidad relacionada a los productos o servicios.</span
+                >
+              </div>
+            </label>
+            <label
+              class="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+            >
+              <input
+                type="radio"
+                name="claim_type"
+                value="queja"
+                class="radio-input mt-1"
+              />
+              <div>
+                <span class="font-bold block text-gray-800">Queja</span>
+                <span class="text-xs text-gray-500"
+                  >Disconformidad no relacionada a los productos o servicios; o
+                  malestar o descontento respecto a la atención al
+                  público.</span
+                >
+              </div>
+            </label>
+          </div>
+          <p class="error-message text-red-500 text-xs mt-1 hidden"></p>
+        </div>
+
+        <div class="form-group mb-6">
+          <label for="claim_detail" class="form-label"
+            >Detalle de la Reclamación *</label
+          >
+          <textarea
+            id="claim_detail"
+            name="claim_detail"
+            rows="4"
+            class="form-textarea"
+            placeholder="Describa detalladamente su reclamo o queja..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="consumer_request" class="form-label"
+            >Pedido del Consumidor *</label
+          >
+          <textarea
+            id="consumer_request"
+            name="consumer_request"
+            rows="3"
+            class="form-textarea"
+            placeholder="¿Qué solicita que se haga para resolver su reclamo?"
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Section 4: Provider Actions (Read Only / Placeholder) -->
+      <div class="form-section border border-gray-100 bg-gray-50 opacity-75">
+        <div class="form-section-title text-gray-500">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+          4. Observaciones y Acciones Adoptadas por el Proveedor
+        </div>
+        <div
+          class="p-4 bg-gray-100 rounded-lg border border-gray-200 text-sm text-gray-500 italic text-center"
+        >
+          Esta sección será completada por nuestro equipo una vez recibida su
+          reclamación.
+        </div>
+      </div>
+
+      <!-- Privacy Check -->
+      <div class="flex items-start gap-3 mb-8">
+        <input
+          type="checkbox"
+          id="privacy_check"
+          name="privacy_check"
+          class="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+          required
+        />
+        <label for="privacy_check" class="text-sm text-gray-600 cursor-pointer">
+          Declaro que la información proporcionada es veraz y autorizo su
+          tratamiento para la atención de mi reclamo, conforme a la
+          <a
+            href="{{ url_for('privacy') }}"
+            class="text-blue-600 hover:underline"
+            >Ley de Protección de Datos Personales</a
+          >. *
+        </label>
+      </div>
+
+      <!-- Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <button
+          type="submit"
+          class="btn-submit flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+        >
+          <span class="material-symbols-outlined">send</span>
+          Enviar Reclamación
+        </button>
+        <button
+          type="button"
+          id="clearBtn"
+          class="btn-clear flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined">restart_alt</span>
+          Limpiar Formulario
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Contact Footer -->
+  <div
+    class="mt-12 bg-blue-50 rounded-xl p-8 text-center animate-fade-in-up delay-200"
+  >
+    <h3 class="text-xl font-bold text-gray-800 mb-6">
+      Información de Contacto
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="flex flex-col items-center">
+        <div
+          class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-3"
+        >
+          <span class="material-symbols-outlined">location_on</span>
+        </div>
+        <h4 class="font-bold text-gray-800">Dirección</h4>
+        <p class="text-sm text-gray-600">
+          Av. Mariscal Benavides 1365<br />Cañete, Lima, Perú
+        </p>
+      </div>
+      <div class="flex flex-col items-center">
+        <div
+          class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-3"
+        >
+          <span class="material-symbols-outlined">call</span>
+        </div>
+        <h4 class="font-bold text-gray-800">Teléfono</h4>
+        <p class="text-sm text-gray-600">+51 942 139 788</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <div
+          class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mb-3"
+        >
+          <span class="material-symbols-outlined">mail</span>
+        </div>
+        <h4 class="font-bold text-gray-800">Email</h4>
+        <p class="text-sm text-gray-600">reclamos@pgwawalu.edu.pe</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/complaints.js') }}"></script>
+{% endblock %}

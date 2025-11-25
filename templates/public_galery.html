@@ -1,0 +1,132 @@
+{% extends "base.html" %} {% block title %}Galería - Wawalu{% endblock %} {%
+block content %}
+<!-- Header Banner -->
+<div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-16">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
+        Nuestra Galería
+      </h1>
+      <p class="text-xl text-pink-100 animate-fade-in-delay">
+        Momentos mágicos y recuerdos inolvidables en Wawalu
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Galery Content -->
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Filters -->
+  <div class="flex flex-wrap justify-center gap-4 mb-12">
+    <a
+      href="{{ url_for('public_galery') }}"
+      class="px-6 py-2 rounded-full font-bold transition-all {% if not current_category %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      Todos
+    </a>
+    <a
+      href="{{ url_for('public_galery', category='Actividades') }}"
+      class="px-6 py-2 rounded-full font-bold transition-all {% if current_category == 'Actividades' %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      Actividades
+    </a>
+    <a
+      href="{{ url_for('public_galery', category='Eventos') }}"
+      class="px-6 py-2 rounded-full font-bold transition-all {% if current_category == 'Eventos' %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      Eventos
+    </a>
+    <a
+      href="{{ url_for('public_galery', category='Talleres') }}"
+      class="px-6 py-2 rounded-full font-bold transition-all {% if current_category == 'Talleres' %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      Talleres
+    </a>
+  </div>
+
+  <!-- Grid -->
+  {% if galery_items %}
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+  >
+    {% for item in galery_items %}
+    <div class="group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer aspect-[4/3]" onclick="openGaleryModal('{{ url_for('static', filename='image/galery/' + item.image_url) }}', '{{ item.title }}')">
+      <img src="{{ url_for('static', filename='image/galery/' + item.image_url) }}" alt="{{ item.title }}"
+        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        loading="lazy"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6" >
+        <span class="text-pink-300 text-xs font-bold uppercase tracking-wider mb-1">{{ item.category }}</span>
+        <h3 class="text-white font-bold text-lg">{{ item.title }}</h3>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-20">
+    <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
+      >photo_library</span
+    >
+    <p class="text-gray-500 text-xl">No hay fotos en esta categoría aún.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Lightbox Modal -->
+<div
+  id="galeryModal"
+  class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm"
+  onclick="closeGaleryModal()"
+>
+  <button
+    class="absolute top-4 right-4 text-white hover:text-pink-400 transition-colors"
+  >
+    <span class="material-symbols-outlined text-4xl">close</span>
+  </button>
+  <div
+    class="max-w-5xl w-full max-h-[90vh] relative"
+    onclick="event.stopPropagation()"
+  >
+    <img
+      id="modalImage"
+      src=""
+      alt=""
+      class="w-full h-full object-contain rounded-lg shadow-2xl"
+    />
+    <div
+      class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg"
+    >
+      <h3
+        id="modalTitle"
+        class="text-white text-2xl font-bold text-center"
+      ></h3>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openGaleryModal(src, title) {
+    const modal = document.getElementById("galeryModal");
+    const img = document.getElementById("modalImage");
+    const titleEl = document.getElementById("modalTitle");
+
+    img.src = src;
+    titleEl.textContent = title;
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeGaleryModal() {
+    const modal = document.getElementById("galeryModal");
+    modal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+  }
+
+  // Close on Escape key
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeGaleryModal();
+    }
+  });
+</script>
+{% endblock %}

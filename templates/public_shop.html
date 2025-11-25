@@ -1,0 +1,205 @@
+{% extends "base.html" %} {% from "components/product_card.html" import product_card %} {% block title %}Tienda - Wawalu{% endblock %} 
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/public_shop.css') }}">
+
+{% endblock %} {% block content %}
+
+<!-- Header Banner Mejorado -->
+<div class="relative py-16">
+  <img src="{{ url_for('static', filename='image/galery/imagen3.jpg') }}" 
+       alt="Fondo Tienda" 
+       class="absolute inset-0 w-full h-full object-cover z-0" 
+       style="filter: brightness(0.7);" />
+  <div class="absolute inset-0 bg-blue-600 bg-opacity-80 z-10"></div>
+  <div class="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white animate-fade-in">
+        Tienda Escolar Wawalu
+      </h1>
+      <p class="text-xl text-blue-100 animate-fade-in-delay">
+        Uniformes, útiles y materiales educativos de calidad
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Products Grid -->
+  {% if products %}
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Nuestros Productos</h2>
+      <p class="text-gray-600">
+        Encuentra todo lo que necesitas para el año escolar
+      </p>
+    </div>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      {% for product in products %} {{ product_card(product, show_delete=False) }} {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div
+    class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200"
+  >
+    <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
+      >storefront</span
+    >
+    <h3 class="text-xl font-medium text-gray-500">
+      No hay productos disponibles
+    </h3>
+    <p class="text-gray-400 mt-2">Vuelve pronto para ver las novedades.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Product Detail Modal -->
+<div
+  id="productModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm"
+>
+  <div
+    class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden animate-scale-in flex flex-col md:flex-row max-h-[90vh]"
+  >
+    <!-- Modal Image -->
+    <div class="w-full md:w-1/2 bg-gray-100 relative h-64 md:h-auto">
+      <img
+        id="modalImage"
+        src=""
+        alt="Product"
+        class="w-full h-full object-cover"
+      />
+      <button
+        onclick="closeProductModal()"
+        class="absolute top-4 left-4 bg-white/80 p-2 rounded-full md:hidden"
+      >
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="w-full md:w-1/2 p-6 md:p-8 overflow-y-auto">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <span
+            id="modalCategory"
+            class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded"
+            >Category</span
+          >
+          <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 mt-2">
+            Product Name
+          </h2>
+        </div>
+        <button
+          onclick="closeProductModal()"
+          class="text-gray-400 hover:text-gray-600 hidden md:block"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <p id="modalPrice" class="text-3xl font-bold text-gray-900 mb-6">
+        S/ 0.00
+      </p>
+
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+            Descripción
+          </h3>
+          <p id="modalDescription" class="text-gray-600 leading-relaxed">
+            Description goes here.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+              Material
+            </h3>
+            <p id="modalMaterial" class="text-gray-600 text-sm">
+              Material info
+            </p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+              Uso Recomendado
+            </h3>
+            <p id="modalUsage" class="text-gray-600 text-sm">Usage info</p>
+          </div>
+        </div>
+
+        <div id="modalDimensionsContainer">
+          <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+            Dimensiones
+          </h3>
+          <p id="modalDimensions" class="text-gray-600 text-sm">
+            Dimensions info
+          </p>
+        </div>
+
+        <div id="modalSizesContainer">
+          <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+            Tallas Disponibles
+          </h3>
+          <div id="modalSizes" class="flex flex-wrap gap-2">
+            <!-- Sizes injected via JS -->
+          </div>
+        </div>
+      </div>
+
+      <form
+        id="modalForm"
+        action=""
+        method="POST"
+        class="pt-6 border-t border-gray-100"
+      >
+        <div class="flex gap-4">
+          <div
+            class="flex items-center border border-gray-300 rounded-xl bg-gray-50 h-12"
+          >
+            <button
+              type="button"
+              onclick="decrementQty(this)"
+              class="px-3 text-gray-600 hover:bg-gray-200 h-full rounded-l-xl"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              id="modalQty"
+              class="w-12 text-center bg-transparent border-none p-0 font-bold focus:ring-0"
+              readonly
+            />
+            <button
+              type="button"
+              onclick="incrementQty(this)"
+              id="modalIncBtn"
+              class="px-3 text-gray-600 hover:bg-gray-200 h-full rounded-r-xl"
+            >
+              +
+            </button>
+          </div>
+          <button
+            type="submit"
+            class="flex-1 bg-blue-600 text-white h-12 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined">shopping_cart</span>
+            Agregar al Carrito
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/public_shop.js') }}"></script>
+
+{% endblock %}

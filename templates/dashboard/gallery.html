@@ -1,0 +1,196 @@
+{% extends "dashboard/base_dashboard.html" %} {% block title %}Galería -
+Wawalu{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header & Actions -->
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Galería de Fotos</h1>
+      <p class="text-gray-500">Momentos especiales de nuestros pequeños</p>
+    </div>
+
+    {% if session.get('user_role') in ['staff', 'admin'] %}
+    <button
+      onclick="document.getElementById('uploadModal').classList.remove('hidden')"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center shadow-sm"
+    >
+      <span class="material-symbols-outlined mr-2">add_a_photo</span>
+      Subir Foto
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-2 mb-8">
+    <a
+      href="{{ url_for('gallery') }}"
+      class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if not current_category %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
+    >
+      Todos
+    </a>
+    <a
+      href="{{ url_for('gallery', category='deportes') }}"
+      class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'deportes' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
+    >
+      Deportes
+    </a>
+    <a
+      href="{{ url_for('gallery', category='salidas') }}"
+      class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'salidas' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
+    >
+      Salidas
+    </a>
+    <a
+      href="{{ url_for('gallery', category='eventos') }}"
+      class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'eventos' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
+    >
+      Eventos
+    </a>
+    <a
+      href="{{ url_for('gallery', category='promos') }}"
+      class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'promos' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
+    >
+      Promociones
+    </a>
+  </div>
+
+  <!-- Gallery Grid -->
+  {% if gallery_items %}
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+  >
+    {% for item in gallery_items %}
+    <div
+      class="group relative bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300"
+    >
+      <!-- Image -->
+      <div class="aspect-square overflow-hidden bg-gray-100">
+        <img
+          src="{{ url_for('static', filename='uploads/' + item.image_url) }}"
+          alt="{{ item.title }}"
+          class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+
+      <!-- Overlay Info -->
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"
+      >
+        <span
+          class="text-white text-xs font-bold uppercase tracking-wider mb-1 bg-blue-600 px-2 py-0.5 rounded w-fit"
+          >{{ item.category }}</span
+        >
+        <h3 class="text-white font-medium truncate">{{ item.title }}</h3>
+      </div>
+
+      <!-- Delete Button (Staff Only) -->
+      {% if session.get('user_role') in ['staff', 'admin'] %}
+      <form
+        action="{{ url_for('delete_gallery_item', item_id=item.id) }}"
+        method="POST"
+        class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+        onsubmit="return confirm('¿Estás seguro de eliminar esta foto?');"
+      >
+        <button
+          type="submit"
+          class="bg-white text-red-500 p-2 rounded-full shadow-lg hover:bg-red-50 transition-colors"
+        >
+          <span class="material-symbols-outlined text-sm">delete</span>
+        </button>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div
+    class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200"
+  >
+    <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
+      >image_not_supported</span
+    >
+    <h3 class="text-xl font-medium text-gray-500">
+      No hay fotos en esta categoría
+    </h3>
+    <p class="text-gray-400 mt-2">¡Pronto subiremos nuevos recuerdos!</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Upload Modal -->
+<div
+  id="uploadModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+>
+  <div
+    class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-fade-in"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-gray-800">Subir Nueva Foto</h3>
+      <button
+        onclick="document.getElementById('uploadModal').classList.add('hidden')"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form
+      action="{{ url_for('upload_gallery') }}"
+      method="POST"
+      enctype="multipart/form-data"
+      class="p-6 space-y-4"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Título</label
+        >
+        <input
+          type="text"
+          name="title"
+          required
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          placeholder="Ej: Día del deporte"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Categoría</label
+        >
+        <select
+          name="category"
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        >
+          <option value="deportes">Deportes</option>
+          <option value="salidas">Salidas</option>
+          <option value="eventos">Eventos</option>
+          <option value="promos">Promociones</option>
+          <option value="otros">Otros</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          required
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
+      </div>
+
+      <div class="pt-4">
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
+        >
+          Publicar Foto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

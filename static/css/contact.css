@@ -1,0 +1,29 @@
+/* Hero Section */
+.contact-hero {
+    background-image: url('../image/galery/imagen4.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 60vh; /* Increased to 60vh to match About Us and prevent overlap */
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.contact-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(30, 64, 175, 0.85) 100%);
+    z-index: 1;
+}
+
+.contact-hero > * {
+    position: relative;
+    z-index: 2;
+}

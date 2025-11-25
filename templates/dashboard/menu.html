@@ -1,0 +1,196 @@
+{% extends "dashboard/base_dashboard.html" %} {% block title %}Menú Semanal -
+Wawalu{% endblock %} {% block content %}
+<div class="max-w-6xl mx-auto">
+  <!-- Header & Actions -->
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Menú Semanal</h1>
+      <p class="text-gray-500">
+        Alimentación saludable y balanceada para nuestros niños
+      </p>
+    </div>
+
+    {% if session.get('user_role') in ['staff', 'admin'] %}
+    <button
+      onclick="document.getElementById('addMenuModal').classList.remove('hidden')"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center shadow-sm"
+    >
+      <span class="material-symbols-outlined mr-2">restaurant</span>
+      Agregar Menú
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- Weekly Menu Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    {% set days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'] %} {%
+    for day in days %}
+    <div
+      class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full border-t-4 border-blue-500"
+    >
+      <div class="bg-blue-50 p-4 text-center border-b border-blue-100">
+        <h3 class="font-bold text-blue-800 text-lg">{{ day }}</h3>
+      </div>
+
+      <div class="p-6 flex-1 flex flex-col gap-6">
+        <!-- Lunch -->
+        <div>
+          <div
+            class="flex items-center gap-2 mb-2 text-orange-500 font-medium text-sm uppercase tracking-wide"
+          >
+            <span class="material-symbols-outlined text-lg">lunch_dining</span>
+            Almuerzo
+          </div>
+          {% set found_lunch = false %} {% for item in menu_items %} {% if
+          item.day == day and item.type == 'almuerzo' %}
+          <p class="text-gray-700 font-medium">{{ item.meal_description }}</p>
+          {% if session.get('user_role') in ['staff', 'admin'] %}
+          <form
+            action="{{ url_for('delete_menu', menu_id=item.id) }}"
+            method="POST"
+            class="mt-2"
+          >
+            <button
+              type="submit"
+              class="text-xs text-red-400 hover:text-red-600 flex items-center"
+            >
+              <span class="material-symbols-outlined text-sm mr-1">delete</span>
+              Eliminar
+            </button>
+          </form>
+          {% endif %} {% set found_lunch = true %} {% endif %} {% endfor %} {%
+          if not found_lunch %}
+          <p class="text-gray-400 text-sm italic">No asignado</p>
+          {% endif %}
+        </div>
+
+        <!-- Snack -->
+        <div>
+          <div
+            class="flex items-center gap-2 mb-2 text-green-500 font-medium text-sm uppercase tracking-wide"
+          >
+            <span class="material-symbols-outlined text-lg">bakery_dining</span>
+            Refrigerio
+          </div>
+          {% set found_snack = false %} {% for item in menu_items %} {% if
+          item.day == day and item.type == 'refrigerio' %}
+          <p class="text-gray-700 font-medium">{{ item.meal_description }}</p>
+          {% if session.get('user_role') in ['staff', 'admin'] %}
+          <form
+            action="{{ url_for('delete_menu', menu_id=item.id) }}"
+            method="POST"
+            class="mt-2"
+          >
+            <button
+              type="submit"
+              class="text-xs text-red-400 hover:text-red-600 flex items-center"
+            >
+              <span class="material-symbols-outlined text-sm mr-1">delete</span>
+              Eliminar
+            </button>
+          </form>
+          {% endif %} {% set found_snack = true %} {% endif %} {% endfor %} {%
+          if not found_snack %}
+          <p class="text-gray-400 text-sm italic">No asignado</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-8 bg-blue-50 rounded-xl p-6 flex items-start gap-4">
+    <span class="material-symbols-outlined text-blue-600 text-3xl"
+      >nutrition</span
+    >
+    <div>
+      <h4 class="font-bold text-blue-800 mb-1">Nota Nutricional</h4>
+      <p class="text-blue-700 text-sm">
+        Todos nuestros menús son elaborados por nutricionistas certificados,
+        asegurando el balance perfecto de proteínas, carbohidratos y vitaminas
+        para el desarrollo de sus hijos. Si su hijo tiene alergias, por favor
+        actualice su perfil médico.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Add Menu Modal -->
+<div
+  id="addMenuModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+>
+  <div
+    class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-fade-in"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-gray-800">Agregar al Menú</h3>
+      <button
+        onclick="document.getElementById('addMenuModal').classList.add('hidden')"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form
+      action="{{ url_for('add_menu') }}"
+      method="POST"
+      class="p-6 space-y-4"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Día de la Semana</label
+        >
+        <select
+          name="day"
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        >
+          <option value="Lunes">Lunes</option>
+          <option value="Martes">Martes</option>
+          <option value="Miércoles">Miércoles</option>
+          <option value="Jueves">Jueves</option>
+          <option value="Viernes">Viernes</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Tipo de Comida</label
+        >
+        <select
+          name="type"
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        >
+          <option value="almuerzo">Almuerzo</option>
+          <option value="refrigerio">Refrigerio</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Descripción del Plato</label
+        >
+        <input
+          type="text"
+          name="meal_description"
+          required
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          placeholder="Ej: Arroz con pollo y ensalada"
+        />
+      </div>
+
+      <div class="pt-4">
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
+        >
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

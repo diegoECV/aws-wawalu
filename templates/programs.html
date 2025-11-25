@@ -1,0 +1,575 @@
+{% extends "base.html" %} {% block title %}Programas - PG Wawalu{% endblock %}
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/programs.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section
+  class="programs-hero flex items-center justify-center text-white text-center"
+>
+  <div class="relative z-10 px-4 reveal">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Programas</h1>
+    <p class="text-xl md:text-2xl opacity-90">
+      Programas educativos diseñados para potenciar el desarrollo integral de
+      cada niño
+    </p>
+  </div>
+</section>
+
+<!-- Methodology Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row gap-12 items-center">
+      <div class="w-full md:w-1/2 reveal">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">
+          Metodología Reggio Emilia
+        </h2>
+        <p class="text-gray-600 mb-6 leading-relaxed">
+          Nuestros programas están inspirados en la metodología Reggio Emilia,
+          reconocida mundialmente por su enfoque innovador en la educación
+          temprana. Esta metodología ve a cada niño como protagonista de su
+          propio aprendizaje.
+        </p>
+        <div class="space-y-4">
+          <div class="flex items-start">
+            <span class="material-symbols-outlined text-blue-600 mr-3 mt-1"
+              >sentiment_satisfied</span
+            >
+            <div>
+              <h3 class="font-bold text-gray-800">El Niño como Protagonista</h3>
+              <p class="text-sm text-gray-600">
+                Reconocemos y respetamos a cada niño como un ser único con
+                potencial ilimitado.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <span class="material-symbols-outlined text-blue-600 mr-3 mt-1"
+              >lightbulb</span
+            >
+            <div>
+              <h3 class="font-bold text-gray-800">Aprendizaje Activo</h3>
+              <p class="text-sm text-gray-600">
+                Fomentamos la exploración, experimentación y descubrimiento a
+                través del juego.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <span class="material-symbols-outlined text-blue-600 mr-3 mt-1"
+              >groups</span
+            >
+            <div>
+              <h3 class="font-bold text-gray-800">Comunidad de Aprendizaje</h3>
+              <p class="text-sm text-gray-600">
+                Creamos un ambiente colaborativo entre educadores, niños y
+                familias.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-full md:w-1/2 reveal delay-100">
+        <div class="grid grid-cols-2 gap-4">
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen8.jpg') }}"
+            alt="Niños aprendiendo"
+            class="rounded-lg shadow-md w-full h-40 object-cover"
+          />
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen9.jpg') }}"
+            alt="Actividades creativas"
+            class="rounded-lg shadow-md w-full h-40 object-cover mt-8"
+          />
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen10.jpg') }}"
+            alt="Juego y aprendizaje"
+            class="rounded-lg shadow-md w-full h-40 object-cover -mt-8"
+          />
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen11.jpg') }}"
+            alt="Exploración sensorial"
+            class="rounded-lg shadow-md w-full h-40 object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Programs Section -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 reveal">
+      Nuestros Programas Educativos
+    </h2>
+
+    <!-- Cuna 1 -->
+    <div
+      class="bg-blue-50 rounded-3xl p-8 md:p-12 mb-12 shadow-lg program-card reveal"
+    >
+      <div class="flex flex-col md:flex-row gap-8 items-center">
+        <div class="w-full md:w-1/2">
+          <div class="flex items-center mb-4">
+            <div class="bg-blue-500 text-white p-3 rounded-full mr-4">
+              <span class="material-symbols-outlined text-2xl">child_care</span>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">
+                CUNA 1 - AULA LUNA
+              </h3>
+              <p class="text-pink-500 font-bold text-sm">
+                ¡Disfruta de tu primera experiencia educativa!
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 mt-6">
+            <div class="flex items-center text-gray-700">
+              <span class="material-symbols-outlined text-blue-500 mr-3"
+                >schedule</span
+              >
+              <span
+                >Edad: Bebés desde 1 año 4 meses hasta antes de los 2 años</span
+              >
+            </div>
+            <div class="flex items-start text-gray-700">
+              <span class="material-symbols-outlined text-blue-500 mr-3 mt-1"
+                >psychology</span
+              >
+              <div>
+                <span class="font-bold block"
+                  >Programa de Estimulación Temprana Integral</span
+                >
+                <span class="text-sm text-gray-600"
+                  >Primeros días asisten acompañados</span
+                >
+              </div>
+            </div>
+            <div class="flex items-start text-gray-700">
+              <span class="material-symbols-outlined text-blue-500 mr-3 mt-1"
+                >home</span
+              >
+              <div>
+                <span class="font-bold block">Espacios Educativos</span>
+                <span class="text-sm text-gray-600"
+                  >Con aulas llenas de exploración, ideal para bebés
+                  caminantes</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full md:w-1/2">
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen1.jpg') }}"
+            alt="Aula Luna"
+            class="rounded-xl shadow-md w-full h-64 object-cover"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Cuna 2 -->
+    <div
+      class="bg-orange-50 rounded-3xl p-8 md:p-12 mb-12 shadow-lg program-card reveal delay-100"
+    >
+      <div class="flex flex-col md:flex-row-reverse gap-8 items-center">
+        <div class="w-full md:w-1/2">
+          <div class="flex items-center mb-4">
+            <div class="bg-orange-500 text-white p-3 rounded-full mr-4">
+              <span class="material-symbols-outlined text-2xl">wb_sunny</span>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">
+                CUNA 2 - AULA SOL
+              </h3>
+              <p class="text-orange-500 font-bold text-sm">
+                ¡Momento de Explorar!
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 mt-6">
+            <div class="flex items-center text-gray-700">
+              <span class="material-symbols-outlined text-orange-500 mr-3"
+                >schedule</span
+              >
+              <span
+                >Edad: Bebés desde los 2 años hasta los 2 años 10 meses</span
+              >
+            </div>
+            <div class="flex items-start text-gray-700">
+              <span class="material-symbols-outlined text-orange-500 mr-3 mt-1"
+                >psychology</span
+              >
+              <div>
+                <span class="font-bold block"
+                  >Programa de Estimulación Temprana Integral</span
+                >
+                <span class="text-sm text-gray-600"
+                  >Asisten solos desde el 1er día</span
+                >
+              </div>
+            </div>
+            <div class="flex items-start text-gray-700">
+              <span class="material-symbols-outlined text-orange-500 mr-3 mt-1"
+                >explore</span
+              >
+              <div>
+                <span class="font-bold block">Espacios Educativos</span>
+                <span class="text-sm text-gray-600"
+                  >Con aulas llenas de materiales desafiantes, ideal para niños
+                  exploradores. Empiezan a trabajar libro educativo</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full md:w-1/2">
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen2.jpg') }}"
+            alt="Aula Sol"
+            class="rounded-xl shadow-md w-full h-64 object-cover"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Años -->
+    <div
+      class="bg-teal-50 rounded-3xl p-8 md:p-12 shadow-lg program-card reveal delay-200"
+    >
+      <div class="flex flex-col md:flex-row gap-8 items-center">
+        <div class="w-full md:w-1/2">
+          <div class="flex items-center mb-4">
+            <div class="bg-teal-500 text-white p-3 rounded-full mr-4">
+              <span class="material-symbols-outlined text-2xl">school</span>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">
+                3 AÑOS - AULA COMETA
+              </h3>
+              <p class="text-teal-500 font-bold text-sm">
+                ¡Que empiece nuestro despegue!
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4 mt-6">
+            <div class="flex items-center text-gray-700">
+              <span class="material-symbols-outlined text-teal-500 mr-3"
+                >cake</span
+              >
+              <span>Nivel Inicial para niños de 3 años</span>
+            </div>
+            <div class="flex items-start text-gray-700">
+              <span class="material-symbols-outlined text-teal-500 mr-3 mt-1"
+                >menu_book</span
+              >
+              <div>
+                <span class="font-bold block"
+                  >Uso de Libros y Material Educativo de Inglés</span
+                >
+              </div>
+            </div>
+            <div class="flex items-center text-gray-700">
+              <span class="material-symbols-outlined text-teal-500 mr-3"
+                >construction</span
+              >
+              <span>Proyectos Educativos</span>
+            </div>
+            <div class="flex items-center text-gray-700">
+              <span class="material-symbols-outlined text-teal-500 mr-3"
+                >directions_run</span
+              >
+              <span>Psicomotriz</span>
+            </div>
+            <div class="flex items-center text-gray-700">
+              <span class="material-symbols-outlined text-teal-500 mr-3"
+                >restaurant</span
+              >
+              <span>Comedor Infantil</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-full md:w-1/2">
+          <img
+            src="{{ url_for('static', filename='image/galery/imagen3.jpg') }}"
+            alt="Aula Cometa"
+            class="rounded-xl shadow-md w-full h-64 object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 text-center">
+    <div class="flex items-center justify-center mb-8 reveal">
+      <span class="material-symbols-outlined text-purple-600 text-2xl mr-2"
+        >star</span
+      >
+      <h2 class="text-2xl font-bold text-gray-800">BENEFICIOS</h2>
+      <span class="material-symbols-outlined text-purple-600 text-2xl ml-2"
+        >star</span
+      >
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto mb-8">
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal"
+      >
+        <span class="material-symbols-outlined text-yellow-500 mr-3"
+          >beach_access</span
+        >
+        <span class="text-gray-700 text-sm font-medium">Arenero</span>
+      </div>
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal delay-100"
+      >
+        <span class="material-symbols-outlined text-blue-500 mr-3">school</span>
+        <span class="text-gray-700 text-sm font-medium"
+          >Proyectos Educativos</span
+        >
+      </div>
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal delay-200"
+      >
+        <span class="material-symbols-outlined text-green-500 mr-3"
+          >restaurant</span
+        >
+        <span class="text-gray-700 text-sm font-medium">Comedor Infantil</span>
+      </div>
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal"
+      >
+        <span class="material-symbols-outlined text-purple-500 mr-3"
+          >directions_run</span
+        >
+        <span class="text-gray-700 text-sm font-medium">Psicomotricidad</span>
+      </div>
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal delay-100"
+      >
+        <span class="material-symbols-outlined text-orange-500 mr-3"
+          >menu_book</span
+        >
+        <span class="text-gray-700 text-sm font-medium">Cartelera Lectora</span>
+      </div>
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal delay-200"
+      >
+        <span class="material-symbols-outlined text-teal-500 mr-3">park</span>
+        <span class="text-gray-700 text-sm font-medium">Salidas al Parque</span>
+      </div>
+      <div
+        class="benefit-item bg-white border border-gray-200 p-4 rounded-lg flex items-center shadow-sm reveal md:col-start-2"
+      >
+        <span class="material-symbols-outlined text-red-500 mr-3"
+          >security</span
+        >
+        <span class="text-gray-700 text-sm font-medium"
+          >Zona Segura con Vigilancia</span
+        >
+      </div>
+    </div>
+
+    <p class="text-purple-500 font-medium text-sm reveal delay-300">
+      ¡Que los niños aprendan y se diviertan con nosotros!
+    </p>
+  </div>
+</section>
+
+<!-- Special Activities Section -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-2xl font-bold text-gray-800 mb-12 reveal">
+      Actividades Especiales
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="bg-white p-6 rounded-xl shadow-md text-left reveal">
+        <div class="flex items-center mb-3">
+          <span class="material-symbols-outlined text-blue-500 mr-2"
+            >music_note</span
+          >
+          <h3 class="font-bold text-gray-800">Música</h3>
+        </div>
+        <p class="text-xs text-gray-600">
+          Desarrollo de habilidades musicales y expresión artística a través del
+          ritmo y el movimiento.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md text-left reveal delay-100">
+        <div class="flex items-center mb-3">
+          <span class="material-symbols-outlined text-blue-500 mr-2"
+            >palette</span
+          >
+          <h3 class="font-bold text-gray-800">Arte</h3>
+        </div>
+        <p class="text-xs text-gray-600">
+          Exploración de diferentes técnicas artísticas y materiales para
+          fomentar la creatividad.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md text-left reveal delay-200">
+        <div class="flex items-center mb-3">
+          <span class="material-symbols-outlined text-blue-500 mr-2"
+            >potted_plant</span
+          >
+          <h3 class="font-bold text-gray-800">Huerto</h3>
+        </div>
+        <p class="text-xs text-gray-600">
+          Contacto con la naturaleza y aprendizaje sobre el cuidado del medio
+          ambiente.
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md text-left reveal delay-300">
+        <div class="flex items-center mb-3">
+          <span class="material-symbols-outlined text-blue-500 mr-2"
+            >sports_soccer</span
+          >
+          <h3 class="font-bold text-gray-800">Deportes</h3>
+        </div>
+        <p class="text-xs text-gray-600">
+          Actividades físicas y juegos que desarrollan la coordinación y el
+          trabajo en equipo.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Costs Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-2xl font-bold text-gray-800 mb-12 reveal">
+      Modalidades de Ingreso y Costos
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+      <!-- Cuota Ingreso -->
+      <div class="cost-card bg-pink-100 p-8 rounded-xl shadow-md reveal">
+        <div
+          class="bg-pink-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <span class="material-symbols-outlined">person_add</span>
+        </div>
+        <h3 class="font-bold text-gray-800 text-sm mb-2">CUOTA INGRESO</h3>
+        <p class="text-pink-600 font-bold text-2xl mb-2">S/150</p>
+        <p class="text-xs text-gray-600">
+          Pago único al momento de la inscripción
+        </p>
+      </div>
+      <!-- Matrícula -->
+      <div
+        class="cost-card bg-blue-100 p-8 rounded-xl shadow-md reveal delay-100"
+      >
+        <div
+          class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <h3 class="font-bold text-gray-800 text-sm mb-2">MATRÍCULA</h3>
+        <p class="text-blue-600 font-bold text-2xl mb-2">S/380</p>
+        <p class="text-xs text-gray-600">
+          Pago anual por matrícula del estudiante
+        </p>
+      </div>
+      <!-- Mensualidad -->
+      <div
+        class="cost-card bg-yellow-100 p-8 rounded-xl shadow-md reveal delay-200"
+      >
+        <div
+          class="bg-yellow-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <h3 class="font-bold text-gray-800 text-sm mb-2">MENSUALIDAD</h3>
+        <p class="text-yellow-600 font-bold text-2xl mb-2">S/380</p>
+        <p class="text-xs text-gray-600">
+          Pago mensual por el programa educativo
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="bg-gray-50 p-6 rounded-xl mt-12 max-w-4xl mx-auto reveal delay-300"
+    >
+      <h3 class="font-bold text-gray-800 mb-4">Información Importante</h3>
+      <p class="text-xs text-gray-600 mb-6">
+        Todos nuestros precios incluyen los siguientes beneficios:
+      </p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div
+          class="bg-white p-3 rounded shadow-sm flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-green-500 mr-2 text-sm"
+            >restaurant</span
+          >
+          <span class="text-xs font-medium">Alimentación saludable</span>
+        </div>
+        <div
+          class="bg-white p-3 rounded shadow-sm flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-blue-500 mr-2 text-sm"
+            >menu_book</span
+          >
+          <span class="text-xs font-medium">Material educativo</span>
+        </div>
+        <div
+          class="bg-white p-3 rounded shadow-sm flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-purple-500 mr-2 text-sm"
+            >celebration</span
+          >
+          <span class="text-xs font-medium">Actividades especiales</span>
+        </div>
+        <div
+          class="bg-white p-3 rounded shadow-sm flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-orange-500 mr-2 text-sm"
+            >security</span
+          >
+          <span class="text-xs font-medium">Seguro estudiantil</span>
+        </div>
+      </div>
+      <p class="text-[10px] text-gray-500 mt-4">
+        * Los precios están sujetos a cambios sin previo aviso
+      </p>
+      <p class="text-[10px] text-gray-500">
+        * Consulte sobre descuentos por hermanos y pronto pago
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-blue-600 text-white text-center">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-4">¿Listo para comenzar?</h2>
+    <p class="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+      Agenda una visita y conoce nuestras instalaciones. ¡Tu pequeño merece la
+      mejor educación desde el principio!
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a
+        href="#"
+        class="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white hover:text-blue-600 transition-colors flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined mr-2">calendar_month</span>
+        Agendar Visita
+      </a>
+      <a
+        href="#"
+        class="bg-white text-blue-600 font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined mr-2">call</span>
+        Contactar Ahora
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/programs.js') }}"></script>
+{% endblock %}

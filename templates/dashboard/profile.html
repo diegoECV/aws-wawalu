@@ -1,0 +1,479 @@
+{% extends "dashboard/base_dashboard.html" %} {% block title %}Mi Perfil -
+Wawalu{% endblock %} {% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-800">Mi Perfil</h1>
+    <p class="text-gray-500">
+      Administra tu información personal y configuración de cuenta
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Sidebar / Profile Card -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Profile Summary Card -->
+      <div
+        class="bg-white rounded-2xl shadow-sm p-6 text-center relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-blue-500 to-purple-600"
+        ></div>
+        <div class="relative z-10 mt-12">
+          <div
+            class="w-24 h-24 mx-auto rounded-full bg-white p-1 shadow-md mb-4"
+          >
+            <div
+              class="w-full h-full rounded-full bg-gray-100 overflow-hidden flex items-center justify-center"
+            >
+              {% if session.get('profile_image') %}
+              <img
+                src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) }}"
+                alt="Profile"
+                class="w-full h-full object-cover"
+              />
+              {% else %}
+              <span class="text-3xl font-bold text-gray-400"
+                >{{ user.name[0] | upper }}</span
+              >
+              {% endif %}
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-gray-800">{{ user.name }}</h2>
+          <p class="text-gray-500 text-sm mb-4">{{ user.role | capitalize }}</p>
+          <div
+            class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-600 text-xs font-bold"
+          >
+            <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+            Activo
+          </div>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-gray-100 grid grid-cols-2 gap-4">
+          <div>
+            <span class="block text-gray-400 text-xs uppercase"
+              >Miembro desde</span
+            >
+            <span class="font-semibold text-gray-700">2025</span>
+          </div>
+          <div>
+            <span class="block text-gray-400 text-xs uppercase"
+              >Último acceso</span
+            >
+            <span class="font-semibold text-gray-700">Hoy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden sticky top-6">
+        <nav class="flex flex-col">
+          <a
+            href="#personal-info"
+            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          >
+            <span class="material-symbols-outlined mr-3">person</span>
+            Información Personal
+          </a>
+          <a
+            href="#security"
+            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          >
+            <span class="material-symbols-outlined mr-3">lock</span>
+            Seguridad
+          </a>
+          <a
+            href="#preferences"
+            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          >
+            <span class="material-symbols-outlined mr-3">settings</span>
+            Preferencias
+          </a>
+          <a
+            href="{{ url_for('logout') }}"
+            class="flex items-center px-6 py-4 text-red-500 hover:bg-red-50 transition-colors border-t border-gray-100"
+          >
+            <span class="material-symbols-outlined mr-3">logout</span>
+            Cerrar Sesión
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Personal Information -->
+      <div
+        id="personal-info"
+        class="bg-white rounded-2xl shadow-sm p-6 md:p-8 scroll-mt-24"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 flex items-center">
+              <span class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
+                <span class="material-symbols-outlined">badge</span>
+              </span>
+              Información Personal
+            </h2>
+            <p class="text-gray-500 text-sm mt-1">
+              Mantén actualizada tu información de contacto
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <span
+              class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center"
+            >
+              <span class="material-symbols-outlined text-sm mr-1"
+                >verified</span
+              >
+              Verificado
+            </span>
+          </div>
+        </div>
+
+        <form
+          action="{{ url_for('update_profile') }}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="space-y-6"
+        >
+          <!-- Photo Upload -->
+          <div class="border rounded-xl p-4 bg-gray-50">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Foto de Perfil</label
+            >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0"
+              >
+                {% if session.get('profile_image') %}
+                <img
+                  src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) }}"
+                  alt="Preview"
+                  class="w-full h-full object-cover"
+                />
+                {% else %}
+                <span
+                  class="flex items-center justify-center w-full h-full text-gray-400"
+                >
+                  <span class="material-symbols-outlined">image</span>
+                </span>
+                {% endif %}
+              </div>
+              <input
+                type="file"
+                name="profile_image"
+                accept="image/*"
+                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors"
+              />
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="name"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Nombre Completo</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value="{{ user.name }}"
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="Tu nombre"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="email"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Correo Electrónico</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value="{{ user.email }}"
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="tu@email.com"
+            />
+          </div>
+
+          <!-- Phone -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="phone"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Teléfono</label
+            >
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value="{{ user.phone or '' }}"
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="Agrega tu teléfono"
+            />
+          </div>
+
+          <!-- Address -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="address"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Dirección</label
+            >
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value="{{ user.address or '' }}"
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="Agrega tu dirección"
+            />
+          </div>
+
+          <div class="flex justify-end pt-4">
+            <button
+              type="submit"
+              class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center"
+            >
+              <span class="material-symbols-outlined mr-2 text-sm">save</span>
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Security Section -->
+      <div
+        id="security"
+        class="bg-white rounded-2xl shadow-sm p-6 md:p-8 scroll-mt-24"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 flex items-center">
+              <span class="bg-green-100 text-green-600 p-2 rounded-lg mr-3">
+                <span class="material-symbols-outlined">lock</span>
+              </span>
+              Seguridad y Privacidad
+            </h2>
+            <p class="text-gray-500 text-sm mt-1">
+              Mantén tu cuenta segura actualizando tu contraseña
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <span
+              class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center"
+            >
+              <span class="material-symbols-outlined text-sm mr-1"
+                >verified_user</span
+              >
+              Protegido
+            </span>
+          </div>
+        </div>
+
+        <form
+          action="{{ url_for('change_password') }}"
+          method="POST"
+          class="space-y-6"
+        >
+          <!-- Current Password -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="current_password"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Contraseña Actual</label
+            >
+            <input
+              type="password"
+              id="current_password"
+              name="current_password"
+              required
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <!-- New Password -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="new_password"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Nueva Contraseña</label
+            >
+            <input
+              type="password"
+              id="new_password"
+              name="new_password"
+              required
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <label
+              for="confirm_password"
+              class="block text-xs font-bold text-gray-500 uppercase mb-1"
+              >Confirmar Nueva Contraseña</label
+            >
+            <input
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              required
+              class="w-full bg-transparent border-none p-0 text-gray-800 font-medium focus:ring-0"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div class="flex justify-start pt-4">
+            <button
+              type="submit"
+              class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors shadow-sm flex items-center"
+            >
+              <span class="material-symbols-outlined mr-2 text-sm">key</span>
+              Cambiar Contraseña
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preferences Section -->
+      <div
+        id="preferences"
+        class="bg-white rounded-2xl shadow-sm p-6 md:p-8 scroll-mt-24"
+      >
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-gray-800 flex items-center">
+            <span class="bg-purple-100 text-purple-600 p-2 rounded-lg mr-3">
+              <span class="material-symbols-outlined">settings</span>
+            </span>
+            Preferencias
+          </h2>
+          <p class="text-gray-500 text-sm mt-1">
+            Personaliza tu experiencia en la plataforma
+          </p>
+        </div>
+
+        <form
+          action="{{ url_for('update_preferences') }}"
+          method="POST"
+          class="space-y-8"
+        >
+          <!-- Notifications -->
+          <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+            <h3 class="text-sm font-bold text-gray-700 uppercase mb-4">
+              Notificaciones
+            </h3>
+            <div class="space-y-4">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="notifications_email"
+                  class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  {%
+                  if
+                  user.notifications_email
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span class="text-gray-700"
+                  >Recibir notificaciones por email</span
+                >
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="notifications_orders"
+                  class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  {%
+                  if
+                  user.notifications_orders
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span class="text-gray-700"
+                  >Notificaciones de nuevos pedidos</span
+                >
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="notifications_promo"
+                  class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  {%
+                  if
+                  user.notifications_promo
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span class="text-gray-700"
+                  >Promociones y ofertas especiales</span
+                >
+              </label>
+            </div>
+          </div>
+
+          <!-- Privacy -->
+          <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+            <h3 class="text-sm font-bold text-gray-700 uppercase mb-4">
+              Privacidad
+            </h3>
+            <div class="space-y-4">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="privacy_session"
+                  class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  {%
+                  if
+                  user.privacy_session
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span class="text-gray-700">Mantener sesión iniciada</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="privacy_analysis"
+                  class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  {%
+                  if
+                  user.privacy_analysis
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span class="text-gray-700">Permitir análisis de uso</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4">
+            <button
+              type="submit"
+              class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center"
+            >
+              <span class="material-symbols-outlined mr-2 text-sm">save</span>
+              Guardar Preferencias
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
