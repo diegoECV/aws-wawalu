@@ -84,6 +84,7 @@
 
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+          <!-- Common Links -->
           <a
             href="{{ url_for('dashboard') }}"
             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'dashboard' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
@@ -99,12 +100,27 @@
             Mi Perfil
           </a>
 
+          <!-- Admin Navigation -->
+          {% if session.get('user_role') == 'admin' %}
           <div
             class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
           >
-            Académico
+            Gestión Académica
           </div>
-
+          <a
+            href="{{ url_for('manage_admissions') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_admissions' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">how_to_reg</span>
+            Admisiones
+          </a>
+          <a
+            href="{{ url_for('manage_enrollments') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_enrollments' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">assignment_ind</span>
+            Matrículas
+          </a>
           <a
             href="{{ url_for('reports') }}"
             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'reports' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
@@ -113,11 +129,47 @@
             Reportes
           </a>
           <a
-            href="{{ url_for('calendar') }}"
-            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'calendar' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            href="{{ url_for('manage_events') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_events' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
           >
             <span class="material-symbols-outlined mr-3">calendar_month</span>
             Calendario
+          </a>
+
+          <div
+            class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            Gestión Contenido
+          </div>
+          <a
+            href="{{ url_for('manage_users') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_users' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">manage_accounts</span>
+            Usuarios
+          </a>
+          <a
+            href="{{ url_for('manage_news') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_news' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">newspaper</span>
+            Noticias
+          </a>
+          <a
+            href="{{ url_for('manage_galery') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_galery' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3"
+              >gallery_thumbnail</span
+            >
+            Galería
+          </a>
+          <a
+            href="{{ url_for('manage_products') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_products' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">storefront</span>
+            Tienda
           </a>
           <a
             href="{{ url_for('menu') }}"
@@ -127,15 +179,64 @@
             Menú
           </a>
 
+          <!-- Staff Navigation -->
+          {% elif session.get('user_role') == 'staff' %}
           <div
             class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
           >
-            Comunidad
+            Gestión Académica
           </div>
-
           <a
-            href="{{ url_for('gallery') }}"
-            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'gallery' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            href="{{ url_for('manage_admissions') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_admissions' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">how_to_reg</span>
+            Admisiones
+          </a>
+          <a
+            href="{{ url_for('manage_enrollments') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_enrollments' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">assignment_ind</span>
+            Matrículas
+          </a>
+          <a
+            href="{{ url_for('reports') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'reports' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">assignment</span>
+            Reportes
+          </a>
+          <a
+            href="{{ url_for('manage_events') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_events' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">calendar_month</span>
+            Calendario
+          </a>
+
+          <div
+            class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            Gestión Contenido
+          </div>
+          <a
+            href="{{ url_for('manage_users') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_users' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">manage_accounts</span>
+            Usuarios
+          </a>
+          <a
+            href="{{ url_for('manage_news') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_news' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">newspaper</span>
+            Noticias
+          </a>
+          <a
+            href="{{ url_for('manage_galery') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_galery' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
           >
             <span class="material-symbols-outlined mr-3"
               >gallery_thumbnail</span
@@ -143,6 +244,23 @@
             Galería
           </a>
           <a
+            href="{{ url_for('manage_products') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_products' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">storefront</span>
+            Tienda
+          </a>
+          <a
+            href="{{ url_for('menu') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'menu' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">restaurant_menu</span>
+            Calendario
+          </a>
+          <a
+            href="{{ url_for('menu') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'menu' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            <a
             href="{{ url_for('shop') }}"
             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'shop' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
           >
@@ -156,6 +274,7 @@
             <span class="material-symbols-outlined mr-3">newspaper</span>
             Noticias
           </a>
+          {% endif %}
         </nav>
 
         <!-- Logout -->
@@ -242,6 +361,7 @@
           </div>
 
           <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <!-- Common Links -->
             <a
               href="{{ url_for('dashboard') }}"
               class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -257,6 +377,27 @@
               Mi Perfil
             </a>
 
+            <!-- Admin Navigation -->
+            {% if session.get('user_role') == 'admin' %}
+            <div
+              class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Gestión Académica
+            </div>
+            <a
+              href="{{ url_for('manage_admissions') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">how_to_reg</span>
+              Admisiones
+            </a>
+            <a
+              href="{{ url_for('manage_enrollments') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">assignment_ind</span>
+              Matrículas
+            </a>
             <a
               href="{{ url_for('reports') }}"
               class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -265,7 +406,90 @@
               Reportes
             </a>
             <a
-              href="{{ url_for('calendar') }}"
+              href="{{ url_for('manage_events') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">calendar_month</span>
+              Calendario
+            </a>
+
+            <div
+              class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Gestión Contenido
+            </div>
+            <a
+              href="{{ url_for('manage_users') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3"
+                >manage_accounts</span
+              >
+              Usuarios
+            </a>
+            <a
+              href="{{ url_for('manage_news') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">newspaper</span>
+              Noticias
+            </a>
+            <a
+              href="{{ url_for('manage_galery') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3"
+                >gallery_thumbnail</span
+              >
+              Galería
+            </a>
+            <a
+              href="{{ url_for('manage_products') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">storefront</span>
+              Tienda
+            </a>
+            <a
+              href="{{ url_for('menu') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3"
+                >restaurant_menu</span
+              >
+              Menú
+            </a>
+
+            <!-- Staff Navigation -->
+            {% elif session.get('user_role') == 'staff' %}
+            <div
+              class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Gestión Académica
+            </div>
+            <a
+              href="{{ url_for('manage_admissions') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">how_to_reg</span>
+              Admisiones
+            </a>
+            <a
+              href="{{ url_for('manage_enrollments') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">assignment_ind</span>
+              Matrículas
+            </a>
+            <a
+              href="{{ url_for('reports') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">assignment</span>
+              Reportes
+            </a>
+            <a
+              href="{{ url_for('manage_events') }}"
               class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
             >
               <span class="material-symbols-outlined mr-3">calendar_month</span>
@@ -280,9 +504,101 @@
               >
               Menú
             </a>
+
+            <!-- Parent/Student Navigation -->
+            {% else %}
+            <div
+              class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Académico
+            </div>
             <a
-              href="{{ url_for('gallery') }}"
-              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              href="{{ url_for('matricula') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'matricula' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">school</span>
+              Matrícula
+            </a>
+            <a
+              href="{{ url_for('student_grades') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_grades' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">grade</span>
+              Notas
+            </a>
+            <a
+              href="{{ url_for('student_attendance') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_attendance' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">fact_check</span>
+              Asistencia
+            </a>
+            <a
+              href="{{ url_for('student_schedule') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_schedule' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">schedule</span>
+              Horario
+            </a>
+            <a
+              href="{{ url_for('student_assignments') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_assignments' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3"
+                >assignment_turned_in</span
+              >
+              Tareas
+            </a>
+            <a
+              href="{{ url_for('student_messages') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_messages' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">mail</span>
+              Mensajes
+            </a>
+            <a
+              href="{{ url_for('reports') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'reports' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">assignment</span>
+              Reportes
+            </a>
+            <a
+              href="{{ url_for('calendar') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'calendar' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">calendar_month</span>
+              Calendario
+            </a>
+
+            <div
+              class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Administrativo
+            </div>
+            <a
+              href="{{ url_for('student_payments') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_payments' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">payments</span>
+              Pagos
+            </a>
+            <a
+              href="{{ url_for('student_documents') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'student_documents' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3">folder_shared</span>
+              Documentos
+            </a>
+
+            <div
+              class="pt-4 pb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Comunidad
+            </div>
+            <a
+              href="{{ url_for('galery') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'galery' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
             >
               <span class="material-symbols-outlined mr-3"
                 >gallery_thumbnail</span
@@ -291,18 +607,28 @@
             </a>
             <a
               href="{{ url_for('shop') }}"
-              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'shop' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
             >
               <span class="material-symbols-outlined mr-3">storefront</span>
               Tienda
             </a>
             <a
               href="{{ url_for('news') }}"
-              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'news' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
             >
               <span class="material-symbols-outlined mr-3">newspaper</span>
               Noticias
             </a>
+            <a
+              href="{{ url_for('menu') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'menu' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+            >
+              <span class="material-symbols-outlined mr-3"
+                >restaurant_menu</span
+              >
+              Menú
+            </a>
+            {% endif %}
 
             <a
               href="{{ url_for('logout') }}"

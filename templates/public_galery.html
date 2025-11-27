@@ -1,63 +1,97 @@
 {% extends "base.html" %} {% block title %}Galería - Wawalu{% endblock %} {%
-block content %}
-<!-- Header Banner -->
-<div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-16">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
-        Nuestra Galería
-      </h1>
-      <p class="text-xl text-pink-100 animate-fade-in-delay">
-        Momentos mágicos y recuerdos inolvidables en Wawalu
-      </p>
-    </div>
+block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/galery.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section
+  class="gallery-hero flex items-center justify-center text-white text-center"
+>
+  <div class="relative z-10 px-4 reveal active">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Nuestra Galería</h1>
+    <p class="text-xl md:text-2xl opacity-90">
+      Revive los mejores momentos de nuestra comunidad educativa
+    </p>
   </div>
-</div>
+</section>
 
-<!-- Galery Content -->
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-  <!-- Filters -->
-  <div class="flex flex-wrap justify-center gap-4 mb-12">
-    <a
-      href="{{ url_for('public_galery') }}"
-      class="px-6 py-2 rounded-full font-bold transition-all {% if not current_category %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
-    >
-      Todos
-    </a>
-    <a
-      href="{{ url_for('public_galery', category='Actividades') }}"
-      class="px-6 py-2 rounded-full font-bold transition-all {% if current_category == 'Actividades' %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
-    >
-      Actividades
-    </a>
-    <a
-      href="{{ url_for('public_galery', category='Eventos') }}"
-      class="px-6 py-2 rounded-full font-bold transition-all {% if current_category == 'Eventos' %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
-    >
-      Eventos
-    </a>
-    <a
-      href="{{ url_for('public_galery', category='Talleres') }}"
-      class="px-6 py-2 rounded-full font-bold transition-all {% if current_category == 'Talleres' %}bg-pink-500 text-white shadow-lg scale-105{% else %}bg-white text-gray-600 hover:bg-gray-100{% endif %}"
-    >
-      Talleres
-    </a>
+<div class="container mx-auto px-4 py-12">
+  <div class="text-center mb-12 reveal active">
+    <!-- Category Buttons -->
+    <div id="galleryCategories" class="flex flex-wrap justify-center gap-3">
+      <button
+        data-category="all"
+        class="px-6 py-2 rounded-full font-bold transition-all bg-pink-500 text-white shadow-lg scale-105 hover:bg-pink-600"
+      >
+        Todos
+      </button>
+      <button
+        data-category="Actividades"
+        class="px-6 py-2 rounded-full font-bold transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+      >
+        Actividades
+      </button>
+      <button
+        data-category="Eventos"
+        class="px-6 py-2 rounded-full font-bold transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+      >
+        Eventos
+      </button>
+      <button
+        data-category="Talleres"
+        class="px-6 py-2 rounded-full font-bold transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+      >
+        Talleres
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="relative w-full md:w-64">
+      <span
+        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+      >
+        <span class="material-symbols-outlined text-gray-400">search</span>
+      </span>
+      <input
+        type="text"
+        id="gallerySearch"
+        class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-shadow"
+        placeholder="Buscar fotos..."
+      />
+    </div>
   </div>
 
   <!-- Grid -->
   {% if galery_items %}
   <div
+    id="galleryGrid"
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
   >
     {% for item in galery_items %}
-    <div class="group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer aspect-[4/3]" onclick="openGaleryModal('{{ url_for('static', filename='image/galery/' + item.image_url) }}', '{{ item.title }}')">
-      <img src="{{ url_for('static', filename='image/galery/' + item.image_url) }}" alt="{{ item.title }}"
+    <div
+      class="gallery-item group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer aspect-[4/3] bg-gray-100"
+      onclick="openGaleryModal('{{ url_for('static', filename='image/galery/' + item.image_url) }}', '{{ item.title }}')"
+      data-title="{{ item.title }}"
+      data-category="{{ item.category }}"
+    >
+      <img
+        src="{{ url_for('static', filename='image/galery/' + item.image_url) }}"
+        alt="{{ item.title }}"
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         loading="lazy"
       />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6" >
-        <span class="text-pink-300 text-xs font-bold uppercase tracking-wider mb-1">{{ item.category }}</span>
-        <h3 class="text-white font-bold text-lg">{{ item.title }}</h3>
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+      >
+        <span
+          class="text-pink-300 text-xs font-bold uppercase tracking-wider mb-1"
+          >{{ item.category }}</span
+        >
+        <h3 class="text-white font-bold text-lg line-clamp-1">
+          {{ item.title }}
+        </h3>
       </div>
     </div>
     {% endfor %}
@@ -104,29 +138,6 @@ block content %}
   </div>
 </div>
 
-<script>
-  function openGaleryModal(src, title) {
-    const modal = document.getElementById("galeryModal");
-    const img = document.getElementById("modalImage");
-    const titleEl = document.getElementById("modalTitle");
-
-    img.src = src;
-    titleEl.textContent = title;
-    modal.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeGaleryModal() {
-    const modal = document.getElementById("galeryModal");
-    modal.classList.add("hidden");
-    document.body.style.overflow = "auto";
-  }
-
-  // Close on Escape key
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      closeGaleryModal();
-    }
-  });
-</script>
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_gallery.js') }}"></script>
 {% endblock %}

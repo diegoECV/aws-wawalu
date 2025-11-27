@@ -1,0 +1,112 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Matrículas - Wawalu{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 animate-fade-in">
+  <h1 class="text-3xl font-bold mb-6 text-blue-700">Matrículas</h1>
+  <form id="enrollmentForm" class="bg-white rounded-xl shadow-lg p-8 mb-8 space-y-6" method="POST" action="{{ url_for('enrollments') }}" novalidate>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label for="student_id" class="block font-semibold mb-2">ID Estudiante</label>
+        <input type="number" id="student_id" name="student_id" required class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="ID del estudiante">
+      </div>
+      <div>
+        <label for="program_id" class="block font-semibold mb-2">ID Programa</label>
+        <input type="number" id="program_id" name="program_id" required class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="ID del programa">
+      </div>
+      <div>
+        <label for="academic_year" class="block font-semibold mb-2">Año Académico</label>
+        <input type="number" id="academic_year" name="academic_year" required class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="2025">
+      </div>
+      <div>
+        <label for="status" class="block font-semibold mb-2">Estado</label>
+        <select id="status" name="status" required class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">
+          <option value="pending">Pendiente</option>
+          <option value="approved">Aprobado</option>
+          <option value="rejected">Rechazado</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
+      </div>
+      <div>
+        <label for="enrollment_date" class="block font-semibold mb-2">Fecha de Matrícula</label>
+        <input type="date" id="enrollment_date" name="enrollment_date" required class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div>
+        <label for="monthly_fee" class="block font-semibold mb-2">Mensualidad</label>
+        <input type="number" step="0.01" id="monthly_fee" name="monthly_fee" required class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="350.00">
+      </div>
+      <div>
+        <label for="discount_percentage" class="block font-semibold mb-2">Descuento (%)</label>
+        <input type="number" step="0.01" id="discount_percentage" name="discount_percentage" value="0.00" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="0.00">
+      </div>
+      <div>
+        <label for="notes" class="block font-semibold mb-2">Notas</label>
+        <textarea id="notes" name="notes" rows="2" class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="Notas adicionales"></textarea>
+      </div>
+    </div>
+    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 rounded-lg hover:bg-blue-700 transition-all shadow-lg animate-bounce">Registrar Matrícula</button>
+    <p id="formError" class="text-red-500 mt-2 hidden"></p>
+  </form>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white rounded-xl shadow-md animate-fade-in-up">
+      <thead class="bg-blue-100">
+        <tr>
+          <th class="py-3 px-4">ID</th>
+          <th class="py-3 px-4">Estudiante</th>
+          <th class="py-3 px-4">Programa</th>
+          <th class="py-3 px-4">Año</th>
+          <th class="py-3 px-4">Estado</th>
+          <th class="py-3 px-4">Fecha</th>
+          <th class="py-3 px-4">Mensualidad</th>
+          <th class="py-3 px-4">Descuento</th>
+          <th class="py-3 px-4">Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in enrollments %}
+        <tr class="hover:bg-blue-50 transition-all">
+          <td class="py-2 px-4">{{ e.id }}</td>
+          <td class="py-2 px-4">{{ e.first_name }} {{ e.last_name }}</td>
+          <td class="py-2 px-4">{{ e.program_name }}</td>
+          <td class="py-2 px-4">{{ e.academic_year }}</td>
+          <td class="py-2 px-4">{{ e.status }}</td>
+          <td class="py-2 px-4">{{ e.enrollment_date }}</td>
+          <td class="py-2 px-4">{{ e.monthly_fee }}</td>
+          <td class="py-2 px-4">{{ e.discount_percentage }}</td>
+          <td class="py-2 px-4">{{ e.notes }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="text-center py-4 text-gray-400">No hay matrículas registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// Animación DOM y validación
+const form = document.getElementById('enrollmentForm');
+const errorMsg = document.getElementById('formError');
+form.addEventListener('submit', function(e) {
+  let valid = true;
+  errorMsg.classList.add('hidden');
+  // Validación básica
+  ['student_id','program_id','academic_year','status','enrollment_date','monthly_fee'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value) {
+      valid = false;
+      el.classList.add('border-red-500');
+    } else {
+      el.classList.remove('border-red-500');
+    }
+  });
+  if (!valid) {
+    e.preventDefault();
+    errorMsg.textContent = 'Por favor completa todos los campos obligatorios.';
+    errorMsg.classList.remove('hidden');
+    form.classList.add('animate-shake');
+    setTimeout(()=>form.classList.remove('animate-shake'), 500);
+  }
+});
+</script>
+{% endblock %}

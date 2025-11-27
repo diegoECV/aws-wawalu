@@ -1,0 +1,172 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Tareas - Wawalu{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header with Student Selector -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Tareas y Actividades</h1>
+            <p class="text-gray-600">Gestiona las tareas escolares de tus hijos</p>
+        </div>
+        
+        {% if students|length > 1 %}
+        <div class="relative">
+            <select onchange="window.location.href='?student_id='+this.value" 
+                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                {% for student in students %}
+                <option value="{{ student.id }}" {% if current_student_id == student.id %}selected{% endif %}>
+                    {{ student.first_name }} {{ student.last_name }}
+                </option>
+                {% endfor %}
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <span class="material-symbols-outlined">expand_more</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if not assignments %}
+    <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+        <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl text-blue-500">assignment_turned_in</span>
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-2">No hay tareas pendientes</h3>
+        <p class="text-gray-500">¡Excelente! Estás al día con todas las actividades.</p>
+    </div>
+    {% else %}
+    <div class="grid grid-cols-1 gap-6">
+        {% for assignment in assignments %}
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-100 p-2 rounded-lg">
+                            <span class="material-symbols-outlined text-blue-600">assignment</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg">{{ assignment.title }}</h3>
+                            <span class="text-sm text-blue-600 font-medium">{{ assignment.course_name }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        {% if assignment.submission_status == 'submitted' %}
+                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium flex items-center">
+                                <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
+                                Entregado
+                            </span>
+                        {% elif assignment.submission_status == 'graded' %}
+                            <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium flex items-center">
+                                <span class="material-symbols-outlined text-sm mr-1">grade</span>
+                                Calificado: {{ assignment.grade }}
+                            </span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium flex items-center">
+                                <span class="material-symbols-outlined text-sm mr-1">pending</span>
+                                Pendiente
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 mb-4">{{ assignment.description }}</p>
+                
+                <div class="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-gray-50 text-sm text-gray-500">
+                    <div class="flex items-center gap-4 mb-4 md:mb-0">
+                        <span class="flex items-center">
+                            <span class="material-symbols-outlined text-base mr-1">calendar_today</span>
+                            Vence: {{ assignment.due_date.strftime('%d/%m/%Y') }}
+                        </span>
+                        {% if assignment.file_url %}
+                        <a href="#" class="flex items-center text-blue-600 hover:underline">
+                            <span class="material-symbols-outlined text-base mr-1">attach_file</span>
+                            Descargar adjunto
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if assignment.submission_status not in ['submitted', 'graded'] %}
+                    <button onclick="openSubmissionModal('{{ assignment.id }}', '{{ assignment.title }}')" 
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                        <span class="material-symbols-outlined mr-2">upload_file</span>
+                        Entregar Tarea
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Submission Modal -->
+<div id="submissionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 overflow-hidden animate-slide-in-up">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Entregar Tarea</h3>
+            <button onclick="closeSubmissionModal()" class="text-gray-400 hover:text-gray-600">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        <form id="submissionForm" action="" method="POST" enctype="multipart/form-data" class="p-6">
+            <input type="hidden" name="student_id" value="{{ current_student_id }}">
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Archivo de la tarea</label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors cursor-pointer relative">
+                    <input type="file" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                    <div class="text-gray-500">
+                        <span class="material-symbols-outlined text-4xl mb-2">cloud_upload</span>
+                        <p class="text-sm">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Comentarios (Opcional)</label>
+                <textarea name="comments" rows="3" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500" placeholder="Escribe algún comentario para el profesor..."></textarea>
+            </div>
+            
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeSubmissionModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                    <span class="material-symbols-outlined mr-2">send</span>
+                    Enviar Entrega
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openSubmissionModal(assignmentId, title) {
+    const modal = document.getElementById('submissionModal');
+    const form = document.getElementById('submissionForm');
+    const titleEl = document.getElementById('modalTitle');
+    
+    form.action = `/dashboard/assignments/submit/${assignmentId}`;
+    titleEl.textContent = `Entregar: ${title}`;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeSubmissionModal() {
+    const modal = document.getElementById('submissionModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Close on outside click
+document.getElementById('submissionModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSubmissionModal();
+});
+</script>
+{% endblock %}

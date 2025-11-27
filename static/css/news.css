@@ -1,0 +1,35 @@
+/* Hero Section */
+.news-hero {
+    background-image: url('../image/galery/imagen12.jpg'); /* Using a different image for variety */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+}
+
+.news-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Green to Teal gradient to match the News theme */
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(13, 148, 136, 0.8) 100%);
+}
+
+/* Animations (reused from about.css if not globally available, but let's include them to be safe) */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }

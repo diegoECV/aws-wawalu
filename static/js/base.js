@@ -38,15 +38,37 @@ document.addEventListener('DOMContentLoaded', function() {
         moreMenuBtn.addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent event bubbling
             moreMenuContent.classList.toggle('hidden');
+            // Close user menu if open
+            if (userMenuContent && !userMenuContent.classList.contains('hidden')) {
+                userMenuContent.classList.add('hidden');
+            }
         });
+    }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!moreMenuBtn.contains(e.target) && !moreMenuContent.contains(e.target)) {
+    // User Menu Dropdown
+    const userMenuBtn = document.getElementById('user-menu-btn');
+    const userMenuContent = document.getElementById('user-menu-content');
+
+    if (userMenuBtn && userMenuContent) {
+        userMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userMenuContent.classList.toggle('hidden');
+            // Close more menu if open
+            if (moreMenuContent && !moreMenuContent.classList.contains('hidden')) {
                 moreMenuContent.classList.add('hidden');
             }
         });
     }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (moreMenuBtn && moreMenuContent && !moreMenuBtn.contains(e.target) && !moreMenuContent.contains(e.target)) {
+            moreMenuContent.classList.add('hidden');
+        }
+        if (userMenuBtn && userMenuContent && !userMenuBtn.contains(e.target) && !userMenuContent.contains(e.target)) {
+            userMenuContent.classList.add('hidden');
+        }
+    });
 
     // Close menu when resizing to desktop
     window.addEventListener('resize', () => {

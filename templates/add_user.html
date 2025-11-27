@@ -1,0 +1,21 @@
+{% extends 'auth_base.html' %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Agregar Usuario</h2>
+<form method="POST">
+  <label>Nombre:</label>
+  <input type="text" name="name" required class="input mb-2">
+  <label>Email:</label>
+  <input type="email" name="email" required class="input mb-2">
+  <label>Contraseña:</label>
+  <input type="password" name="password" required class="input mb-2">
+  <label>Rol:</label>
+  <select name="role" class="input mb-2">
+    <option value="padre">Padre</option>
+    <option value="staff">Staff</option>
+    {% if session['user_role'] == 'admin' %}
+    <option value="admin">Admin</option>
+    {% endif %}
+  </select>
+  <button type="submit" class="btn">Agregar</button>
+</form>
+{% endblock %}

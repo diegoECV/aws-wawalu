@@ -1,34 +1,86 @@
 {% extends "base.html" %} {% block title %}Noticias - Wawalu{% endblock %} {%
-block content %}
-<!-- Header Banner -->
-<div class="bg-gradient-to-r from-green-500 to-teal-600 text-white py-16">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
-        Noticias y Novedades
-      </h1>
-      <p class="text-xl text-green-100 animate-fade-in-delay">
-        Mantente al día con todo lo que sucede en nuestra comunidad
-      </p>
+block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/news.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- Hero Section -->
+<section
+  class="news-hero flex items-center justify-center text-white text-center"
+>
+  <div class="relative z-10 px-4 reveal active">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Noticias y Novedades</h1>
+    <p class="text-xl md:text-2xl opacity-90">
+      Mantente al día con todo lo que sucede en nuestra comunidad
+    </p>
+  </div>
+</section>
+
+<!-- News Content -->
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Filters Bar -->
+  <div class="max-w-4xl mx-auto mb-12">
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col md:flex-row gap-4 justify-between items-center"
+    >
+      <!-- Search -->
+      <div class="relative w-full md:w-96">
+        <span
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <span class="material-symbols-outlined text-gray-400">search</span>
+        </span>
+        <input
+          type="text"
+          id="newsSearch"
+          class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 sm:text-sm transition-shadow"
+          placeholder="Buscar noticias..."
+        />
+      </div>
+
+      <!-- Sort -->
+      <div class="w-full md:w-auto">
+        <select
+          id="newsSort"
+          class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-lg"
+        >
+          <option value="date-new">Más Recientes</option>
+          <option value="date-old">Más Antiguas</option>
+          <option value="name-asc">Título: A-Z</option>
+        </select>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- News Grid -->
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
   {% if news_items %}
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <div
+    id="newsGrid"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+  >
     {% for item in news_items %}
     <article
-      class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group border border-gray-100"
+      class="news-item bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group border border-gray-100"
+      data-title="{{ item.title }}"
+      data-date="{{ item.created_at }}"
+      data-description="{{ item.content }}"
     >
       <!-- Image -->
-      <div class="h-56 overflow-hidden relative">
+      <div class="h-56 overflow-hidden relative bg-gray-100">
+        {% if item.image_url %}
         <img
           src="{{ url_for('static', filename='image/galery/' + item.image_url) }}"
           alt="{{ item.title }}"
           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
+        {% else %}
+        <div
+          class="w-full h-full flex items-center justify-center text-gray-300"
+        >
+          <span class="material-symbols-outlined text-6xl">newspaper</span>
+        </div>
+        {% endif %}
+
         <div class="absolute top-4 left-4">
           <span
             class="bg-white/90 backdrop-blur-sm text-green-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
@@ -80,4 +132,16 @@ block content %}
   </div>
   {% endif %}
 </div>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    new PageFilters({
+      containerId: "newsGrid",
+      itemSelector: ".news-item",
+      searchInputId: "newsSearch",
+      sortSelectId: "newsSort",
+    });
+  });
+</script>
 {% endblock %}

@@ -1,0 +1,93 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}{{ 'Editar' if event else 'Agregar' }} Evento - Wawalu{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <span class="text-gray-500 text-sm font-medium mb-1 block">Administración > Calendario</span>
+            <h1 class="text-3xl font-bold text-gray-800">{{ 'Editar' if event else 'Agregar Nuevo' }} Evento</h1>
+        </div>
+        <a href="{{ url_for('manage_events') }}" class="text-gray-600 hover:text-blue-600 flex items-center transition-colors">
+            <span class="material-symbols-outlined mr-1">arrow_back</span>
+            Volver
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-8">
+            <form action="{{ url_for('edit_event', event_id=event.id) if event else url_for('add_event') }}" method="POST" class="space-y-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Title -->
+                    <div class="md:col-span-2">
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Título del Evento</label>
+                        <input type="text" name="title" id="title" required
+                            value="{{ event.title if event else '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="Ej: Reunión de Padres">
+                    </div>
+
+                    <!-- Type -->
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Evento</label>
+                        <div class="relative">
+                            <select name="type" id="type" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white">
+                                <option value="" disabled {{ 'selected' if not event else '' }}>Seleccionar tipo</option>
+                                <option value="academic" {{ 'selected' if event and event.type == 'academic' else '' }}>Académico</option>
+                                <option value="holiday" {{ 'selected' if event and event.type == 'holiday' else '' }}>Feriado/Vacaciones</option>
+                                <option value="activity" {{ 'selected' if event and event.type == 'activity' else '' }}>Actividad</option>
+                                <option value="meeting" {{ 'selected' if event and event.type == 'meeting' else '' }}>Reunión</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+
+                    <!-- Color (Auto-selected based on type usually, but manual override option) -->
+                    <!-- For simplicity, we'll stick to type defining color in the backend/frontend logic, or add a color picker later if needed. -->
+
+                    <!-- Start Date -->
+                    <div>
+                        <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
+                        <input type="datetime-local" name="start_date" id="start_date" required
+                            value="{{ event.start_date.strftime('%Y-%m-%dT%H:%M') if event and event.start_date else '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    </div>
+
+                    <!-- End Date -->
+                    <div>
+                        <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Fin</label>
+                        <input type="datetime-local" name="end_date" id="end_date" required
+                            value="{{ event.end_date.strftime('%Y-%m-%dT%H:%M') if event and event.end_date else '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea name="description" id="description" rows="3"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="Detalles adicionales del evento...">{{ event.description if event else '' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
+                    <a href="{{ url_for('manage_events') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm hover:shadow transition-all flex items-center">
+                        <span class="material-symbols-outlined mr-2">save</span>
+                        {{ 'Guardar Cambios' if event else 'Crear Evento' }}
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

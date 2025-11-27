@@ -49,8 +49,11 @@ function openProductModal(product) {
     incrementQty(this, product.stock);
   };
   modal.classList.remove("hidden");
+  modal.classList.add("flex");
 }
 
 function closeProductModal() {
-  document.getElementById("productModal").classList.add("hidden");
+  const modal = document.getElementById("productModal");
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
 }

@@ -22,7 +22,7 @@ INSERT INTO products (name, description, price, image_url, category, stock, mate
 ('Uniforme Completo (Niña)', 'Set de pantalón y casaca de buzo.', 120.00, 'uniform2.jpg', 'Uniforme', 25, 'Polialgodón', 'Uniforme oficial', NULL, '4,6,8,10,12');
 
 -- Insert Gallery Items
-INSERT INTO gallery_items (title, image_url, category) VALUES
+INSERT INTO galery_items (title, image_url, category) VALUES
 ('Clase de Arte', 'imagen1.jpg', 'Actividades'),
 ('Juegos en el Recreo', 'imagen2.jpg', 'Recreación'),
 ('Festival de Danza', 'imagen3.jpg', 'Eventos'),
@@ -44,3 +44,127 @@ INSERT INTO news (title, content, image_url) VALUES
 ('Ganadores del Concurso de Dibujo', 'Felicitamos a todos los participantes de nuestro concurso anual de dibujo. El nivel de creatividad ha sido impresionante. Los ganadores serán premiados en la asamblea del lunes.', 'imagen12.jpg'),
 ('Mejoras en Nuestra Infraestructura', 'Durante las vacaciones hemos realizado mejoras en nuestras instalaciones, incluyendo un nuevo patio de juegos y aulas renovadas para mayor comodidad de nuestros alumnos.', 'imagen2.jpg'),
 ('Charla para Padres: Crianza Positiva', 'Invitamos a todos los padres de familia a nuestra próxima charla sobre crianza positiva y límites con amor, a cargo de la psicóloga educativa María Pérez. Fecha: 15 de Marzo.', 'imagen10.jpg');
+
+-- Insert Users
+INSERT INTO users (name, email, password, role, is_admin, phone, address, profile_image, is_active, email_verified) VALUES
+('Admin Wawalu', 'admin@wawalu.com', 'hashed_password', 'admin', TRUE, '+51 999999999', 'Av. Mariscal Benavides 1365', 'admin.png', TRUE, TRUE),
+('Padre Ejemplo', 'padre@wawalu.com', 'hashed_password', 'padre', FALSE, '+51 988888888', 'Calle Falsa 123', 'padre.png', TRUE, FALSE),
+('Ana García', 'ana.garcia@test.com', 'hashed_password', 'padre', FALSE, '+51 911111111', 'Av. Arequipa 123, Lima', NULL, TRUE, TRUE),
+('Carlos Mendoza', 'carlos.mendoza@test.com', 'hashed_password', 'padre', FALSE, '+51 922222222', 'Jr. Unión 456, Lima', NULL, TRUE, TRUE),
+('Elena Torres', 'elena.torres@test.com', 'hashed_password', 'padre', FALSE, '+51 933333333', 'Av. Javier Prado 789, Lima', NULL, TRUE, TRUE),
+('Jorge Ruiz', 'jorge.ruiz@test.com', 'hashed_password', 'padre', FALSE, '+51 944444444', 'Calle Los Pinos 321, Lima', NULL, TRUE, TRUE),
+('Lucía Vargas', 'lucia.vargas@test.com', 'hashed_password', 'padre', FALSE, '+51 955555555', 'Av. La Marina 654, Lima', NULL, TRUE, TRUE),
+('Miguel Castro', 'miguel.castro@test.com', 'hashed_password', 'padre', FALSE, '+51 966666666', 'Jr. Cusco 987, Lima', NULL, TRUE, TRUE),
+('Patricia Flores', 'patricia.flores@test.com', 'hashed_password', 'padre', FALSE, '+51 977777777', 'Av. Brasil 159, Lima', NULL, TRUE, TRUE),
+('Roberto Silva', 'roberto.silva@test.com', 'hashed_password', 'padre', FALSE, '+51 988888889', 'Calle Las Begonias 753, Lima', NULL, TRUE, TRUE),
+('Sofia Morales', 'sofia.morales@test.com', 'hashed_password', 'padre', FALSE, '+51 999999990', 'Av. Salaverry 246, Lima', NULL, TRUE, TRUE),
+('Staff Docente', 'staff@wawalu.com', 'hashed_password', 'staff', FALSE, '+51 910101010', 'Av. El Sol 100, Lima', 'staff.png', TRUE, TRUE);
+
+-- Insert Programs
+INSERT INTO programs (name, description, age_range, academic_year, registration_fee, monthly_fee, capacity, is_active) VALUES
+('Inicial 3 años', 'Programa para niños de 3 años', '3 años', 2025, 100.00, 350.00, 20, TRUE),
+('Inicial 4 años', 'Programa para niños de 4 años', '4 años', 2025, 100.00, 350.00, 20, TRUE);
+
+-- Insert Menus
+INSERT INTO menus (date, meal_description, type) VALUES
+('2025-11-25', 'Arroz con pollo y ensalada', 'lunch'),
+('2025-11-25', 'Fruta fresca y jugo', 'snack');
+
+-- Insert Events
+INSERT INTO events (title, description, start_date, end_date, type) VALUES
+('Inicio de clases', 'Comienzo del ciclo escolar', '2025-03-01 08:00:00', NULL, 'academic'),
+('Fiesta de bienvenida', 'Evento para padres y niños', '2025-03-05 10:00:00', NULL, 'activity');
+
+-- Insert Comments
+INSERT INTO comments (name, relation, comment) VALUES
+('María López', 'Mamá de Juan', 'Excelente centro educativo, mi hijo está feliz.'),
+('Carlos Pérez', 'Papá de Ana', 'Muy buena atención y profesores dedicados.');
+
+-- Insert Messages
+INSERT INTO messages (name, email, subject, message) VALUES
+('Luis Torres', 'luis@example.com', 'Consulta de matrícula', 'Quisiera información sobre el proceso de matrícula.'),
+('Ana Ruiz', 'ana@example.com', 'Horario de atención', '¿Cuál es el horario de atención en verano?');
+
+-- Insert Complaints
+INSERT INTO complaints (name, lastname, doc_type, document_number, phone, email, address, good_type, amount, good_description, claim_type, claim_detail, consumer_request) VALUES
+('Pedro Gómez', 'Gómez', 'DNI', '12345678', '+51 987654321', 'pedro@example.com', 'Av. Siempre Viva 742', 'producto', 80.00, 'Mochila escolar', 'reclamo', 'La mochila llegó dañada', 'Cambio de producto');
+
+-- Insert Students
+INSERT INTO students (parent_id, first_name, last_name, dob, gender, allergies, medical_info, parent_id_front, parent_id_back, birth_certificate, student_photo) VALUES
+(2, 'Juan', 'Ejemplo', '2020-05-10', 'M', 'Ninguna', 'Ninguna', 'dni_front_2_example.jpg', 'dni_back_2_example.jpg', 'birth_cert_2_example.pdf', 'student_photo_2_example.jpg'),
+(2, 'Ana', 'Ejemplo', '2019-08-22', 'F', 'Polen', 'Asma leve', 'dni_front_2_example2.jpg', 'dni_back_2_example2.jpg', 'birth_cert_2_example2.pdf', 'student_photo_2_example2.jpg');
+
+-- Insert Enrollments
+INSERT INTO enrollments (student_id, program_id, enrollment_year, enrollment_period, status, observations) VALUES
+(1, 1, 2025, 'Anual', 'active', 'Matrícula aprobada - Estudiante regular'),
+(2, 2, 2025, 'Anual', 'pending', 'Matrícula pendiente de revisión de documentos');
+
+-- ========================================
+-- PHASE 1 DATA: ACADEMIC MANAGEMENT
+-- ========================================
+
+-- Insert Courses
+INSERT INTO courses (program_id, name, description, teacher_name) VALUES
+(1, 'Matemáticas Divertidas', 'Introducción a números y formas', 'Prof. María'),
+(1, 'Comunicación', 'Desarrollo del lenguaje y expresión', 'Prof. Ana'),
+(1, 'Psicomotricidad', 'Desarrollo motor grueso y fino', 'Prof. Carlos'),
+(2, 'Pre-Matemáticas', 'Conteo, sumas simples y lógica', 'Prof. María'),
+(2, 'Lectoescritura', 'Iniciación a la lectura y escritura', 'Prof. Ana'),
+(2, 'Inglés Básico', 'Vocabulario y canciones en inglés', 'Teacher John');
+
+-- Insert Class Schedule
+INSERT INTO class_schedule (course_id, day_of_week, start_time, end_time, room) VALUES
+(1, 'Monday', '09:00:00', '10:30:00', 'Aula 3A'),
+(2, 'Tuesday', '09:00:00', '10:30:00', 'Aula 3A'),
+(3, 'Wednesday', '10:00:00', '11:30:00', 'Patio'),
+(4, 'Monday', '09:00:00', '10:30:00', 'Aula 4A'),
+(5, 'Tuesday', '09:00:00', '10:30:00', 'Aula 4A'),
+(6, 'Thursday', '11:00:00', '12:30:00', 'Aula 4A');
+
+-- Insert Grades (for active enrollment student_id=1)
+INSERT INTO grades (enrollment_id, course_id, period, grade, comments) VALUES
+(1, 1, 'Bimestre 1', 18.00, 'Excelente progreso en conteo'),
+(1, 2, 'Bimestre 1', 17.50, 'Participa activamente en clase'),
+(1, 3, 'Bimestre 1', 19.00, 'Muy buena coordinación');
+
+-- Insert Attendance (for active enrollment student_id=1)
+INSERT INTO attendance (enrollment_id, date, status, remarks) VALUES
+(1, '2025-03-01', 'present', 'Primer día de clases'),
+(1, '2025-03-02', 'present', ''),
+(1, '2025-03-03', 'late', 'Llegó 10 min tarde'),
+(1, '2025-03-04', 'present', ''),
+(1, '2025-03-05', 'absent', 'Enfermedad (Justificado)');
+
+-- ========================================
+-- PHASE 2 DATA: ADMINISTRATIVE MANAGEMENT
+-- ========================================
+
+-- Insert Pensions (for active enrollment student_id=1)
+INSERT INTO pensions (enrollment_id, month, amount, due_date, status, payment_date) VALUES
+(1, 'Marzo', 350.00, '2025-03-31', 'paid', '2025-03-28'),
+(1, 'Abril', 350.00, '2025-04-30', 'pending', NULL),
+(1, 'Mayo', 350.00, '2025-05-31', 'pending', NULL);
+
+-- Insert Student Documents
+INSERT INTO student_documents (student_id, title, description, file_url, document_type) VALUES
+(1, 'Constancia de Matrícula 2025', 'Documento oficial de matrícula', 'constancia_2025.pdf', 'administrative'),
+(1, 'Libreta de Notas B1', 'Reporte de notas del primer bimestre', 'libreta_b1.pdf', 'report');
+
+-- ========================================
+-- PHASE 3 DATA: INTERACTION MODULES
+-- ========================================
+
+-- Insert Assignments
+INSERT INTO assignments (course_id, title, description, due_date, file_url) VALUES
+(1, 'Dibujando Números', 'Dibujar y colorear los números del 1 al 5 en el cuaderno.', '2025-03-15 23:59:59', NULL),
+(2, 'Mi Familia', 'Traer una foto familiar y prepararse para presentarla en clase.', '2025-03-20 23:59:59', NULL),
+(4, 'Colección de Hojas', 'Recolectar 5 tipos diferentes de hojas del parque.', '2025-03-18 23:59:59', 'guia_hojas.pdf');
+
+-- Insert Submissions (for student_id=1)
+INSERT INTO submissions (assignment_id, student_id, file_url, comments, grade, status) VALUES
+(1, 1, 'tarea_numeros_juan.jpg', 'Aquí está mi tarea profesora', 18.00, 'graded');
+
+-- Insert Internal Messages
+INSERT INTO internal_messages (sender_id, recipient_id, subject, content, is_read) VALUES
+(1, 2, 'Bienvenida', 'Bienvenido a la plataforma Wawalu. Estamos para servirle.', FALSE),
+(2, 1, 'Consulta sobre uniforme', 'Buenas tardes, ¿dónde puedo adquirir el uniforme de verano?', FALSE);

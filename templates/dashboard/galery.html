@@ -24,43 +24,43 @@ Wawalu{% endblock %} {% block content %}
   <!-- Filters -->
   <div class="flex flex-wrap gap-2 mb-8">
     <a
-      href="{{ url_for('gallery') }}"
+      href="{{ url_for('galery') }}"
       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if not current_category %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
     >
       Todos
     </a>
     <a
-      href="{{ url_for('gallery', category='deportes') }}"
+      href="{{ url_for('galery', category='deportes') }}"
       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'deportes' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
     >
       Deportes
     </a>
     <a
-      href="{{ url_for('gallery', category='salidas') }}"
+      href="{{ url_for('galery', category='salidas') }}"
       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'salidas' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
     >
       Salidas
     </a>
     <a
-      href="{{ url_for('gallery', category='eventos') }}"
+      href="{{ url_for('galery', category='eventos') }}"
       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'eventos' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
     >
       Eventos
     </a>
     <a
-      href="{{ url_for('gallery', category='promos') }}"
+      href="{{ url_for('galery', category='promos') }}"
       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == 'promos' %}bg-blue-600 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50 border border-gray-200{% endif %}"
     >
       Promociones
     </a>
   </div>
 
-  <!-- Gallery Grid -->
-  {% if gallery_items %}
+  <!-- Galery Grid -->
+  {% if galery_items %}
   <div
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
   >
-    {% for item in gallery_items %}
+    {% for item in galery_items %}
     <div
       class="group relative bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300"
     >
@@ -87,7 +87,7 @@ Wawalu{% endblock %} {% block content %}
       <!-- Delete Button (Staff Only) -->
       {% if session.get('user_role') in ['staff', 'admin'] %}
       <form
-        action="{{ url_for('delete_gallery_item', item_id=item.id) }}"
+        action="{{ url_for('delete_galery_item', item_id=item.id) }}"
         method="POST"
         class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
         onsubmit="return confirm('¿Estás seguro de eliminar esta foto?');"
@@ -137,7 +137,7 @@ Wawalu{% endblock %} {% block content %}
     </div>
 
     <form
-      action="{{ url_for('upload_gallery') }}"
+      action="{{ url_for('upload_galery') }}"
       method="POST"
       enctype="multipart/form-data"
       class="p-6 space-y-4"

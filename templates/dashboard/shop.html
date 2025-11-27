@@ -64,7 +64,7 @@ Wawalu{% endblock %} {% block content %}
 <!-- Product Detail Modal -->
 <div
   id="productModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm"
 >
   <div
     class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden animate-scale-in flex flex-col md:flex-row max-h-[90vh]"
@@ -298,96 +298,210 @@ Wawalu{% endblock %} {% block content %}
         >
           Guardar Producto
         </button>
+        </button>
+      </div>
+
+      <p id="modalPrice" class="text-3xl font-bold text-gray-900 mb-6">
+        S/ 0.00
+      </p>
+
+      <div class="space-y-6 mb-8">
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+            Descripción
+          </h3>
+          <p id="modalDescription" class="text-gray-600 leading-relaxed">
+            Description goes here.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+              Material
+            </h3>
+            <p id="modalMaterial" class="text-gray-600 text-sm">
+              Material info
+            </p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+              Uso Recomendado
+            </h3>
+            <p id="modalUsage" class="text-gray-600 text-sm">Usage info</p>
+          </div>
+        </div>
+
+        <div id="modalDimensionsContainer">
+          <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+            Dimensiones
+          </h3>
+          <p id="modalDimensions" class="text-gray-600 text-sm">
+            Dimensions info
+          </p>
+        </div>
+
+        <div id="modalSizesContainer">
+          <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">
+            Tallas Disponibles
+          </h3>
+          <div id="modalSizes" class="flex flex-wrap gap-2">
+            <!-- Sizes injected via JS -->
+          </div>
+        </div>
+      </div>
+
+      <form
+        id="modalForm"
+        action=""
+        method="POST"
+        class="pt-6 border-t border-gray-100"
+      >
+        <div class="flex gap-4">
+          <div
+            class="flex items-center border border-gray-300 rounded-xl bg-gray-50 h-12"
+          >
+            <button
+              type="button"
+              onclick="decrementQty(this)"
+              class="px-3 text-gray-600 hover:bg-gray-200 h-full rounded-l-xl"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              id="modalQty"
+              class="w-12 text-center bg-transparent border-none p-0 font-bold focus:ring-0"
+              readonly
+            />
+            <button
+              type="button"
+              onclick="incrementQty(this)"
+              id="modalIncBtn"
+              class="px-3 text-gray-600 hover:bg-gray-200 h-full rounded-r-xl"
+            >
+              +
+            </button>
+          </div>
+          <button
+            type="submit"
+            class="flex-1 bg-blue-600 text-white h-12 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined">shopping_cart</span>
+            Agregar al Carrito
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Modal (Admin) -->
+<div
+  id="addProductModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+>
+  <div
+    class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-fade-in"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-gray-800">Nuevo Producto</h3>
+      <button
+        onclick="document.getElementById('addProductModal').classList.add('hidden')"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form
+      action="{{ url_for('add_product') }}"
+      method="POST"
+      enctype="multipart/form-data"
+      class="p-6 space-y-4"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Nombre</label
+        >
+        <input
+          type="text"
+          name="name"
+          required
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Precio (S/)</label
+        >
+        <input
+          type="number"
+          step="0.01"
+          name="price"
+          required
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Categoría</label
+        >
+        <select
+          name="category"
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        >
+          <option value="Uniformes">Uniformes</option>
+          <option value="Útiles">Útiles</option>
+          <option value="Libros">Libros</option>
+          <option value="Accesorios">Accesorios</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Descripción</label
+        >
+        <textarea
+          name="description"
+          rows="2"
+          class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Imagen</label
+        >
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
+      </div>
+
+      <div class="pt-4">
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30"
+        >
+          Guardar Producto
+        </button>
       </div>
     </form>
   </div>
 </div>
 
-<script>
-  function incrementQty(btn, max) {
-    const input = btn.previousElementSibling;
-    let val = parseInt(input.value);
-    if (max && val >= max) return;
-    input.value = val + 1;
-  }
-
-  function decrementQty(btn) {
-    const input = btn.nextElementSibling;
-    let val = parseInt(input.value);
-    if (val > 1) {
-      input.value = val - 1;
-    }
-  }
-
-  function openProductModal(product) {
-    const modal = document.getElementById("productModal");
-
-    // Populate data
-    document.getElementById("modalTitle").textContent = product.name;
-    document.getElementById("modalCategory").textContent = product.category;
-    document.getElementById("modalPrice").textContent =
-      "S/ " + parseFloat(product.price).toFixed(2);
-    document.getElementById("modalDescription").textContent =
-      product.description || "Sin descripción";
-    document.getElementById("modalMaterial").textContent =
-      product.material || "N/A";
-    document.getElementById("modalUsage").textContent =
-      product.usage_info || "N/A";
-
-    // Image logic
-    const img = document.getElementById("modalImage");
-    // Try products folder first, fallback handled by onerror in grid but here we need logic or try/catch
-    // Simplest is to assume path based on where we know images are.
-    // Since we inserted them as 'filename.jpg', and they are in static/image/products/
-    // But uploaded ones are in static/uploads/
-    // We can check if it starts with 'product_' (uploaded) or not.
-    if (product.image_url && product.image_url.startsWith("product_")) {
-      img.src =
-        "{{ url_for('static', filename='uploads/') }}" + product.image_url;
-    } else {
-      img.src =
-        "{{ url_for('static', filename='image/products/') }}" +
-        product.image_url;
-    }
-
-    // Dimensions vs Sizes
-    const dimContainer = document.getElementById("modalDimensionsContainer");
-    const sizeContainer = document.getElementById("modalSizesContainer");
-
-    if (product.sizes) {
-      dimContainer.classList.add("hidden");
-      sizeContainer.classList.remove("hidden");
-      const sizes = product.sizes.split(",");
-      const sizeHtml = sizes
-        .map(
-          (s) =>
-            `<span class="px-3 py-1 border border-gray-200 rounded-lg text-sm text-gray-600">${s}</span>`
-        )
-        .join("");
-      document.getElementById("modalSizes").innerHTML = sizeHtml;
-    } else {
-      sizeContainer.classList.add("hidden");
-      dimContainer.classList.remove("hidden");
-      document.getElementById("modalDimensions").textContent =
-        product.dimensions || "N/A";
-    }
-
-    // Form Action
-    const form = document.getElementById("modalForm");
-    form.action = "/cart/add/" + product.id;
-
-    // Reset Qty
-    document.getElementById("modalQty").value = 1;
-    const incBtn = document.getElementById("modalIncBtn");
-    incBtn.onclick = function () {
-      incrementQty(this, product.stock);
-    };
-
-    modal.classList.remove("hidden");
-  }
-
-  function closeProductModal() {
-    document.getElementById("productModal").classList.add("hidden");
-  }
-</script>
+<div id="shop-config" 
+     data-uploads-url="{{ url_for('static', filename='uploads/') }}" 
+     data-products-url="{{ url_for('static', filename='image/products/') }}"
+     class="hidden">
+</div>
+<script src="{{ url_for('static', filename='js/dashboard_shop.js') }}"></script>
 {% endblock %}

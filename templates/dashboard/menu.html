@@ -48,8 +48,8 @@ Wawalu{% endblock %} {% block content %}
           <p class="text-gray-700 font-medium">{{ item.meal_description }}</p>
           {% if session.get('user_role') in ['staff', 'admin'] %}
           <form
-            action="{{ url_for('delete_menu', menu_id=item.id) }}"
-            method="POST"
+            action="{{ url_for('delete_menu_item', item_id=item.id) }}"
+            method="GET"
             class="mt-2"
           >
             <button
@@ -79,8 +79,8 @@ Wawalu{% endblock %} {% block content %}
           <p class="text-gray-700 font-medium">{{ item.meal_description }}</p>
           {% if session.get('user_role') in ['staff', 'admin'] %}
           <form
-            action="{{ url_for('delete_menu', menu_id=item.id) }}"
-            method="POST"
+            action="{{ url_for('delete_menu_item', item_id=item.id) }}"
+            method="GET"
             class="mt-2"
           >
             <button
@@ -136,7 +136,7 @@ Wawalu{% endblock %} {% block content %}
     </div>
 
     <form
-      action="{{ url_for('add_menu') }}"
+      action="{{ url_for('add_menu_item') }}"
       method="POST"
       class="p-6 space-y-4"
     >

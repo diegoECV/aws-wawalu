@@ -1,0 +1,13 @@
+{% extends 'auth_base.html' %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Agregar Foto a Galería</h2>
+<form method="POST" enctype="multipart/form-data">
+  <label>Título:</label>
+  <input type="text" name="title" required class="input mb-2">
+  <label>Categoría:</label>
+  <input type="text" name="category" required class="input mb-2">
+  <label>Imagen:</label>
+  <input type="file" name="image" required class="input mb-2">
+  <button type="submit" class="btn">Agregar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Horario - Wawalu{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Horario de Clases</h1>
+            <p class="text-gray-600">Cronograma semanal de actividades académicas.</p>
+        </div>
+        
+        <!-- Student Selector -->
+        {% if students|length > 1 %}
+        <div class="relative">
+            <form action="{{ url_for('student_schedule') }}" method="get" class="flex items-center">
+                <label for="student_id" class="mr-2 text-sm font-medium text-gray-700">Estudiante:</label>
+                <select name="student_id" id="student_id" onchange="this.form.submit()" 
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    {% for student in students %}
+                    <option value="{{ student.id }}" {% if student.id == current_student_id %}selected{% endif %}>
+                        {{ student.first_name }} {{ student.last_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if schedule %}
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {% for day in days %}
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
+            <div class="bg-blue-50 px-4 py-3 border-b border-blue-100">
+                <h3 class="font-bold text-blue-800 text-center">
+                    {% if day == 'Monday' %}Lunes
+                    {% elif day == 'Tuesday' %}Martes
+                    {% elif day == 'Wednesday' %}Miércoles
+                    {% elif day == 'Thursday' %}Jueves
+                    {% elif day == 'Friday' %}Viernes
+                    {% else %}{{ day }}
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="p-4 flex-1 space-y-4">
+                {% if schedule[day] %}
+                    {% for class in schedule[day] %}
+                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                {{ class.start_time }} - {{ class.end_time }}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-1">{{ class.course_name }}</h4>
+                        <div class="flex items-center text-xs text-gray-500 mb-1">
+                            <span class="material-symbols-outlined text-[14px] mr-1">person</span>
+                            {{ class.teacher_name or 'Sin asignar' }}
+                        </div>
+                        {% if class.room %}
+                        <div class="flex items-center text-xs text-gray-500">
+                            <span class="material-symbols-outlined text-[14px] mr-1">meeting_room</span>
+                            Aula {{ class.room }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="h-full flex items-center justify-center text-gray-400 text-sm italic">
+                        Sin clases
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+        <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+            <span class="material-symbols-outlined text-5xl">calendar_today</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">Horario no disponible</h3>
+        <p class="mt-2 text-sm text-gray-500">No se ha configurado un horario para este estudiante.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

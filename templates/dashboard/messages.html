@@ -1,0 +1,276 @@
+{% extends "dashboard/base_dashboard.html" %} {% block title %}Mensajería -
+Wawalu{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto h-[calc(100vh-8rem)] flex flex-col">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Mensajería</h1>
+      <p class="text-gray-600">Comunícate con profesores y administrativos</p>
+    </div>
+    <button
+      onclick="openComposeModal()"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center shadow-sm"
+    >
+      <span class="material-symbols-outlined mr-2">edit_square</span>
+      Redactar
+    </button>
+  </div>
+
+  <!-- Main Interface -->
+  <div
+    class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-1 overflow-hidden"
+  >
+    <!-- Sidebar -->
+    <div class="w-64 border-r border-gray-200 bg-gray-50 flex flex-col">
+      <div class="p-4">
+        <button
+          onclick="switchTab('inbox')"
+          id="tab-inbox"
+          class="w-full text-left px-4 py-3 rounded-lg bg-blue-100 text-blue-700 font-medium mb-2 flex items-center transition-colors"
+        >
+          <span class="material-symbols-outlined mr-3">inbox</span>
+          Bandeja de Entrada
+        </button>
+        <button
+          onclick="switchTab('sent')"
+          id="tab-sent"
+          class="w-full text-left px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-100 font-medium flex items-center transition-colors"
+        >
+          <span class="material-symbols-outlined mr-3">send</span>
+          Enviados
+        </button>
+      </div>
+    </div>
+
+    <!-- Message List -->
+    <div class="flex-1 overflow-y-auto p-0" id="content-inbox">
+      {% if not received_messages %}
+      <div
+        class="flex flex-col items-center justify-center h-full text-gray-500"
+      >
+        <span class="material-symbols-outlined text-6xl mb-4 text-gray-300"
+          >inbox</span
+        >
+        <p>No tienes mensajes nuevos</p>
+      </div>
+      {% else %}
+      <div class="divide-y divide-gray-100">
+        {% for message in received_messages %}
+        <div
+          class="p-4 hover:bg-gray-50 cursor-pointer transition-colors {% if not message.is_read %}bg-blue-50{% endif %}"
+          onclick="viewMessage('{{ message.id }}')"
+        >
+          <div class="flex justify-between items-start mb-1">
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3 text-gray-600 font-bold text-xs"
+              >
+                {{ message.sender_name[:2].upper() }}
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800 text-sm">
+                  {{ message.sender_name }}
+                </h4>
+                <span class="text-xs text-gray-500 uppercase"
+                  >{{ message.sender_role }}</span
+                >
+              </div>
+            </div>
+            <span class="text-xs text-gray-400"
+              >{{ message.created_at.strftime('%d/%m %H:%M') }}</span
+            >
+          </div>
+          <h5 class="font-medium text-gray-800 mb-1 ml-11">
+            {{ message.subject }}
+          </h5>
+          <p class="text-gray-500 text-sm ml-11 line-clamp-2">
+            {{ message.content }}
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-0 hidden" id="content-sent">
+      {% if not sent_messages %}
+      <div
+        class="flex flex-col items-center justify-center h-full text-gray-500"
+      >
+        <span class="material-symbols-outlined text-6xl mb-4 text-gray-300"
+          >send</span
+        >
+        <p>No has enviado mensajes</p>
+      </div>
+      {% else %}
+      <div class="divide-y divide-gray-100">
+        {% for message in sent_messages %}
+        <div class="p-4 hover:bg-gray-50 cursor-pointer transition-colors">
+          <div class="flex justify-between items-start mb-1">
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3 text-gray-600 font-bold text-xs"
+              >
+                {{ message.recipient_name[:2].upper() }}
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-800 text-sm">
+                  Para: {{ message.recipient_name }}
+                </h4>
+              </div>
+            </div>
+            <span class="text-xs text-gray-400"
+              >{{ message.created_at.strftime('%d/%m %H:%M') }}</span
+            >
+          </div>
+          <h5 class="font-medium text-gray-800 mb-1 ml-11">
+            {{ message.subject }}
+          </h5>
+          <p class="text-gray-500 text-sm ml-11 line-clamp-2">
+            {{ message.content }}
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Compose Modal -->
+<div
+  id="composeModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+>
+  <div
+    class="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 overflow-hidden animate-slide-in-up"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-xl font-bold text-gray-800">Nuevo Mensaje</h3>
+      <button
+        onclick="closeComposeModal()"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form action="{{ url_for('send_message') }}" method="POST" class="p-6">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2"
+          >Destinatario</label
+        >
+        <select
+          name="recipient_id"
+          class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-blue-500"
+          required
+        >
+          <option value="">Seleccionar destinatario...</option>
+          {% for recipient in recipients %}
+          <option value="{{ recipient.id }}">
+            {{ recipient.name }} ({{ recipient.role|capitalize }})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Asunto</label>
+        <input
+          type="text"
+          name="subject"
+          class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-blue-500"
+          placeholder="Motivo del mensaje"
+          required
+        />
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2"
+          >Mensaje</label
+        >
+        <textarea
+          name="content"
+          rows="5"
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
+          placeholder="Escribe tu mensaje aquí..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button
+          type="button"
+          onclick="closeComposeModal()"
+          class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+        >
+          <span class="material-symbols-outlined mr-2">send</span>
+          Enviar Mensaje
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function switchTab(tab) {
+    // Hide all content
+    document.getElementById("content-inbox").classList.add("hidden");
+    document.getElementById("content-sent").classList.add("hidden");
+
+    // Reset tabs
+    document
+      .getElementById("tab-inbox")
+      .classList.remove("bg-blue-100", "text-blue-700");
+    document
+      .getElementById("tab-inbox")
+      .classList.add("text-gray-600", "hover:bg-gray-100");
+    document
+      .getElementById("tab-sent")
+      .classList.remove("bg-blue-100", "text-blue-700");
+    document
+      .getElementById("tab-sent")
+      .classList.add("text-gray-600", "hover:bg-gray-100");
+
+    // Activate selected
+    document.getElementById("content-" + tab).classList.remove("hidden");
+    document
+      .getElementById("tab-" + tab)
+      .classList.add("bg-blue-100", "text-blue-700");
+    document
+      .getElementById("tab-" + tab)
+      .classList.remove("text-gray-600", "hover:bg-gray-100");
+  }
+
+  function openComposeModal() {
+    const modal = document.getElementById("composeModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+  }
+
+  function closeComposeModal() {
+    const modal = document.getElementById("composeModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+
+  // Close on outside click
+  document
+    .getElementById("composeModal")
+    .addEventListener("click", function (e) {
+      if (e.target === this) closeComposeModal();
+    });
+
+  function viewMessage(id) {
+    // Future implementation: Open message details
+    // For now, simple alert or expand
+    alert("Funcionalidad de vista detallada en desarrollo");
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'auth_base.html' %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Agregar Producto</h2>
+<form method="POST" enctype="multipart/form-data">
+  <label>Nombre:</label>
+  <input type="text" name="name" required class="input mb-2">
+  <label>Precio:</label>
+  <input type="number" name="price" required class="input mb-2">
+  <label>Categoría:</label>
+  <input type="text" name="category" required class="input mb-2">
+  <label>Descripción:</label>
+  <textarea name="description" class="input mb-2"></textarea>
+  <label>Imagen:</label>
+  <input type="file" name="image" class="input mb-2">
+  <button type="submit" class="btn">Agregar</button>
+</form>
+{% endblock %}

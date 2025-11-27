@@ -1,370 +1,296 @@
-🎓 Wawalu Centro Educativo
-Plataforma web integral para centro educativo basado en metodología Reggio Emilia con sistema de inscripciones, tienda virtual y gestión administrativa completa.
+# 🎓 Wawalu Centro Educativo
 
-Estado del Proyecto Versión Licencia Última Actualización
+![Wawalu Banner](static/img/banner.jpg)
 
-📋 Tabla de Contenidos
-Características
-Tecnologías
-Instalación
-Configuración
-Uso
-Estructura del Proyecto
-API
-Base de Datos
-Contribuir
-Licencia
-Contacto
-✨ Características
-🏫 Portal Educativo
-✅ Información institucional y programas educativos
-✅ Calendario de actividades y eventos
-✅ Galería de fotos e imágenes con gestión admin
-✅ Sistema de noticias y actualizaciones
-✅ Sistema de contacto integrado con WhatsApp
-✅ Footer horizontal optimizado y responsive
-👨‍👩‍👧‍👦 Sistema de Matriculación
-✅ Formulario de matrícula completo (/matricula)
-✅ Gestión de datos familiares y médicos
-✅ Confirmación automática por email
-✅ Panel administrativo para seguimiento
-✅ Página de éxito de inscripción
-🛒 E-commerce Avanzado
-✅ Tienda virtual con productos educativos
-✅ Carrito de compras con localStorage
-✅ Sistema de checkout con múltiples métodos de pago
-✅ Gestión completa de inventario y órdenes
-✅ Historial de pedidos de usuario (/mis-pedidos)
-✅ Confirmaciones de pedido con email
-👤 Gestión de Usuarios Completa
-✅ Sistema de registro e inicio de sesión
-✅ Perfiles de usuario personalizados
-✅ Roles y permisos (usuario/admin)
-✅ Autenticación segura con bcrypt
-✅ Cambio de contraseña
-✅ Gestión de sesiones
-🔧 Panel Administrativo Avanzado
-✅ Dashboard con métricas y estadísticas
-✅ Gestión completa de usuarios y permisos
-✅ Administración de productos y inventario
-✅ Gestión de contenido web dinámico
-✅ Control de inscripciones y órdenes
-✅ Gestión de galería de imágenes
-✅ Sistema de noticias admin
-✅ Herramientas de seguridad
-📞 Sistema de Contacto Integrado
-✅ Información de contacto actualizada
-✅ Email: diego.centeno@vallegrande.edu.pe
-✅ WhatsApp: +51 942 139 788
-✅ Facebook: https://www.facebook.com/search/top?q=wawalu
-✅ Botón flotante de WhatsApp
-✅ Enlaces directos clickeables
-🆘 Atención al Cliente
-✅ Libro de reclamaciones digital (/libro-reclamaciones)
-✅ Sistema de seguimiento de reclamaciones
-✅ Consulta de estado por número
-✅ Panel admin para gestión de reclamaciones
-📱 Diseño Responsive Moderno
-✅ Interfaz moderna con Tailwind CSS
-✅ Completamente responsive para móviles
-✅ Footer horizontal optimizado
-✅ Navegación intuitiva y accesible
-✅ Animaciones y transiciones suaves
-✅ Material Icons integrados
-🛠️ Tecnologías
-Backend
-Python Python 3.8+
-Flask Flask 2.3.3
-MySQL MySQL 8.0+
-Frontend
-HTML5 HTML5
-CSS3 CSS3 + Tailwind CSS
-JavaScript JavaScript ES6+
-Herramientas
-Docker Docker (para base de datos)
-Node.js Node.js (para Tailwind CSS)
-Git Git (control de versiones)
-🚀 Instalación
-Prerrequisitos
-Python 3.8 o superior
-Node.js 16 o superior
-MySQL 8.0 o superior (o Docker)
-Git
-1. Clonar el repositorio
-git clone https://github.com/vallegrande/ASE251S2_T13_wp.git
-cd ASE251S2_T13_wp
-2. Configurar entorno virtual de Python
-# Crear entorno virtual
-python -m venv venv
+> Plataforma web integral para el Centro Educativo Wawalu, basada en la metodología Reggio Emilia. Incluye sistema de inscripciones, tienda virtual, gestión administrativa, libro de reclamaciones y portal para padres.
 
-# Activar entorno virtual
-# En Windows:
-venv\Scripts\activate
-# En Linux/Mac:
-source venv/bin/activate
-3. Instalar dependencias Python
-pip install -r requirements.txt
-4. Configurar Node.js y Tailwind CSS
-# Instalar dependencias de Node.js
-npm install
+![Estado](https://img.shields.io/badge/Estado-Activo-success)
+![Versión](https://img.shields.io/badge/Versión-2.0-blue)
+![Licencia](https://img.shields.io/badge/Licencia-MIT-green)
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![Flask](https://img.shields.io/badge/Flask-3.0.0-lightgrey)
 
-# Compilar CSS de Tailwind
-npm run build:css
-5. Configurar base de datos
-Opción A: Con Docker (Recomendado)
-# Crear contenedor MySQL
-docker run --name wawalu-mysql \
-  -e MYSQL_ROOT_PASSWORD=root123 \
-  -e MYSQL_DATABASE=wawalu_db \
-  -e MYSQL_USER=wawalu_user \
-  -e MYSQL_PASSWORD=wawalu123 \
-  -p 3306:3306 \
-  -d mysql:8.0
+## 📋 Tabla de Contenidos
 
-# Importar schema
-docker exec -i wawalu-mysql mysql -u wawalu_user -pwawalu123 wawalu_db < schema.sql
-Opción B: MySQL Local
-# Crear base de datos
-mysql -u root -p
-CREATE DATABASE wawalu_db;
-CREATE USER 'wawalu_user'@'localhost' IDENTIFIED BY 'wawalu123';
-GRANT ALL PRIVILEGES ON wawalu_db.* TO 'wawalu_user'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
+- [Características](#-características)
+- [Tecnologías](#-tecnologías)
+- [Instalación](#-instalación)
+- [Configuración](#-configuración)
+- [Uso](#-uso)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [API](#-api)
+- [Base de Datos](#-base-de-datos)
+- [Contribuir](#-contribuir)
+- [Licencia](#-licencia)
+- [Contacto](#-contacto)
 
-# Importar schema
-mysql -u wawalu_user -p wawalu_db < schema.sql
-⚙️ Configuración
-Variables de Entorno
-Crea un archivo .env en la raíz del proyecto:
+---
 
-# Base de datos
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=wawalu_db
-DB_USER=wawalu_user
-DB_PASSWORD=wawalu123
+## ✨ Características
 
-# Flask
-FLASK_DEBUG=True
-SECRET_KEY=tu-clave-secreta-aqui
+### 🏫 Portal Educativo Público
 
-# Email (opcional)
-MAIL_SERVER=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=tu-email@gmail.com
-MAIL_PASSWORD=tu-password
-Configuración de la Base de Datos
-El archivo schema.sql incluye:
+- **Información Institucional**: Páginas de "Nosotros", "Programas" y metodología.
+- **Galería Multimedia**: Galería de fotos filtrable por categorías.
+- **Noticias y Blog**: Sistema de noticias para mantener informada a la comunidad.
+- **Calendario de Actividades**: Visualización de eventos próximos.
+- **Menú de Comedor**: Visualización del menú semanal para los padres.
 
-📊 Estructura completa de tablas
-👤 Usuarios de ejemplo (incluyendo admin)
-🛍️ 20 productos de ejemplo
-📰 Noticias de muestra
-⚙️ Configuraciones del sitio
-🎮 Uso
-Iniciar la aplicación
-# Activar entorno virtual
-venv\Scripts\activate
+### 👨‍👩‍👧‍👦 Dashboard para Padres y Estudiantes
 
-# Ejecutar aplicación
-python app.py
-Acceso al sitio
-Frontend: http://localhost:5000
-Panel Admin: http://localhost:5000/admin
-Credenciales por defecto
-Admin:
-Email: diego.centeno@vallegrande.edu.pe
-Password: 123456
+#### 📚 Gestión Académica
 
-Usuario test:
-Email: juan@example.com
-Password: password123
-Desarrollo con Tailwind CSS
-# Compilar CSS una vez
-npm run build:css
+- **Notas**: Visualización de calificaciones por curso y bimestre.
+- **Asistencia**: Registro detallado de asistencias, tardanzas y faltas.
+- **Horario**: Cronograma semanal de clases.
+- **Reportes**: Descarga de libretas de notas y constancias en PDF.
 
-# Modo watch (recompila automáticamente)
-npm run watch:css
-📁 Estructura del Proyecto
+#### 💼 Gestión Administrativa
+
+- **Pagos**: Estado de cuenta de pensiones y cronograma de pagos.
+- **Documentos**: Solicitud y descarga de documentos administrativos.
+
+#### 💬 Interacción
+
+- **Tareas**: Visualización y entrega de tareas en línea.
+- **Mensajería**: Comunicación interna con profesores y administrativos.
+
+### 🛒 Tienda Virtual (E-commerce)
+
+- **Catálogo de Productos**: Venta de uniformes, libros y materiales.
+- **Carrito de Compras**: Gestión de carrito persistente en sesión.
+- **Checkout**: Simulación de proceso de compra.
+
+### 👤 Gestión de Usuarios
+
+- **Autenticación**: Registro, inicio de sesión y cierre de sesión seguros.
+- **Perfil**: Gestión de datos personales y cambio de contraseña.
+- **Roles**: Sistema de roles (Padre, Staff, Admin).
+
+### 🔧 Panel Administrativo (Admin/Staff)
+
+- **Gestión de Contenido**: Noticias, Galería, Eventos, Menú.
+- **Gestión Académica**: Cursos, Notas, Asistencia, Horarios.
+- **Gestión Administrativa**: Pensiones, Documentos, Matrículas.
+- **Gestión de Tienda**: Productos, Pedidos.
+- **Gestión de Usuarios**: Admisiones, Usuarios, Reclamos.
+
+---
+
+## 🛠️ Tecnologías
+
+### Backend
+
+- **Lenguaje**: Python 3.8+
+- **Framework**: Flask 3.0.0
+- **Base de Datos**: MySQL 8.0+ (con PyMySQL)
+- **Seguridad**: Werkzeug (hashing), Cryptography
+- **Utilidades**: Python-dotenv
+
+### Frontend
+
+- **Estructura**: HTML5 (Jinja2 Templates)
+- **Estilos**: Tailwind CSS (vía CDN) + CSS personalizado
+- **Scripting**: JavaScript ES6+
+- **Iconos**: Material Symbols (Google Fonts)
+
+### Herramientas
+
+- **Control de Versiones**: Git
+- **Entorno Virtual**: venv
+- **Gestión de Paquetes**: pip, npm
+
+---
+
+## 🚀 Instalación
+
+### Prerrequisitos
+
+- Python 3.8 o superior
+- MySQL Server 8.0+
+- Git
+
+### Pasos
+
+1.  **Clonar el repositorio**
+
+    ```bash
+    git clone https://github.com/vallegrande/ASE251S2_T13_wp.git
+    cd ASE251S2_T13_wp
+    ```
+
+2.  **Configurar entorno virtual**
+
+    ```bash
+    # Windows
+    python -m venv venv
+    venv\Scripts\activate
+
+    # Linux/Mac
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3.  **Instalar dependencias**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Configurar Base de Datos**
+
+    - Crea una base de datos vacía en MySQL llamada `wawalu_db`.
+    - Importa el esquema completo:
+      ```bash
+      mysql -u root -p wawalu_db < schema.sql
+      ```
+    - Importa los datos de prueba:
+      ```bash
+      mysql -u root -p wawalu_db < schema_insert.sql
+      ```
+
+5.  **Variables de Entorno**
+    - Crea un archivo `.env` en la raíz:
+    ```env
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASSWORD=tu_password
+    DB_NAME=wawalu_db
+    SECRET_KEY=tu_clave_secreta
+    ```
+
+---
+
+## ⚙️ Configuración
+
+El archivo `app.py` contiene la configuración principal. Asegúrate de actualizar las credenciales de base de datos si no usas variables de entorno.
+
+```python
+# Configuración de la base de datos en app.py
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'tu_password')
+DB_NAME = os.getenv('DB_NAME', 'wawalu_db')
+```
+
+---
+
+## 🎮 Uso
+
+1.  **Iniciar la aplicación**
+
+    ```bash
+    python app.py
+    ```
+
+2.  **Acceder al navegador**
+    - Frontend: `http://localhost:5000`
+    - Dashboard: `http://localhost:5000/dashboard` (Requiere login)
+
+### Credenciales de Prueba
+
+- **Admin**: `admin@wawalu.com` / `hashed_password` (Nota: En entorno real las contraseñas están hasheadas)
+- **Padre**: `padre@wawalu.com` / `hashed_password`
+
+---
+
+## 📁 Estructura del Proyecto
+
+```text
 wawalu/
-├── 📄 app.py                    # Aplicación Flask principal
-├── 📄 schema.sql                # Base de datos MySQL
-├── 📄 requirements.txt          # Dependencias Python
-├── 📄 package.json              # Configuración npm
-├── 📄 tailwind.config.js        # Configuración Tailwind
-├── 📄 sitemap.xml               # Sitemap para SEO
-├── 📄 README.md                 # Este archivo
-│
-├── 📁 static/                   # Archivos estáticos
-│   ├── 📁 css/                  # Hojas de estilo
-│   ├── 📁 js/                   # JavaScript
-│   ├── 📁 img/                  # Imágenes
-│   └── 📁 icons/                # Iconos
-│
-├── 📁 templates/                # Plantillas HTML
-│   ├── 📄 base.html             # Template base
-│   ├── 📄 index.html            # Página principal
-│   ├── 📄 shop.html             # Tienda
-│   ├── 📄 cart.html             # Carrito
-│   └── 📁 admin/                # Templates admin
-│
-├── 📁 venv/                     # Entorno virtual
-└── 📁 node_modules/             # Dependencias Node.js
-🔗 API
-Autenticación
-POST /login                    # Iniciar sesión
-POST /register                 # Registrar usuario
-POST /logout                   # Cerrar sesión
-GET  /profile                  # Perfil de usuario
-POST /profile/update           # Actualizar perfil
-POST /profile/change-password  # Cambiar contraseña
-Contacto y Comunicación
-GET  /contacto                 # Formulario de contacto
-POST /contacto                 # Enviar mensaje
-GET  /api/contact/info         # Información de contacto
-POST /api/contact/whatsapp     # Generar enlace WhatsApp
-E-commerce
-GET  /tienda                   # Obtener productos
-POST /api/cart/add             # Agregar al carrito
-PUT  /api/cart/update          # Actualizar carrito
-DELETE /api/cart/remove        # Eliminar del carrito
-GET  /api/cart/count           # Contador del carrito
-GET  /carrito                  # Ver carrito
-GET  /checkout                 # Página de checkout
-POST /process_order            # Procesar compra
-GET  /mis-pedidos              # Historial de pedidos
-GET  /order_confirmation/<id>  # Confirmación de pedido
-Matriculación
-GET  /matricula                # Formulario de matrícula
-POST /api/enrollment/submit    # Procesar matrícula
-GET  /enrollment/success       # Éxito de matrícula
-Noticias
-GET  /noticias                 # Lista de noticias
-GET  /noticias/<id>            # Noticia específica
-Atención al Cliente
-GET  /libro-reclamaciones              # Formulario de reclamaciones
-POST /libro-reclamaciones              # Enviar reclamación
-GET  /api/reclamacion/consultar/<num>  # Consultar reclamación
-Administración
-GET  /admin                           # Dashboard admin
-GET  /admin/users                     # Gestionar usuarios
-POST /admin/users                     # Crear usuario
-PUT  /admin/users/<id>                # Actualizar usuario
-DELETE /admin/users/<id>              # Eliminar usuario
-GET  /admin/products                  # Gestionar productos
-POST /admin/products                  # Crear producto
-PUT  /admin/products/<id>             # Actualizar producto
-DELETE /admin/products/<id>           # Eliminar producto
-GET  /admin/orders                    # Gestionar órdenes
-GET  /admin/orders/<id>               # Ver orden específica
-POST /admin/orders/<id>/verify_payment # Verificar pago
-GET  /admin/enrollments               # Gestionar matrículas
-GET  /admin/news                      # Gestionar noticias
-POST /admin/news                      # Crear noticia
-DELETE /admin/news/<id>               # Eliminar noticia
-GET  /admin/content                   # Gestionar contenido
-POST /admin/content/update            # Actualizar contenido
-GET  /admin/gallery                   # Gestionar galería
-POST /admin/gallery/upload            # Subir imagen
-POST /admin/gallery/edit/<id>         # Editar imagen
-DELETE /admin/gallery/delete/<id>     # Eliminar imagen
-GET  /admin/reclamaciones             # Gestionar reclamaciones
-GET  /admin/reclamaciones/<id>        # Ver reclamación
-POST /admin/reclamaciones/<id>/responder # Responder reclamación
-🗄️ Base de Datos
-Tablas Principales
-users - Usuarios del sistema
-products - Productos de la tienda
-shopping_cart - Carrito de compras
-orders - Órdenes de compra
-order_items - Items de las órdenes
-enrollments - Matrículas de estudiantes
-news - Noticias del centro
-site_settings - Configuraciones del sitio
-gallery_images - Imágenes de la galería
-reclamaciones - Libro de reclamaciones
-contact_submissions - Formularios de contacto
-Diagrama ER
-users --|< shopping_cart >|-- products
-users --|< orders >|-- order_items >|-- products
-users --|< enrollments
-users --|< reclamaciones
-users --|< contact_submissions
-gallery_images (standalone)
-news (standalone)
-site_settings (standalone)
-🤝 Contribuir
-Fork el proyecto
-Crea una rama (git checkout -b feature/nueva-caracteristica)
-Commit tus cambios (git commit -m 'Agregar nueva característica')
-Push a la rama (git push origin feature/nueva-caracteristica)
-Abre un Pull Request
-Guías de Contribución
-Usar convenciones de código PEP 8 para Python
-Comentar código complejo
-Agregar tests para nuevas funcionalidades
-Actualizar documentación cuando sea necesario
-🧪 Testing
-# Ejecutar tests
-pytest
+├── .git/                # Control de versiones
+├── static/              # Archivos estáticos
+│   ├── css/             # Estilos CSS
+│   ├── img/             # Imágenes del sitio
+│   ├── js/              # Scripts JavaScript
+│   └── uploads/         # Archivos subidos
+├── templates/           # Plantillas HTML (Jinja2)
+│   ├── dashboard/       # Plantillas del panel administrativo
+│   │   ├── admin/       # Vistas de administrador
+│   │   ├── staff/       # Vistas de personal
+│   │   └── ...          # Vistas de estudiante/padre
+│   └── ...              # Plantillas públicas
+├── venv/                # Entorno virtual Python
+├── .env                 # Variables de entorno
+├── app.py               # 🚀 Aplicación principal Flask
+├── requirements.txt     # Dependencias Backend
+├── schema.sql           # Estructura de Base de Datos (Completa)
+├── schema_insert.sql    # Datos de prueba (Completo)
+└── README.md            # Documentación
+```
 
-# Ejecutar tests con cobertura
-pytest --cov=app
+---
 
-# Ejecutar tests específicos
-pytest tests/test_auth.py
-🚀 Despliegue
-Producción
-Configurar servidor web (Nginx/Apache)
-Usar WSGI server (Gunicorn)
-Configurar base de datos MySQL
-Configurar certificados SSL
-Configurar backup automático
-Docker
-# Construir imagen
-docker build -t wawalu-app .
+## 🔗 API y Rutas Principales
 
-# Ejecutar contenedor
-docker run -p 5000:5000 wawalu-app
-📈 Roadmap
-Versión 2.1 (Próxima)
- Sistema de testimonios de padres
- Chat en línea con soporte
- Notificaciones push
- API REST completa documentada
- Sistema de citas para reuniones
- Integración con calendario Google
-Versión 2.2 (Futuro)
- Multi-idioma (ES/EN)
- App móvil nativa
- Integración avanzada con redes sociales
- Sistema de reportes avanzados
- Portal de padres dedicado
- Sistema de evaluaciones online
-📄 Licencia
-Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.
+### Públicas
 
-📞 Contacto
-Wawalu Centro Educativo
+- `GET /`: Inicio
+- `GET /about`: Nosotros
+- `GET /programs`: Programas
+- `GET /admission`: Admisión
+- `GET /public/shop`: Tienda pública
+- `GET /public/news`: Noticias públicas
 
-🌐 Website: wawalu.com
-📧 Email: diego.centeno@vallegrande.edu.pe
-📱 WhatsApp: +51 942 139 788
-📘 Facebook: Wawalu
-📍 Dirección: Av. Mariscal Benavides 1365, Cañete, Lima, Perú
-Desarrolladores
+### Dashboard Estudiante/Padre
 
-👨‍💻 Diego Centeno - diego.centeno@vallegrande.edu.pe
-🏫 Universidad Tecnológica del Perú - Valle Grande
-🐙 GitHub: vallegrande/ASE251S2_T13_wp
-📅 Última Actualización: Octubre 2025
+- `GET /dashboard/grades`: Notas
+- `GET /dashboard/attendance`: Asistencia
+- `GET /dashboard/schedule`: Horario
+- `GET /dashboard/payments`: Pagos
+- `GET /dashboard/assignments`: Tareas
+- `GET /dashboard/messages`: Mensajería
 
-✅ Sistema de contacto completamente funcional
-✅ Footer horizontal optimizado
-✅ Sistema de matrículas mejorado
-✅ Panel administrativo expandido
-✅ Sistema de reclamaciones implementado
-⭐ ¡No olvides dar una estrella al proyecto si te gustó! ⭐
+### Dashboard Admin
 
-Hecho con ❤️ para la educación infantil
+- `GET /users/manage`: Gestión de usuarios
+- `GET /admissions/manage`: Gestión de admisiones
+- `GET /enrollments/manage`: Gestión de matrículas
+
+---
+
+## 🗄️ Base de Datos
+
+El sistema utiliza MySQL con un esquema relacional completo que incluye tablas para:
+
+- **Usuarios**: `users`, `students`
+- **Académico**: `programs`, `courses`, `enrollments`, `grades`, `attendance`, `class_schedule`
+- **Administrativo**: `pensions`, `student_documents`, `admissions`
+- **Interacción**: `assignments`, `submissions`, `internal_messages`
+- **Contenido**: `news`, `events`, `galery_items`, `menus`
+- **Tienda**: `products`, `orders`, `order_items`
+- **Otros**: `complaints`, `messages`, `comments`
+
+---
+
+## 🤝 Contribuir
+
+1.  Haz un Fork del proyecto.
+2.  Crea tu rama de funcionalidad (`git checkout -b feature/AmazingFeature`).
+3.  Haz Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`).
+4.  Push a la rama (`git push origin feature/AmazingFeature`).
+5.  Abre un Pull Request.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+## 📞 Contacto
+
+**Wawalu Centro Educativo**
+
+- 📍 **Dirección**: Av. Mariscal Benavides 1365, Cañete, Lima, Perú
+- 📧 **Email**: contacto@wawalu.edu.pe
+- 🌐 **Web**: [wawalu.com](http://wawalu.com)
+
+### Desarrolladores
+
+- **Diego Centeno** - _Full Stack Developer_ - [GitHub](https://github.com/vallegrande)
+
+---
+
+_Hecho con ❤️ para la educación infantil._

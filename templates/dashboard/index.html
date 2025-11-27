@@ -6,8 +6,8 @@ Wawalu{% endblock %} {% block content %}
     class="bg-white rounded-2xl shadow-sm p-6 md:p-8 mb-8 flex flex-col md:flex-row items-center justify-between relative overflow-hidden"
   >
     <div class="relative z-10">
-      <span class="text-gray-500 text-sm font-medium mb-1 block"
-        >Tutoría > Dashboard</span
+      <span class="text-gray-500 text-sm font-medium mb-1 block">
+        Tutoría > Dashboard</span
       >
       <h1 class="text-3xl font-bold text-gray-800 mb-2">
         Hola, {{ session.get('user_name') }}
@@ -104,7 +104,7 @@ Wawalu{% endblock %} {% block content %}
         de la plataforma Wawalu.
       </p>
       <a
-        href="#"
+        href="{{ url_for('news') }}"
         class="inline-block bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Ver más
@@ -126,7 +126,7 @@ Wawalu{% endblock %} {% block content %}
         ¡Descúbrelas!
       </p>
       <a
-        href="#"
+        href="{{ url_for('student_messages') }}"
         class="inline-block bg-purple-600 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
       >
         Explorar
@@ -146,7 +146,7 @@ Wawalu{% endblock %} {% block content %}
         importante este mes.
       </p>
       <a
-        href="#"
+        href="{{ url_for('calendar') }}"
         class="inline-block bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
       >
         Ver Calendario

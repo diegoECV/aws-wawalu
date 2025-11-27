@@ -1,0 +1,89 @@
+{% extends "base.html" %} {% block title %}Pedido Confirmado - PG Wawalu{%
+endblock %} {% block content %}
+<div
+  class="container"
+  style="max-width: 800px; margin: 4rem auto; text-align: center"
+>
+  <div
+    style="
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    "
+  >
+    <div style="color: #28a745; font-size: 4rem; margin-bottom: 1.5rem">
+      <i class="fas fa-check-circle"></i>
+    </div>
+
+    <h1 style="margin-bottom: 1rem; color: #333">¡Gracias por tu compra!</h1>
+    <p style="font-size: 1.2rem; color: #666; margin-bottom: 2rem">
+      Tu pedido #{{ order.id }} ha sido recibido correctamente.
+    </p>
+
+    <div
+      style="
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        text-align: left;
+      "
+    >
+      <h3
+        style="
+          margin-bottom: 1rem;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 0.5rem;
+        "
+      >
+        Detalles del Pedido
+      </h3>
+      <p><strong>Total:</strong> S/ {{ "%.2f"|format(order.total_amount) }}</p>
+      <p><strong>Método de Pago:</strong> {{ order.payment_method|upper }}</p>
+      <p>
+        <strong>Estado:</strong>
+        <span class="badge badge-warning">{{ order.status|upper }}</span>
+      </p>
+
+      {% if order.payment_method == 'yape' %}
+      <div
+        style="
+          margin-top: 1rem;
+          padding: 1rem;
+          background: #f3e5f5;
+          border-radius: 4px;
+          color: #742284;
+        "
+      >
+        <i class="fas fa-info-circle"></i> Recuerda enviar la captura de tu Yape
+        al WhatsApp +51942139788 si aún no lo has hecho.
+      </div>
+      {% elif order.payment_method == 'transfer' %}
+      <div
+        style="
+          margin-top: 1rem;
+          padding: 1rem;
+          background: #e3f2fd;
+          border-radius: 4px;
+          color: #1565c0;
+        "
+      >
+        <i class="fas fa-info-circle"></i> Por favor realiza la transferencia
+        usando la referencia
+        <strong>WAWALU-{{ session.get('user_id') }}</strong>.
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="display: flex; gap: 1rem; justify-content: center">
+      <a href="{{ url_for('shop') }}" class="btn btn-primary"
+        >Seguir Comprando</a
+      >
+      <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary"
+        >Ver mis Pedidos</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

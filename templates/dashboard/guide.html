@@ -1,0 +1,222 @@
+{% extends "dashboard/base_dashboard.html" %} {% block title %}Guía de Uso -
+Wawalu{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <span class="text-gray-500 text-sm font-medium mb-1 block"
+      >Soporte > Guía de Uso</span
+    >
+    <h1 class="text-3xl font-bold text-gray-800">Guía del Sistema Wawalu</h1>
+    <p class="text-gray-600 mt-2">
+      Aprende a utilizar todas las funcionalidades de nuestra plataforma
+      educativa.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Sidebar Navigation -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+        <h3
+          class="font-bold text-gray-800 mb-4 uppercase text-sm tracking-wider"
+        >
+          Contenido
+        </h3>
+        <nav class="space-y-2">
+          <a
+            href="#matriculas"
+            class="block text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+          >
+            Gestión de Matrículas
+          </a>
+          <a
+            href="#tienda"
+            class="block text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+          >
+            Tienda Virtual
+          </a>
+          <a
+            href="#usuarios"
+            class="block text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+          >
+            Gestión de Usuarios
+          </a>
+          <a
+            href="#noticias"
+            class="block text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+          >
+            Noticias y Eventos
+          </a>
+          <a
+            href="#galeria"
+            class="block text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+          >
+            Galería de Fotos
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:col-span-3 space-y-8">
+      <!-- Matrículas -->
+      <section
+        id="matriculas"
+        class="bg-white rounded-xl shadow-sm p-8 scroll-mt-24"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="bg-blue-100 p-3 rounded-lg">
+            <span class="material-symbols-outlined text-blue-600"
+              >assignment_ind</span
+            >
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">
+            Gestión de Matrículas
+          </h2>
+        </div>
+        <div class="prose text-gray-600 max-w-none">
+          <p>
+            El módulo de matrículas permite administrar todo el proceso de
+            inscripción de nuevos estudiantes.
+          </p>
+          <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li>
+              <strong>Revisión:</strong> Accede a la lista de solicitudes
+              pendientes para verificar la documentación.
+            </li>
+            <li>
+              <strong>Aprobación:</strong> Cambia el estado de una matrícula a
+              "Aprobada" para oficializar el ingreso.
+            </li>
+            <li>
+              <strong>Documentos:</strong> Visualiza y descarga los documentos
+              adjuntos (DNI, certificados) de cada estudiante.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Tienda -->
+      <section
+        id="tienda"
+        class="bg-white rounded-xl shadow-sm p-8 scroll-mt-24"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="bg-green-100 p-3 rounded-lg">
+            <span class="material-symbols-outlined text-green-600"
+              >storefront</span
+            >
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">Tienda Virtual</h2>
+        </div>
+        <div class="prose text-gray-600 max-w-none">
+          <p>
+            Administra el inventario de productos escolares, uniformes y
+            accesorios.
+          </p>
+          <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li>
+              <strong>Productos:</strong> Agrega nuevos productos con imágenes,
+              precios y descripciones detalladas.
+            </li>
+            <li>
+              <strong>Stock:</strong> Controla la disponibilidad de cada
+              artículo en tiempo real.
+            </li>
+            <li>
+              <strong>Pedidos:</strong> Gestiona las órdenes de compra
+              realizadas por los padres de familia.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Usuarios -->
+      <section
+        id="usuarios"
+        class="bg-white rounded-xl shadow-sm p-8 scroll-mt-24"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="bg-purple-100 p-3 rounded-lg">
+            <span class="material-symbols-outlined text-purple-600"
+              >manage_accounts</span
+            >
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
+        </div>
+        <div class="prose text-gray-600 max-w-none">
+          <p>Control total sobre las cuentas de acceso a la plataforma.</p>
+          <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li>
+              <strong>Roles:</strong> Asigna permisos de Administrador, Staff o
+              Padre de Familia según corresponda.
+            </li>
+            <li>
+              <strong>Seguridad:</strong> Restablece contraseñas y gestiona el
+              acceso de los usuarios.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Noticias -->
+      <section
+        id="noticias"
+        class="bg-white rounded-xl shadow-sm p-8 scroll-mt-24"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="bg-red-100 p-3 rounded-lg">
+            <span class="material-symbols-outlined text-red-600"
+              >newspaper</span
+            >
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">Noticias y Eventos</h2>
+        </div>
+        <div class="prose text-gray-600 max-w-none">
+          <p>
+            Mantén informada a la comunidad educativa con las últimas novedades.
+          </p>
+          <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li>
+              <strong>Publicaciones:</strong> Crea artículos con imágenes
+              destacadas para el blog de noticias.
+            </li>
+            <li>
+              <strong>Eventos:</strong> Programa actividades en el calendario
+              escolar visible para todos.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Galería -->
+      <section
+        id="galeria"
+        class="bg-white rounded-xl shadow-sm p-8 scroll-mt-24"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="bg-pink-100 p-3 rounded-lg">
+            <span class="material-symbols-outlined text-pink-600"
+              >photo_library</span
+            >
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">Galería de Fotos</h2>
+        </div>
+        <div class="prose text-gray-600 max-w-none">
+          <p>Comparte los mejores momentos de las actividades escolares.</p>
+          <ul class="list-disc pl-5 space-y-2 mt-4">
+            <li>
+              <strong>Álbumes:</strong> Organiza las fotos por categorías
+              (Eventos, Talleres, Actividades).
+            </li>
+            <li>
+              <strong>Subida:</strong> Carga múltiples imágenes de forma
+              sencilla para actualizar la galería pública.
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+/* Custom animations not in Tailwind default config */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+.checkout-step-content {
+  display: none;
+}
+.checkout-step-content.active {
+  display: block;
+}
+.step.active .step-icon {
+  background-color: #2563eb;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5);
+}
+.step.active .step-label {
+  color: #2563eb;
+  font-weight: 600;
+}

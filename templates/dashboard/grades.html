@@ -1,0 +1,83 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Mis Notas - Wawalu{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Libreta de Notas</h1>
+            <p class="text-gray-600">Consulta el rendimiento académico por periodo.</p>
+        </div>
+        
+        <!-- Student Selector -->
+        {% if students|length > 1 %}
+        <div class="relative">
+            <form action="{{ url_for('student_grades') }}" method="get" class="flex items-center">
+                <label for="student_id" class="mr-2 text-sm font-medium text-gray-700">Estudiante:</label>
+                <select name="student_id" id="student_id" onchange="this.form.submit()" 
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    {% for student in students %}
+                    <option value="{{ student.id }}" {% if student.id == current_student_id %}selected{% endif %}>
+                        {{ student.first_name }} {{ student.last_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if grades %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Programa</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comentarios</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for grade in grades %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ grade.course_name }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ grade.period }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ grade.program_name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold {% if grade.grade >= 13 %}text-green-600{% elif grade.grade >= 11 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                                {{ grade.grade }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            {{ grade.comments or '-' }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+        <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+            <span class="material-symbols-outlined text-5xl">assignment_late</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">No hay notas registradas</h3>
+        <p class="mt-2 text-sm text-gray-500">Aún no se han publicado calificaciones para este estudiante.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,46 +1,205 @@
-{% extends "base.html" %} {% from "components/product_card.html" import product_card %} {% block title %}Tienda - Wawalu{% endblock %} 
-{% block extra_css %}
+{% extends "base.html" %} {% from "components/product_card.html" import
+product_card %} {% block title %}Tienda - Wawalu{% endblock %} {% block
+extra_css %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/public_shop.css') }}">
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/public_shop.css') }}"
+/>
 
 {% endblock %} {% block content %}
 
-<!-- Header Banner Mejorado -->
-<div class="relative py-16">
-  <img src="{{ url_for('static', filename='image/galery/imagen3.jpg') }}" 
-       alt="Fondo Tienda" 
-       class="absolute inset-0 w-full h-full object-cover z-0" 
-       style="filter: brightness(0.7);" />
-  <div class="absolute inset-0 bg-blue-600 bg-opacity-80 z-10"></div>
-  <div class="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white animate-fade-in">
-        Tienda Escolar Wawalu
-      </h1>
-      <p class="text-xl text-blue-100 animate-fade-in-delay">
-        Uniformes, útiles y materiales educativos de calidad
-      </p>
-    </div>
+<!-- Hero Section -->
+<section
+  class="shop-hero flex items-center justify-center text-white text-center"
+>
+  <div class="relative z-10 px-4 reveal active">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Tienda Escolar Wawalu</h1>
+    <p class="text-xl md:text-2xl opacity-90">
+      Uniformes, útiles y materiales educativos de calidad
+    </p>
   </div>
-</div>
+</section>
 
 <!-- Main Content -->
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Filters Bar -->
+  <div
+    class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-8 sticky top-24 z-30"
+  >
+    <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+      <!-- Search -->
+      <div class="relative w-full md:w-96">
+        <span
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <span class="material-symbols-outlined text-gray-400">search</span>
+        </span>
+        <input
+          type="text"
+          id="shopSearch"
+          class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow"
+          placeholder="Buscar productos..."
+        />
+      </div>
+
+      <!-- Filters Group -->
+      <div class="flex flex-wrap gap-3 items-center w-full md:w-auto">
+        <!-- Category Filter -->
+        <select
+          id="shopCategory"
+          class="block w-full md:w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
+        >
+          <option value="all">Todas las Categorías</option>
+          <option value="Uniformes">Uniformes</option>
+          <option value="Útiles">Útiles</option>
+          <option value="Libros">Libros</option>
+          <option value="Accesorios">Accesorios</option>
+        </select>
+
+        <!-- Sort -->
+        <select
+          id="shopSort"
+          class="block w-full md:w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
+        >
+          <option value="default">Ordenar por</option>
+          <option value="price-asc">Precio: Menor a Mayor</option>
+          <option value="price-desc">Precio: Mayor a Menor</option>
+          <option value="name-asc">Nombre: A-Z</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <!-- Products Grid -->
   {% if products %}
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">Nuestros Productos</h2>
-      <p class="text-gray-600">
-        Encuentra todo lo que necesitas para el año escolar
-      </p>
-    </div>
-
+  <div
+    id="productsGrid"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+  >
+    {% for product in products %}
     <div
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+      class="product-item group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col"
+      data-title="{{ product.name }}"
+      data-category="{{ product.category }}"
+      data-price="{{ product.price }}"
+      data-description="{{ product.description }}"
     >
-      {% for product in products %} {{ product_card(product, show_delete=False) }} {% endfor %}
+      <!-- Image Area (Black Background) -->
+      <div
+        class="relative h-64 bg-black flex items-center justify-center overflow-hidden group-image-container"
+      >
+        {% if product.image_url %}
+        <img
+          src="{{ url_for('static', filename='uploads/' + product.image_url) }}"
+          alt="{{ product.name }}"
+          class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+        />
+        {% else %}
+        <div class="text-gray-600">
+          <span class="material-symbols-outlined text-6xl">image</span>
+        </div>
+        {% endif %}
+
+        <!-- Center Button -->
+        <div
+          class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20 backdrop-blur-[2px]"
+        >
+          <button
+            onclick="openProductModal({{ product | tojson }})"
+            class="bg-white text-black font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-lg"
+          >
+            Ver Detalles
+          </button>
+        </div>
+
+        <!-- Badge -->
+        {% if product.stock <= 5 and product.stock > 0 %}
+        <div class="absolute top-3 left-3">
+          <span
+            class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm"
+          >
+            ¡Últimas unidades!
+          </span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Content -->
+      <div class="p-5 flex-1 flex flex-col">
+        <div class="mb-2">
+          <span
+            class="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider"
+          >
+            {{ product.category }}
+          </span>
+        </div>
+
+        <h3 class="text-lg font-bold text-gray-900 mb-1 leading-tight">
+          {{ product.name }}
+        </h3>
+
+        <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+          {{ product.description }}
+        </p>
+
+        <div class="mt-auto pt-4 border-t border-gray-50">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-2xl font-bold text-gray-900"
+              >S/ {{ "%.2f"|format(product.price) }}</span
+            >
+            <span class="text-xs text-gray-400"
+              >Stock: {{ product.stock }}</span
+            >
+          </div>
+
+          <!-- Add to Cart Form -->
+          <form
+            action="{{ url_for('add_to_cart', product_id=product.id) }}"
+            method="POST"
+            class="flex gap-2"
+          >
+            <div
+              class="flex items-center border border-gray-200 rounded-lg bg-gray-50 h-10 w-24"
+            >
+              <button
+                type="button"
+                onclick="decrementQty(this)"
+                class="px-2 text-gray-600 hover:bg-gray-200 h-full rounded-l-lg flex items-center justify-center w-8"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                max="{{ product.stock }}"
+                class="w-full text-center bg-transparent border-none p-0 text-sm font-bold focus:ring-0 appearance-none"
+                readonly
+              />
+              <button
+                type="button"
+                onclick="incrementQty(this, {{ product.stock }})"
+                class="px-2 text-gray-600 hover:bg-gray-200 h-full rounded-r-lg flex items-center justify-center w-8"
+              >
+                +
+              </button>
+            </div>
+            <button
+              type="submit"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold h-10 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+            >
+              <span class="material-symbols-outlined text-lg"
+                >shopping_cart</span
+              >
+              Agregar
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
+    {% endfor %}
   </div>
   {% else %}
   <div
@@ -60,7 +219,7 @@
 <!-- Product Detail Modal -->
 <div
   id="productModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm"
 >
   <div
     class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden animate-scale-in flex flex-col md:flex-row max-h-[90vh]"
@@ -200,6 +359,8 @@
   </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script src="{{ url_for('static', filename='js/public_shop.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_shop_init.js') }}"></script>
 
 {% endblock %}

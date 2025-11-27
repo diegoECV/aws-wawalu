@@ -1,0 +1,32 @@
+/* Hero Section */
+.gallery-hero {
+    background-image: url('../image/galery/imagen1.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+}
+
+.gallery-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Pink to Purple gradient */
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.9) 0%, rgba(168, 85, 247, 0.8) 100%);
+}
+
+/* Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}

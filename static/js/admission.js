@@ -2,23 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('admissionForm');
 
     form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if (validateForm()) {
-            // Simulate submission
+        if (!validateForm()) {
+            e.preventDefault();
+        } else {
+            // Show loading state
             const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Enviando...';
-
-            setTimeout(() => {
-                alert('Su solicitud de admisión ha sido enviada exitosamente. Nos pondremos en contacto con usted pronto.');
-                form.reset();
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 2000);
         }
     });
 

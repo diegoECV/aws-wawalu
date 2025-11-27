@@ -1,0 +1,64 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Documentos - Wawalu{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Documentos Académicos</h1>
+            <p class="text-gray-600">Descarga certificados, constancias y otros documentos.</p>
+        </div>
+        
+        <!-- Student Selector -->
+        {% if students|length > 1 %}
+        <div class="relative">
+            <form action="{{ url_for('student_documents') }}" method="get" class="flex items-center">
+                <label for="student_id" class="mr-2 text-sm font-medium text-gray-700">Estudiante:</label>
+                <select name="student_id" id="student_id" onchange="this.form.submit()" 
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    {% for student in students %}
+                    <option value="{{ student.id }}" {% if student.id == current_student_id %}selected{% endif %}>
+                        {{ student.first_name }} {{ student.last_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if documents %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for doc in documents %}
+        <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow border border-gray-100">
+            <div class="flex items-start justify-between mb-4">
+                <div class="bg-blue-50 p-3 rounded-lg">
+                    <span class="material-symbols-outlined text-blue-600 text-2xl">description</span>
+                </div>
+                <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                    {{ doc.upload_date.strftime('%d/%m/%Y') }}
+                </span>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2">{{ doc.title }}</h3>
+            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ doc.description or 'Sin descripción' }}</p>
+            <a href="{{ url_for('static', filename='uploads/documents/' + doc.file_url) }}" download 
+               class="flex items-center justify-center w-full bg-white border border-blue-600 text-blue-600 font-medium py-2 px-4 rounded-lg hover:bg-blue-50 transition-colors">
+                <span class="material-symbols-outlined mr-2 text-lg">download</span>
+                Descargar
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+        <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+            <span class="material-symbols-outlined text-5xl">folder_off</span>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">No hay documentos disponibles</h3>
+        <p class="mt-2 text-sm text-gray-500">No se han subido documentos para este estudiante.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

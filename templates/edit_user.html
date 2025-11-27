@@ -1,0 +1,19 @@
+{% extends 'auth_base.html' %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Editar Usuario</h2>
+<form method="POST">
+  <label>Nombre:</label>
+  <input type="text" name="name" value="{{ user.name }}" required class="input mb-2">
+  <label>Email:</label>
+  <input type="email" name="email" value="{{ user.email }}" required class="input mb-2">
+  <label>Rol:</label>
+  <select name="role" class="input mb-2">
+    <option value="padre" {% if user.role == 'padre' %}selected{% endif %}>Padre</option>
+    <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
+    {% if session['user_role'] == 'admin' %}
+    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+    {% endif %}
+  </select>
+  <button type="submit" class="btn">Actualizar</button>
+</form>
+{% endblock %}

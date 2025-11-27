@@ -76,6 +76,13 @@ Wawalu{% endblock %} {% block content %}
             Información Personal
           </a>
           <a
+            href="{{ url_for('orders') }}"
+            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          >
+            <span class="material-symbols-outlined mr-3">shopping_bag</span>
+            Mis Pedidos
+          </a>
+          <a
             href="#security"
             class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
           >
@@ -132,7 +139,7 @@ Wawalu{% endblock %} {% block content %}
         </div>
 
         <form
-          action="{{ url_for('update_profile') }}"
+          action="{{ url_for('profile') }}"
           method="POST"
           enctype="multipart/form-data"
           class="space-y-6"

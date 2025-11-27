@@ -33,16 +33,56 @@ endblock %} {% block extra_css %}
           Datos del Apoderado
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="form-group md:col-span-2">
-            <label for="parent_name" class="form-label"
-              >Nombres y Apellidos *</label
-            >
+          <div class="form-group">
+            <label for="parent_name" class="form-label">Nombres *</label>
             <input
               type="text"
               id="parent_name"
               name="parent_name"
               class="form-input"
-              placeholder="Ej: Juan Pérez"
+              placeholder="Ej: Juan"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="parent_lastname" class="form-label">Apellidos *</label>
+            <input
+              type="text"
+              id="parent_lastname"
+              name="parent_lastname"
+              class="form-input"
+              placeholder="Ej: Pérez"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="parent_doc_type" class="form-label"
+              >Tipo de Documento *</label
+            >
+            <select
+              id="parent_doc_type"
+              name="parent_doc_type"
+              class="form-select"
+              required
+            >
+              <option value="DNI">DNI</option>
+              <option value="CE">Carnet de Extranjería</option>
+              <option value="PASSPORT">Pasaporte</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="parent_doc_number" class="form-label"
+              >Número de Documento *</label
+            >
+            <input
+              type="text"
+              id="parent_doc_number"
+              name="parent_doc_number"
+              class="form-input"
+              placeholder="Ej: 12345678"
               required
             />
           </div>
@@ -157,6 +197,20 @@ endblock %} {% block extra_css %}
               class="form-input"
               required
             />
+          </div>
+
+          <div class="form-group">
+            <label for="child_gender" class="form-label">Género *</label>
+            <select
+              id="child_gender"
+              name="child_gender"
+              class="form-select"
+              required
+            >
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+              <option value="Other">Otro</option>
+            </select>
           </div>
 
           <div class="form-group">

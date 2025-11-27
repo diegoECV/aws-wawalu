@@ -49,6 +49,7 @@ endblock %} {% block extra_css %}
         </div>
 
         <form id="loginForm" class="space-y-8" novalidate method="POST">
+          <input type="hidden" name="next" value="{{ request.args.get('next') or '' }}">
           <!-- Email Field -->
           <div class="form-group relative">
             <label
@@ -153,20 +154,7 @@ endblock %} {% block extra_css %}
               Iniciar Sesión
             </button>
           </div>
-        </form>
 
-        <div class="mt-8 text-center">
-          <p class="text-base text-gray-600">
-            ¿No tienes una cuenta?
-            <a
-              href="{{ url_for('register') }}"
-              class="font-bold text-blue-600 hover:text-blue-500 transition-colors hover:underline"
-              >Regístrate</a
-            >
-          </p>
-        </div>
-
-        <div class="mt-6 text-center">
           <a
             href="{{ url_for('index') }}"
             class="text-sm text-gray-500 hover:text-gray-700 flex items-center justify-center transition-colors group"

@@ -1,0 +1,308 @@
+{% extends "dashboard/base_dashboard.html" %} {% block title %}Staff Dashboard -
+Wawalu{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Welcome Section -->
+  <div
+    class="bg-white rounded-2xl shadow-sm p-6 md:p-8 mb-8 flex flex-col md:flex-row items-center justify-between relative overflow-hidden"
+  >
+    <div class="relative z-10">
+      <span class="text-gray-500 text-sm font-medium mb-1 block"
+        >Docencia > Dashboard</span
+      >
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">
+        Hola, {{ session.get('user_name') }}
+      </h1>
+      <p class="text-gray-600">
+        Bienvenido al panel docente. Gestiona tus clases y estudiantes desde
+        aquí.
+      </p>
+    </div>
+    <div class="hidden md:block relative z-10">
+      <div class="bg-blue-50 rounded-full p-4">
+        <span class="material-symbols-outlined text-4xl text-blue-600"
+          >school</span
+        >
+      </div>
+    </div>
+    <!-- Decorative Background Pattern -->
+    <div
+      class="absolute top-0 right-0 w-64 h-full opacity-10 pointer-events-none"
+    >
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path
+          fill="#2563EB"
+          d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-5.3C93.5,8.6,82.2,21.5,70.6,32.3C59,43.1,47.1,51.8,34.8,58.3C22.5,64.8,9.8,69.1,-1.8,72.2C-13.4,75.3,-23.9,77.2,-34.1,73.5C-44.3,69.8,-54.2,60.5,-63.1,49.9C-72,39.3,-79.9,27.4,-82.6,14.5C-85.3,1.6,-82.8,-12.3,-75.6,-24.3C-68.4,-36.3,-56.5,-46.4,-43.8,-54.2C-31.1,-62,-17.6,-67.5,-3.6,-61.3C10.4,-55.1,20.8,-37.2,30.5,-22.8L44.7,-76.4Z"
+          transform="translate(100 100)"
+        />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Users -->
+    <div
+      class="bg-white rounded-xl shadow-sm p-6 flex items-center hover:shadow-md transition-shadow border-l-4 border-blue-500"
+    >
+      <div class="bg-blue-100 p-3 rounded-lg mr-4">
+        <span class="material-symbols-outlined text-blue-600 text-2xl"
+          >group</span
+        >
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Usuarios Totales</p>
+        <h3 class="text-2xl font-bold text-gray-800">{{ total_users }}</h3>
+      </div>
+    </div>
+
+    <!-- Total Students -->
+    <div
+      class="bg-white rounded-xl shadow-sm p-6 flex items-center hover:shadow-md transition-shadow border-l-4 border-green-500"
+    >
+      <div class="bg-green-100 p-3 rounded-lg mr-4">
+        <span class="material-symbols-outlined text-green-600 text-2xl"
+          >school</span
+        >
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Estudiantes</p>
+        <h3 class="text-2xl font-bold text-gray-800">{{ total_students }}</h3>
+      </div>
+    </div>
+
+    <!-- Pending Admissions -->
+    <div
+      class="bg-white rounded-xl shadow-sm p-6 flex items-center hover:shadow-md transition-shadow border-l-4 border-orange-500"
+    >
+      <div class="bg-orange-100 p-3 rounded-lg mr-4">
+        <span class="material-symbols-outlined text-orange-600 text-2xl"
+          >pending_actions</span
+        >
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Admisiones Pend.</p>
+        <h3 class="text-2xl font-bold text-gray-800">
+          {{ pending_admissions }}
+        </h3>
+      </div>
+    </div>
+
+    <!-- Total Orders -->
+    <div
+      class="bg-white rounded-xl shadow-sm p-6 flex items-center hover:shadow-md transition-shadow border-l-4 border-purple-500"
+    >
+      <div class="bg-purple-100 p-3 rounded-lg mr-4">
+        <span class="material-symbols-outlined text-purple-600 text-2xl"
+          >shopping_cart</span
+        >
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Pedidos Tienda</p>
+        <h3 class="text-2xl font-bold text-gray-800">{{ total_orders }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Grid -->
+  <h2 class="text-xl font-bold text-gray-800 mb-4">Gestión Rápida</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Manage Enrollments -->
+    <a
+      href="{{ url_for('manage_enrollments') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-blue-50 p-3 rounded-lg group-hover:bg-blue-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-blue-600 text-3xl"
+            >assignment_ind</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-blue-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Matrículas</h3>
+      <p class="text-gray-500 text-sm">Revisar y aprobar nuevas matrículas</p>
+    </a>
+
+    <!-- Manage Users -->
+    <a
+      href="{{ url_for('manage_users') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-purple-50 p-3 rounded-lg group-hover:bg-purple-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-purple-600 text-3xl"
+            >manage_accounts</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-purple-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Usuarios</h3>
+      <p class="text-gray-500 text-sm">Administrar cuentas y roles</p>
+    </a>
+
+    <!-- Manage Shop -->
+    <a
+      href="{{ url_for('manage_products') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-green-50 p-3 rounded-lg group-hover:bg-green-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-green-600 text-3xl"
+            >storefront</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-green-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Tienda</h3>
+      <p class="text-gray-500 text-sm">Gestionar productos e inventario</p>
+    </a>
+
+    <!-- Manage News -->
+    <a
+      href="{{ url_for('manage_news') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-red-50 p-3 rounded-lg group-hover:bg-red-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-red-600 text-3xl"
+            >newspaper</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-red-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Noticias</h3>
+      <p class="text-gray-500 text-sm">Publicar anuncios y eventos</p>
+    </a>
+
+    <!-- Manage Gallery -->
+    <a
+      href="{{ url_for('manage_galery') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-pink-50 p-3 rounded-lg group-hover:bg-pink-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-pink-600 text-3xl"
+            >gallery_thumbnail</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-pink-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Galería</h3>
+      <p class="text-gray-500 text-sm">Subir y organizar fotos</p>
+    </a>
+
+    <!-- Manage Calendar -->
+    <a
+      href="{{ url_for('manage_events') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-orange-50 p-3 rounded-lg group-hover:bg-orange-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-orange-600 text-3xl"
+            >calendar_month</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-orange-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Calendario</h3>
+      <p class="text-gray-500 text-sm">Gestionar eventos y fechas</p>
+    </a>
+
+    <!-- Manage Menu -->
+    <a
+      href="{{ url_for('manage_menu') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-teal-50 p-3 rounded-lg group-hover:bg-teal-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-teal-600 text-3xl"
+            >restaurant_menu</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-teal-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Menú</h3>
+      <p class="text-gray-500 text-sm">Planificar comidas semanales</p>
+    </a>
+
+    <!-- Manage Reports -->
+    <a
+      href="{{ url_for('manage_reports') }}"
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 group"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div
+          class="bg-indigo-50 p-3 rounded-lg group-hover:bg-indigo-100 transition-colors"
+        >
+          <span class="material-symbols-outlined text-indigo-600 text-3xl"
+            >description</span
+          >
+        </div>
+        <span
+          class="material-symbols-outlined text-gray-300 group-hover:text-indigo-500 transition-colors"
+          >arrow_forward</span
+        >
+      </div>
+      <h3 class="font-bold text-gray-800 text-lg mb-1">Reportes</h3>
+      <p class="text-gray-500 text-sm">Subir notas y evaluaciones</p>
+    </a>
+
+    <!-- User Guide -->
+    <div
+      class="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-all transform hover:-translate-y-1 border-l-4 border-blue-500"
+    >
+      <div class="flex items-center gap-3 mb-4">
+        <span class="material-symbols-outlined text-blue-600 text-2xl"
+          >article</span
+        >
+        <h3 class="font-bold text-gray-800 text-lg">Guía de uso del sistema</h3>
+      </div>
+      <p class="text-gray-600 text-sm mb-4">
+        Descarga la guía completa para aprender a utilizar todas las funciones
+        de la plataforma Wawalu.
+      </p>
+      <a
+        href="{{ url_for('dashboard_guide') }}"
+        class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
+      >
+        Ver más
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

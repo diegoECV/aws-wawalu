@@ -25,10 +25,11 @@ Wawalu{% endblock %} {% block content %}
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Upcoming Events List -->
-    <div class="lg:col-span-2 space-y-6">
+    <div class="lg:col-span-2 space-y-6" id="events-container">
       {% if events %} {% for event in events %}
       <div
-        class="bg-white rounded-xl shadow-sm p-6 flex gap-6 hover:shadow-md transition-shadow border-l-4 {% if event.type == 'reunion' %}border-purple-500{% elif event.type == 'festivo' %}border-red-500{% else %}border-blue-500{% endif %}"
+        class="event-item bg-white rounded-xl shadow-sm p-6 flex gap-6 hover:shadow-md transition-shadow border-l-4 {% if event.type == 'reunion' %}border-purple-500{% elif event.type == 'festivo' %}border-red-500{% else %}border-blue-500{% endif %}"
+        data-date="{{ event.start_date.strftime('%Y-%m-%d') }}"
       >
         <!-- Date Box -->
         <div
@@ -88,6 +89,7 @@ Wawalu{% endblock %} {% block content %}
       </div>
       {% endfor %} {% else %}
       <div
+        id="no-events-message"
         class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200"
       >
         <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
@@ -101,18 +103,57 @@ Wawalu{% endblock %} {% block content %}
         </p>
       </div>
       {% endif %}
+
+      <!-- Hidden message for filtering -->
+      <div
+        id="no-events-filter-message"
+        class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200 hidden"
+      >
+        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
+          >event_note</span
+        >
+        <h3 class="text-xl font-medium text-gray-500">
+          No hay eventos para esta fecha
+        </h3>
+        <button
+          id="clear-filter-btn"
+          class="mt-4 text-blue-600 hover:text-blue-700 font-medium"
+        >
+          Ver todos los eventos
+        </button>
+      </div>
     </div>
 
-    <!-- Mini Calendar Widget (Static for visual) -->
+    <!-- Mini Calendar Widget -->
     <div class="lg:col-span-1">
       <div class="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-        <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-          <span class="material-symbols-outlined mr-2 text-blue-600"
-            >calendar_month</span
+        <div class="flex items-center justify-between mb-4">
+          <h3
+            class="font-bold text-gray-800 flex items-center"
+            id="current-month"
           >
-          Resumen del Mes
-        </h3>
-        <!-- Simple static calendar grid for visual appeal -->
+            <!-- Month Year will be injected here -->
+          </h3>
+          <div class="flex space-x-1">
+            <button
+              id="prev-month"
+              class="p-1 hover:bg-gray-100 rounded-full text-gray-600"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >chevron_left</span
+              >
+            </button>
+            <button
+              id="next-month"
+              class="p-1 hover:bg-gray-100 rounded-full text-gray-600"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >chevron_right</span
+              >
+            </button>
+          </div>
+        </div>
+
         <div class="grid grid-cols-7 gap-1 text-center text-sm mb-2">
           <div class="text-gray-400 font-medium py-1">D</div>
           <div class="text-gray-400 font-medium py-1">L</div>
@@ -122,25 +163,11 @@ Wawalu{% endblock %} {% block content %}
           <div class="text-gray-400 font-medium py-1">V</div>
           <div class="text-gray-400 font-medium py-1">S</div>
         </div>
-        <div class="grid grid-cols-7 gap-1 text-center text-sm">
-          <!-- Mock days -->
-          <div class="py-2 text-gray-300">29</div>
-          <div class="py-2 text-gray-300">30</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">1</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">2</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">3</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">4</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">5</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">6</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">7</div>
-          <div
-            class="py-2 bg-blue-600 text-white rounded-full font-bold shadow-md"
-          >
-            8
-          </div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">9</div>
-          <div class="py-2 hover:bg-gray-50 rounded cursor-pointer">10</div>
-          <!-- ... more days ... -->
+        <div
+          id="calendar-grid"
+          class="grid grid-cols-7 gap-1 text-center text-sm"
+        >
+          <!-- Days will be injected here by JS -->
         </div>
 
         <div class="mt-6 pt-6 border-t border-gray-100">
@@ -265,4 +292,6 @@ Wawalu{% endblock %} {% block content %}
     </form>
   </div>
 </div>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
 {% endblock %}

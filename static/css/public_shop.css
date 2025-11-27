@@ -5,3 +5,55 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Hero Section */
+.shop-hero {
+    background-image: url('../image/galery/imagen3.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+}
+
+.shop-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Blue gradient for Shop */
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.8) 100%);
+}
+
+/* Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+
+/* Product Card Utilities */
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Smooth image transition */
+.group-image-container img {
+    backface-visibility: hidden;
+}

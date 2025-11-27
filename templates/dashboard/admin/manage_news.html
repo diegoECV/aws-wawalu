@@ -1,0 +1,118 @@
+{% extends 'dashboard/base_dashboard.html' %} {% block title %}Gestión de
+Noticias - Wawalu{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+  >
+    <div>
+      <span class="text-gray-500 text-sm font-medium mb-1 block"
+        >Gestión Contenido > Noticias</span
+      >
+      <h1 class="text-3xl font-bold text-gray-800">Noticias y Eventos</h1>
+    </div>
+    <a
+      href="{{ url_for('add_news') }}"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/30"
+    >
+      <span class="material-symbols-outlined">add</span>
+      Nueva Noticia
+    </a>
+  </div>
+
+  <!-- News Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for news in news %}
+    <div
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col h-full transform hover:-translate-y-1"
+    >
+      <!-- Image -->
+      <div class="h-56 overflow-hidden relative">
+        {% if news.image_url %}
+        <img
+          src="{{ url_for('static', filename='uploads/' + news.image_url) }}"
+          alt="{{ news.title }}"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        {% else %}
+        <div
+          class="w-full h-full bg-gray-50 flex items-center justify-center text-gray-300"
+        >
+          <span class="material-symbols-outlined text-6xl">newspaper</span>
+        </div>
+        {% endif %}
+
+        <!-- Date Badge -->
+        <div
+          class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-700 shadow-sm flex items-center gap-1"
+        >
+          <span class="material-symbols-outlined text-[14px] text-blue-600"
+            >calendar_today</span
+          >
+          {{ news.created_at.strftime('%d %b, %Y') if news.created_at else
+          'Fecha desconocida' }}
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 flex-1 flex flex-col">
+        <h3
+          class="font-bold text-gray-800 text-xl mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors"
+        >
+          {{ news.title }}
+        </h3>
+        <p
+          class="text-gray-600 text-sm line-clamp-3 mb-6 flex-1 leading-relaxed"
+        >
+          {{ news.content }}
+        </p>
+
+        <!-- Actions Footer -->
+        <div
+          class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto"
+        >
+          <a
+            href="{{ url_for('edit_news', news_id=news.id) }}"
+            class="text-gray-600 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors"
+          >
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+            Editar
+          </a>
+          <a
+            href="{{ url_for('delete_news', news_id=news.id) }}"
+            class="text-gray-400 hover:text-red-500 text-sm font-medium flex items-center gap-1 transition-colors"
+            onclick="return confirm('¿Estás seguro de eliminar esta noticia?')"
+          >
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+            Eliminar
+          </a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div
+      class="col-span-full bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100"
+    >
+      <div
+        class="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+      >
+        <span class="material-symbols-outlined text-3xl text-gray-400"
+          >newspaper</span
+        >
+      </div>
+      <h3 class="text-lg font-bold text-gray-800 mb-1">
+        No hay noticias publicadas
+      </h3>
+      <p class="text-gray-500 mb-6">
+        Comienza publicando las últimas novedades de la institución.
+      </p>
+      <a
+        href="{{ url_for('add_news') }}"
+        class="text-blue-600 font-bold hover:underline"
+        >Crear primera noticia</a
+      >
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

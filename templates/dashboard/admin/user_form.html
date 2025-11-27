@@ -1,0 +1,108 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}{{ 'Editar' if user else 'Agregar' }} Usuario - Wawalu{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <span class="text-gray-500 text-sm font-medium mb-1 block">Administración > Usuarios</span>
+            <h1 class="text-3xl font-bold text-gray-800">{{ 'Editar' if user else 'Agregar Nuevo' }} Usuario</h1>
+        </div>
+        <a href="{{ url_for('manage_users') }}" class="text-gray-600 hover:text-blue-600 flex items-center transition-colors">
+            <span class="material-symbols-outlined mr-1">arrow_back</span>
+            Volver
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-8">
+            <form action="{{ url_for('edit_user', user_id=user.id) if user else url_for('add_user') }}" method="POST" class="space-y-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                        <input type="text" name="name" id="name" required
+                            value="{{ user.name if user else '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="Ej: Juan Pérez">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                        <input type="email" name="email" id="email" required
+                            value="{{ user.email if user else '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="Ej: juan@ejemplo.com">
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                        <input type="tel" name="phone" id="phone"
+                            value="{{ user.phone if user else '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="Ej: 987654321">
+                    </div>
+
+                    <!-- Role -->
+                    <div>
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                        <div class="relative">
+                            <select name="role" id="role" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white">
+                                <option value="padre" {% if user and user.role == 'padre' %}selected{% endif %}>Padre</option>
+                                <option value="staff" {% if user and user.role == 'staff' %}selected{% endif %}>Staff</option>
+                                <option value="admin" {% if user and user.role == 'admin' %}selected{% endif %}>Administrador</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Section -->
+                <div class="border-t border-gray-100 pt-6 mt-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                        <span class="material-symbols-outlined mr-2 text-gray-500">lock</span>
+                        Seguridad
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                                {{ 'Nueva Contraseña (Opcional)' if user else 'Contraseña' }}
+                            </label>
+                            <input type="password" name="password" id="password" 
+                                {{ 'required' if not user else '' }}
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                placeholder="{{ 'Dejar en blanco para mantener la actual' if user else 'Mínimo 6 caracteres' }}">
+                        </div>
+                    </div>
+                    {% if user %}
+                    <p class="text-xs text-gray-500 mt-2">
+                        <span class="material-symbols-outlined text-[14px] align-middle mr-1">info</span>
+                        Solo llena este campo si deseas cambiar la contraseña del usuario.
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
+                    <a href="{{ url_for('manage_users') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm hover:shadow transition-all flex items-center">
+                        <span class="material-symbols-outlined mr-2">save</span>
+                        {{ 'Guardar Cambios' if user else 'Crear Usuario' }}
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

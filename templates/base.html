@@ -39,7 +39,10 @@
   </head>
   <body class="font-['Inter'] bg-gray-50 flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-sm w-full" style="position:fixed;top:0;left:0;z-index:100;">
+    <header
+      class="bg-white shadow-sm w-full"
+      style="position: fixed; top: 0; left: 0; z-index: 100"
+    >
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
           <!-- Logo -->
@@ -65,58 +68,81 @@
               href="{{ url_for('index') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.endpoint == 'index' %}bg-blue-50 text-blue-600{% else %}text-gray-600 hover:bg-gray-50 hover:text-blue-600{% endif %}"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] {% if request.endpoint == 'index' %}text-blue-600{% else %}text-gray-500{% endif %}">home</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] {% if request.endpoint == 'index' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >home</span
+              >
               Inicio
             </a>
             <a
               href="{{ url_for('about') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.endpoint == 'about' %}bg-blue-50 text-blue-600{% else %}text-gray-600 hover:bg-gray-50 hover:text-blue-600{% endif %}"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] {% if request.endpoint == 'about' %}text-blue-600{% else %}text-gray-500{% endif %}">info</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] {% if request.endpoint == 'about' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >info</span
+              >
               Nosotros
             </a>
             <a
               href="{{ url_for('programs') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg {% if request.path == '/programas' %}text-blue-600 bg-blue-50{% else %}text-gray-600 hover:bg-gray-50 hover:text-blue-600{% endif %} transition-colors"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] {% if request.path == '/programas' %}text-blue-600{% else %}text-gray-500{% endif %}">school</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] {% if request.path == '/programas' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >school</span
+              >
               Programas
             </a>
             <a
               href="{{ url_for('public_shop') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg {% if request.endpoint == 'public_shop' %}bg-blue-50 text-blue-600{% else %}text-gray-600 hover:bg-gray-50 hover:text-blue-600{% endif %} transition-colors"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] {% if request.endpoint == 'public_shop' %}text-blue-600{% else %}text-gray-500{% endif %}">storefront</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] {% if request.endpoint == 'public_shop' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >storefront</span
+              >
               Tienda
             </a>
             <a
               href="{{ url_for('admission') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] text-gray-500">assignment</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] text-gray-500"
+                >assignment</span
+              >
               Admisión
             </a>
             <a
               href="{{ url_for('contact') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] text-gray-500">help</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] text-gray-500"
+                >help</span
+              >
               Contacto
             </a>
-            
+
             <!-- Dropdown Más -->
             <div class="relative group">
               <button
                 id="more-menu-btn"
                 class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none"
               >
-                <span class="material-symbols-outlined mr-2 text-[22px] text-gray-500">more_horiz</span>
+                <span
+                  class="material-symbols-outlined mr-2 text-[22px] text-gray-500"
+                  >more_horiz</span
+                >
                 Más
-                <span class="material-symbols-outlined ml-1 text-[18px]">expand_more</span>
+                <span class="material-symbols-outlined ml-1 text-[18px]"
+                  >expand_more</span
+                >
               </button>
-              
+
               <!-- Dropdown Content -->
-              <div 
+              <div
                 id="more-menu-content"
                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden border border-gray-100 animate-fade-in z-50"
               >
@@ -125,7 +151,9 @@
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                 >
                   <span class="inline-flex items-center">
-                    <span class="material-symbols-outlined mr-2 text-[18px]">article</span>
+                    <span class="material-symbols-outlined mr-2 text-[18px]"
+                      >article</span
+                    >
                     Noticias
                   </span>
                 </a>
@@ -134,7 +162,9 @@
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                 >
                   <span class="inline-flex items-center">
-                    <span class="material-symbols-outlined mr-2 text-[18px]">gallery_thumbnail</span>
+                    <span class="material-symbols-outlined mr-2 text-[18px]"
+                      >gallery_thumbnail</span
+                    >
                     Galería
                   </span>
                 </a>
@@ -143,31 +173,114 @@
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                 >
                   <span class="inline-flex items-center">
-                    <span class="material-symbols-outlined mr-2 text-[18px]">gavel</span>
+                    <span class="material-symbols-outlined mr-2 text-[18px]"
+                      >gavel</span
+                    >
                     Reclamos
                   </span>
                 </a>
               </div>
             </div>
-            
+
             <!-- Cart Button -->
             <a
               href="{{ url_for('public_cart') }}"
               class="nav-link flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors"
             >
-              <span class="material-symbols-outlined mr-2 text-[22px] text-gray-500">shopping_cart</span>
+              <span
+                class="material-symbols-outlined mr-2 text-[22px] text-gray-500"
+                >shopping_cart</span
+              >
               Carrito
-              <span class="ml-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+              <span
+                class="ml-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full"
+                >0</span
+              >
             </a>
 
+            <!-- User Menu (Logged In) -->
+            {% if session.get('user_id') %}
+            <div class="relative group ml-4">
+              <button
+                id="user-menu-btn"
+                class="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-blue-600 focus:outline-none transition-colors"
+              >
+                <div
+                  class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 overflow-hidden border border-blue-200"
+                >
+                  {% if session.get('profile_image') %}
+                  <img
+                    src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) }}"
+                    alt="Profile"
+                    class="w-full h-full object-cover"
+                  />
+                  {% else %}
+                  <span class="material-symbols-outlined text-[20px]"
+                    >person</span
+                  >
+                  {% endif %}
+                </div>
+                <span class="hidden lg:block"
+                  >{{ session.get('user_name', 'Usuario') }}</span
+                >
+                <span class="material-symbols-outlined text-[18px]"
+                  >expand_more</span
+                >
+              </button>
+
+              <!-- User Dropdown -->
+              <div
+                id="user-menu-content"
+                class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 hidden border border-gray-100 animate-fade-in z-50"
+              >
+                <div class="px-4 py-2 border-b border-gray-100">
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ session.get('user_name') }}
+                  </p>
+                  <p class="text-xs text-gray-500 truncate">
+                    {{ session.get('user_email', '') }}
+                  </p>
+                </div>
+
+                <a
+                  href="{{ url_for('dashboard') }}"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  <span class="inline-flex items-center">
+                    <span class="material-symbols-outlined mr-2 text-[18px]"
+                      >dashboard</span
+                    >
+                    Regresar al panel estudiantil
+                  </span>
+                </a>
+
+                <div class="border-t border-gray-100 mt-1 pt-1">
+                  <a
+                    href="{{ url_for('logout') }}"
+                    class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <span class="inline-flex items-center">
+                      <span class="material-symbols-outlined mr-2 text-[18px]"
+                        >logout</span
+                      >
+                      Cerrar Sesión
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% else %}
             <!-- Login Button -->
             <a
               href="{{ url_for('login') }}"
               class="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-all hover:shadow-md"
             >
-              <span class="material-symbols-outlined mr-2 text-[20px]">login</span>
+              <span class="material-symbols-outlined mr-2 text-[20px]"
+                >login</span
+              >
               Iniciar Sesión
             </a>
+            {% endif %}
           </nav>
 
           <!-- Mobile menu button -->
@@ -220,84 +333,204 @@
         <div class="flex-1 overflow-y-auto py-4 px-4 space-y-1">
           <a
             href="{{ url_for('index') }}"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'index' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">home</span> Inicio
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'index' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >home</span
+              >
+              Inicio
             </div>
           </a>
           <a
             href="{{ url_for('about') }}"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'about' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">info</span> Nosotros
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'about' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >info</span
+              >
+              Nosotros
             </div>
           </a>
           <a
             href="{{ url_for('programs') }}"
-            class="block px-3 py-2 rounded-md text-base font-medium {% if request.path == '/programas' %}text-blue-600 bg-blue-50{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %} transition-colors"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.path == '/programas' %}text-blue-600 bg-blue-50{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">school</span>
+              <span
+                class="material-symbols-outlined mr-3 {% if request.path == '/programas' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >school</span
+              >
               Programas
             </div>
           </a>
 
+          <div class="my-2 border-t border-gray-100"></div>
+
           <a
-            href="#"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            href="{{ url_for('public_shop') }}"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'public_shop' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">article</span>
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'public_shop' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >storefront</span
+              >
+              Tienda
+            </div>
+          </a>
+
+          <a
+            href="{{ url_for('admission') }}"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'admission' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
+          >
+            <div class="flex items-center">
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'admission' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >assignment</span
+              >
+              Admisión
+            </div>
+          </a>
+
+          <div class="my-2 border-t border-gray-100"></div>
+
+          <a
+            href="{{ url_for('public_news') }}"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'public_news' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
+          >
+            <div class="flex items-center">
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'public_news' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >article</span
+              >
               Noticias
             </div>
           </a>
           <a
-            href="#"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            href="{{ url_for('public_galery') }}"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'public_galery' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3"
-                >galery_thumbnail</span
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'public_galery' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >gallery_thumbnail</span
               >
               Galería
             </div>
           </a>
-          <a
-            href="#"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-          >
-            <div class="flex items-center">
+
+          <div class="my-2 border-t border-gray-100"></div>
+
           <a
             href="{{ url_for('contact') }}"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'contact' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">help</span> Contacto
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'contact' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >help</span
+              >
+              Contacto
             </div>
           </a>
           <a
             href="{{ url_for('complaints') }}"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'complaints' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">gavel</span> Reclamos
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'complaints' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >gavel</span
+              >
+              Reclamos
             </div>
           </a>
+
           <a
-            href="#"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            href="{{ url_for('public_cart') }}"
+            class="block px-3 py-2 rounded-md text-base font-medium transition-colors {% if request.endpoint == 'public_cart' %}bg-blue-50 text-blue-600{% else %}text-gray-900 hover:bg-blue-50 hover:text-blue-600{% endif %}"
           >
             <div class="flex items-center">
-              <span class="material-symbols-outlined mr-3">shopping_cart</span> 
+              <span
+                class="material-symbols-outlined mr-3 {% if request.endpoint == 'public_cart' %}text-blue-600{% else %}text-gray-500{% endif %}"
+                >shopping_cart</span
+              >
               Carrito
-              <span class="ml-auto bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+              <span
+                class="ml-auto bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full"
+                >0</span
+              >
             </div>
           </a>
         </div>
 
         <div class="p-4 border-t border-gray-200">
+          {% if session.get('user_id') %}
+          <div class="flex items-center mb-4 px-2">
+            <div
+              class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 overflow-hidden border border-blue-200 mr-3"
+            >
+              {% if session.get('profile_image') %}
+              <img
+                src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) }}"
+                alt="Profile"
+                class="w-full h-full object-cover"
+              />
+              {% else %}
+              <span class="material-symbols-outlined text-[24px]">person</span>
+              {% endif %}
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">
+                {{ session.get('user_name') }}
+              </p>
+              <p class="text-xs text-gray-500">Sesión iniciada</p>
+            </div>
+          </div>
+
+          <a
+            href="{{ url_for('profile') }}"
+            class="block px-4 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+          >
+            <span class="inline-flex items-center">
+              <span class="material-symbols-outlined mr-3">person</span>
+              Mi Perfil
+            </span>
+          </a>
+          <a
+            href="{{ url_for('orders') }}"
+            class="block px-4 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+          >
+            <span class="inline-flex items-center">
+              <span class="material-symbols-outlined mr-3">shopping_bag</span>
+              Mis Pedidos
+            </span>
+          </a>
+
+          <a
+            href="{{ url_for('dashboard') }}"
+            class="block px-4 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+          >
+            <span class="inline-flex items-center">
+              <span class="material-symbols-outlined mr-3">dashboard</span>
+              Dashboard
+            </span>
+          </a>
+
+          <a
+            href="{{ url_for('logout') }}"
+            class="block px-4 py-2 mt-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md"
+          >
+            <span class="inline-flex items-center">
+              <span class="material-symbols-outlined mr-3">logout</span>
+              Cerrar Sesión
+            </span>
+          </a>
+          {% else %}
           <a
             href="{{ url_for('login') }}"
             class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700"
@@ -305,6 +538,7 @@
             <span class="material-symbols-outlined mr-2">login</span> Iniciar
             Sesión
           </a>
+          {% endif %}
         </div>
       </div>
     </header>
@@ -558,7 +792,11 @@
 
     <!-- Chatbot -->
     <div class="chatbot-container">
-      <button id="chatbot-button" class="chatbot-button" title="Chat con Wawalu">
+      <button
+        id="chatbot-button"
+        class="chatbot-button"
+        title="Chat con Wawalu"
+      >
         <img
           src="{{ url_for('static', filename='icons/social/chat.png') }}"
           alt="Chatbot"

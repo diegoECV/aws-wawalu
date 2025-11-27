@@ -22,7 +22,7 @@ endblock %} {% block content %}
         >
           <!-- Image -->
           <div
-            class="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0"
+            class="shrink-0 w-24 h-24 bg-gray-100 rounded-md overflow-hidden"
           >
             {% if item.image_url %}
             <img
@@ -73,11 +73,15 @@ endblock %} {% block content %}
                 name="quantity"
                 value="{{ item.quantity + 1 }}"
                 class="px-2 py-1 text-gray-500 hover:bg-gray-100 rounded-r-lg"
-                {% if item.quantity >= item.stock %}disabled{% endif %} > +
+                {%
+                if
+                item.quantity
+              >
+                = item.stock %}disabled{% endif %} > +
               </button>
             </form>
             <span class="font-bold text-gray-800"
-              >S/ {{ "%.2f"|format(item.subtotal) }}</span
+              >S/ {{ "%.2f"|format(item.price * item.quantity) }}</span
             >
           </div>
 
@@ -123,12 +127,12 @@ endblock %} {% block content %}
             </div>
           </div>
 
-          <button
-            class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 mb-3"
-            onclick="alert('Funcionalidad de pago no implementada en esta demo')"
+          <a
+            href="{{ url_for('checkout') }}"
+            class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 mb-3 flex items-center justify-center"
           >
             Proceder al Pago
-          </button>
+          </a>
           <a
             href="{{ url_for('public_shop') }}"
             class="block w-full text-center text-gray-500 hover:text-gray-700 text-sm font-medium"

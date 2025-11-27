@@ -3,7 +3,7 @@
 .complaints-header {
     background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); /* blue-800 to blue-500 */
     color: white;
-    padding: 4rem 1rem 6rem; /* Added bottom padding for overlap effect */
+    padding: 10rem 1rem 6rem; /* Increased top padding to clear fixed header */
     text-align: center;
     position: relative;
     overflow: hidden;
