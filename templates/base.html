@@ -306,7 +306,7 @@
       <!-- Mobile Menu Overlay -->
       <div
         id="mobile-menu-overlay"
-        class="fixed inset-0 bg-black/30 backdrop-blur-sm z-[105] hidden opacity-0 transition-opacity duration-300 xl:hidden"
+        class="fixed inset-0 bg-black/5 backdrop-blur-md z-[105] hidden opacity-0 transition-opacity duration-300 xl:hidden"
       ></div>
 
       <!-- Mobile Menu -->
@@ -548,7 +548,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow">{% block content %}{% endblock %}</main>
+    <main class="flex-grow pt-20">{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     <footer class="bg-slate-900 text-white pt-12 pb-8 mt-auto">
@@ -583,7 +583,7 @@
                 />
               </a>
               <a
-                href="#"
+                href="https://wa.me/51942139788"
                 class="text-slate-400 hover:text-green-500 transition-colors transform hover:scale-110"
               >
                 <img
@@ -616,7 +616,7 @@
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{{ url_for('about') }}"
                   class="text-slate-300 hover:text-blue-400 transition-colors flex items-center text-sm"
                 >
                   <span class="material-symbols-outlined text-xs mr-2"
@@ -627,7 +627,7 @@
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{{ url_for('programs') }}"
                   class="text-slate-300 hover:text-blue-400 transition-colors flex items-center text-sm"
                 >
                   <span class="material-symbols-outlined text-xs mr-2"
@@ -638,7 +638,7 @@
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{{ url_for('public_galery') }}"
                   class="text-slate-300 hover:text-blue-400 transition-colors flex items-center text-sm"
                 >
                   <span class="material-symbols-outlined text-xs mr-2"
@@ -649,7 +649,7 @@
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{{ url_for('contact') }}"
                   class="text-slate-300 hover:text-blue-400 transition-colors flex items-center text-sm"
                 >
                   <span class="material-symbols-outlined text-xs mr-2"
@@ -752,7 +752,7 @@
                 ¿Necesitas ayuda?
               </p>
               <a
-                href="#"
+                href="{{ url_for('contact') }}"
                 class="flex items-center text-slate-300 hover:text-white transition-colors text-sm"
               >
                 <span class="material-symbols-outlined mr-2 text-[20px]"
@@ -771,7 +771,9 @@
         >
           <p>&copy; 2025 Wawalu. Todos los derechos reservados.</p>
           <div class="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" class="hover:text-blue-400 transition-colors"
+            <a
+              href="{{ url_for('admission') }}"
+              class="hover:text-blue-400 transition-colors"
               >Admisión</a
             >
             <a

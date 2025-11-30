@@ -422,7 +422,7 @@ def comments():
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO comments (name, relation, comment) VALUES (%s, %s, %s)',
+                cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, TRUE)',
                              (name, relation, comment))
                 conn.commit()
                 flash('Comentario enviado exitosamente', 'success')
@@ -431,7 +431,15 @@ def comments():
         finally:
             conn.close()
         return redirect(url_for('comments'))
-    return render_template('comments.html')
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM comments WHERE is_approved = TRUE ORDER BY created_at DESC')
+            comments = cursor.fetchall()
+    finally:
+        conn.close()
+    return render_template('comments.html', comments=comments)
 
 @app.route('/add_comment', methods=['POST'])
 def add_comment():
@@ -443,15 +451,16 @@ def add_comment():
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('INSERT INTO comments (name, relation, comment) VALUES (%s, %s, %s)',
+            cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, TRUE)',
                          (name, relation, comment))
             conn.commit()
-            flash('¡Gracias por tu comentario! Será publicado después de ser aprobado.', 'success')
+            flash('¡Gracias por tu comentario! Ha sido publicado exitosamente.', 'success')
     except Exception as e:
         flash(f'Error al enviar comentario: {str(e)}', 'error')
     finally:
         conn.close()
-    return redirect(url_for('index'))
+    next_url = request.form.get('next')
+    return redirect(next_url or url_for('index'))
 
 @app.route('/cookies')
 def cookies():

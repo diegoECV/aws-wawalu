@@ -557,13 +557,6 @@ desarrollo integral de tu hijo.{% endblock %} {% block extra_css %}
       {% endfor %}
     </div>
     <div class="mt-8 flex flex-col md:flex-row justify-center gap-4">
-      <button
-        onclick="document.getElementById('comment-modal').classList.remove('hidden'); document.getElementById('comment-modal').classList.add('flex')"
-        class="bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2 px-6 rounded-full transition-colors flex items-center justify-center"
-      >
-        <span class="material-symbols-outlined mr-2">add_comment</span> Agregar
-        Comentario
-      </button>
       <a
         href="{{ url_for('comments') }}"
         class="bg-blue-600 border-2 border-blue-600 text-white hover:bg-blue-700 font-bold py-2 px-6 rounded-full transition-colors flex items-center justify-center"
@@ -586,7 +579,202 @@ desarrollo integral de tu hijo.{% endblock %} {% block extra_css %}
       hoy y sé parte de nuestra comunidad.
     </p>
     <a
-      href="#"
+      href="{{ url_for('admission') }}"
+      class="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg inline-block"
+    >
+              >
+              Desarrollo motor
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <span
+                class="material-symbols-outlined text-green-500 text-sm mr-2"
+                >check_circle</span
+              >
+              Socialización
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <span
+                class="material-symbols-outlined text-green-500 text-sm mr-2"
+                >check_circle</span
+              >
+              Juego estructurado
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100"
+      >
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen11.jpg') }}"
+          alt="Programa Preescolar"
+          class="w-full h-56 object-cover"
+        />
+        <div class="p-6 text-left">
+          <h3 class="text-lg font-bold text-gray-800 mb-1">
+            Programa Preescolar
+          </h3>
+          <p class="text-xs text-gray-500 mb-3">De 3 a 5 años</p>
+          <ul class="space-y-1">
+            <li class="flex items-center text-sm text-gray-600">
+              <span
+                class="material-symbols-outlined text-green-500 text-sm mr-2"
+                >check_circle</span
+              >
+              Desarrollo cognitivo
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <span
+                class="material-symbols-outlined text-green-500 text-sm mr-2"
+                >check_circle</span
+              >
+              Expresión artística
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <span
+                class="material-symbols-outlined text-green-500 text-sm mr-2"
+                >check_circle</span
+              >
+              Preparación escolar
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Methodology Section -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-900 section-title">
+        Nuestra Metodología
+      </h2>
+    </div>
+    <div class="flex flex-col lg:flex-row items-center gap-12">
+      <div class="lg:w-1/2 space-y-6">
+        <p class="text-gray-600 leading-relaxed">
+          En Wawalu, nos inspiramos en la metodología Reggio Emilia,
+          reconociendo a cada niño como protagonista de su propio aprendizaje.
+          Creemos en el potencial innato de cada pequeño y en su capacidad para
+          construir su conocimiento a través de la experiencia directa.
+        </p>
+        <div class="flex items-start space-x-4">
+          <span class="material-symbols-outlined text-blue-600 text-3xl mt-1"
+            >lightbulb</span
+          >
+          <div>
+            <h4 class="font-bold text-gray-800">Aprendizaje Activo</h4>
+            <p class="text-sm text-gray-600">
+              Los niños aprenden haciendo, experimentando y descubriendo por sí
+              mismos.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="material-symbols-outlined text-blue-600 text-3xl mt-1"
+            >nature_people</span
+          >
+          <div>
+            <h4 class="font-bold text-gray-800">Conexión con la Naturaleza</h4>
+            <p class="text-sm text-gray-600">
+              Fomentamos el vínculo con el entorno natural como parte
+              fundamental del aprendizaje.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <span class="material-symbols-outlined text-blue-600 text-3xl mt-1"
+            >palette</span
+          >
+          <div>
+            <h4 class="font-bold text-gray-800">Expresión Creativa</h4>
+            <p class="text-sm text-gray-600">
+              El arte y la creatividad son herramientas esenciales en nuestro
+              método educativo.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="lg:w-1/2 grid grid-cols-2 gap-4">
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen12.jpg') }}"
+          alt="Metodología 1"
+          class="rounded-lg shadow-md w-full h-48 object-cover transform translate-y-4"
+        />
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen13.jpg') }}"
+          alt="Metodología 2"
+          class="rounded-lg shadow-md w-full h-48 object-cover"
+        />
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen1.jpg') }}"
+          alt="Metodología 3"
+          class="rounded-lg shadow-md w-full h-48 object-cover transform translate-y-4"
+        />
+        <img
+          src="{{ url_for('static', filename='image/galery/imagen2.jpg') }}"
+          alt="Metodología 4"
+          class="rounded-lg shadow-md w-full h-48 object-cover"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-4xl font-bold text-gray-900 section-title">
+      Lo que dicen nuestras familias
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 max-w-4xl mx-auto">
+      {% for comment in comments %}
+      <div class="testimonial-card p-6 md:p-8 text-left">
+        <div class="flex items-center mb-4">
+          <div class="bg-blue-100 rounded-full p-2 mr-4">
+            <span class="material-symbols-outlined text-blue-600">person</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-800">{{ comment.name }}</h4>
+            <p class="text-xs text-gray-500">{{ comment.relation }}</p>
+          </div>
+        </div>
+        <p class="text-gray-600 italic">"{{ comment.comment }}"</p>
+      </div>
+      {% else %}
+      <div class="col-span-2 text-center text-gray-500">
+        <p>
+          Aún no hay comentarios. ¡Sé el primero en compartir tu experiencia!
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-8 flex flex-col md:flex-row justify-center gap-4">
+      <a
+        href="{{ url_for('comments') }}"
+        class="bg-blue-600 border-2 border-blue-600 text-white hover:bg-blue-700 font-bold py-2 px-6 rounded-full transition-colors flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined mr-2">forum</span> Ver todos los
+        comentarios
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer CTA Section -->
+<section class="cta-section py-16 text-white text-center">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+      ¡Únete a la Familia Wawalu!
+    </h2>
+    <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
+      Descubre un mundo de aprendizaje, creatividad y amor. Inscribe a tu hijo
+      hoy y sé parte de nuestra comunidad.
+    </p>
+    <a
+      href="{{ url_for('admission') }}"
       class="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg inline-block"
     >
       ¡Quiero Inscribir a Mi Hijo!
@@ -594,73 +782,6 @@ desarrollo integral de tu hijo.{% endblock %} {% block extra_css %}
   </div>
 </section>
 
-<!-- Comment Modal -->
-<div
-  id="comment-modal"
-  class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm hidden"
->
-  <div
-    class="bg-white rounded-xl shadow-2xl p-6 md:p-8 max-w-md w-full mx-4 relative animate-slide-in-up"
-  >
-    <button
-      onclick="document.getElementById('comment-modal').classList.add('hidden'); document.getElementById('comment-modal').classList.remove('flex')"
-      class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-    >
-      <span class="material-symbols-outlined">close</span>
-    </button>
-    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-      Agregar Comentario
-    </h3>
-    <form action="{{ url_for('add_comment') }}" method="POST">
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="name"
-          >Nombre</label
-        >
-        <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Tu nombre"
-          required
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="relation"
-          >Relación</label
-        >
-        <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
-          id="relation"
-          name="relation"
-          type="text"
-          placeholder="Ej: Mamá de..."
-          required
-        />
-      </div>
-      <div class="mb-6">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="comment"
-          >Comentario</label
-        >
-        <textarea
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 h-32"
-          id="comment"
-          name="comment"
-          placeholder="Escribe tu experiencia..."
-          required
-        ></textarea>
-      </div>
-      <div class="flex items-center justify-center">
-        <button
-          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full focus:outline-none focus:shadow-outline transition-colors w-full"
-          type="submit"
-        >
-          Enviar Comentario
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 {% endblock %} {% block extra_js %}
 <script src="{{ url_for('static', filename='js/slide.js') }}"></script>
 {% endblock %}
