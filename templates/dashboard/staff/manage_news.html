@@ -30,7 +30,7 @@ Noticias (Staff) - Wawalu{% endblock %} {% block content %}
       <div class="h-56 overflow-hidden relative">
         {% if news.image_url %}
         <img
-          src="{{ url_for('static', filename='uploads/' + news.image_url) }}"
+          src="{{ url_for('static', filename='uploads/' + news.image_url) if news.image_url else url_for('static', filename='image/default_news.png') }}"
           alt="{{ news.title }}"
           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />

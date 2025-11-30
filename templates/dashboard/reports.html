@@ -74,10 +74,12 @@ Wawalu{% endblock %} {% block content %}
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
                 <a
-                  href="{{ url_for('static', filename='uploads/' + report.file_url) }}"
-                  target="_blank"
-                  class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center"
+                  href="{{ url_for('download_report', filename=report.file_url) if report.file_url else '#' }}"
+                  class="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
                 >
+                  <span class="material-symbols-outlined text-lg"
+                    >download</span
+                  >
                   Descargar
                 </a>
 

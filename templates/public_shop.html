@@ -91,7 +91,7 @@ extra_css %}
       >
         {% if product.image_url %}
         <img
-          src="{{ url_for('static', filename='uploads/' + product.image_url) }}"
+          src="{{ url_for('static', filename='uploads/products/' + product.image_url) if product.image_url else url_for('static', filename='image/default_product.png') }}"
           alt="{{ product.name }}"
           class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
         />

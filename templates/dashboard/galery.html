@@ -12,7 +12,7 @@ Wawalu{% endblock %} {% block content %}
 
     {% if session.get('user_role') in ['staff', 'admin'] %}
     <button
-      onclick="document.getElementById('uploadModal').classList.remove('hidden')"
+      onclick="document.getElementById('uploadModal').classList.remove('hidden'); document.getElementById('uploadModal').classList.add('flex')"
       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center shadow-sm"
     >
       <span class="material-symbols-outlined mr-2">add_a_photo</span>
@@ -67,7 +67,7 @@ Wawalu{% endblock %} {% block content %}
       <!-- Image -->
       <div class="aspect-square overflow-hidden bg-gray-100">
         <img
-          src="{{ url_for('static', filename='uploads/' + item.image_url) }}"
+          src="{{ url_for('static', filename='uploads/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_gallery.png') }}"
           alt="{{ item.title }}"
           class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
         />
@@ -75,7 +75,7 @@ Wawalu{% endblock %} {% block content %}
 
       <!-- Overlay Info -->
       <div
-        class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"
+        class="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"
       >
         <span
           class="text-white text-xs font-bold uppercase tracking-wider mb-1 bg-blue-600 px-2 py-0.5 rounded w-fit"
@@ -121,7 +121,7 @@ Wawalu{% endblock %} {% block content %}
 <!-- Upload Modal -->
 <div
   id="uploadModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4"
 >
   <div
     class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-fade-in"
@@ -129,7 +129,7 @@ Wawalu{% endblock %} {% block content %}
     <div class="p-6 border-b border-gray-100 flex justify-between items-center">
       <h3 class="text-lg font-bold text-gray-800">Subir Nueva Foto</h3>
       <button
-        onclick="document.getElementById('uploadModal').classList.add('hidden')"
+        onclick="document.getElementById('uploadModal').classList.add('hidden'); document.getElementById('uploadModal').classList.remove('flex')"
         class="text-gray-400 hover:text-gray-600"
       >
         <span class="material-symbols-outlined">close</span>

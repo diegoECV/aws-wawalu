@@ -5,7 +5,7 @@
   <!-- Image -->
   <div
     class="aspect-square bg-gray-100 relative overflow-hidden cursor-pointer"
-    onclick="openProductModal({{ product | tojson | safe }})"
+    onclick="openProductModal({{ product | tojson }})"
   >
     {% if product.image_url %}
     <img
@@ -61,7 +61,7 @@
     </div>
     <h3
       class="font-bold text-gray-800 mb-1 cursor-pointer hover:text-blue-600"
-      onclick="openProductModal({{ product | tojson | safe }})"
+      onclick="openProductModal({{ product | tojson }})"
     >
       {{ product.name }}
     </h3>

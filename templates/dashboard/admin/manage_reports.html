@@ -70,7 +70,7 @@ Reportes - Wawalu{% endblock %} {% block content %}
                 class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <a
-                  href="{{ url_for('static', filename='reports/' + report.file_url) }}"
+                  href="{{ url_for('static', filename='reports/' + report.file_url) if report.file_url else '#' }}"
                   target="_blank"
                   class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                   title="Ver PDF"

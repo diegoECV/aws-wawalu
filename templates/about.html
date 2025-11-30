@@ -1,7 +1,5 @@
-{% extends "base.html" %} {% block title %}Nosotros - PG Wawalu{% endblock %} {%
-block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}"
-/>
+{% extends "base.html" %} {% block title %}Nosotros - PG Wawalu{% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}"/>
 {% endblock %} {% block content %}
 <!-- Hero Section -->
 <section
@@ -9,9 +7,7 @@ block extra_css %}
 >
   <div class="relative z-10 px-4 reveal">
     <h1 class="text-5xl md:text-6xl font-bold mb-4">Nosotros</h1>
-    <p class="text-xl md:text-2xl opacity-90">
-      Descubre quiénes somos y nuestra pasión por la educación temprana
-    </p>
+    <p class="text-xl md:text-2xl opacity-90">Descubre quiénes somos y nuestra pasión por la educación temprana</p>
   </div>
 </section>
 
@@ -22,12 +18,9 @@ block extra_css %}
       ¿QUIÉNES SOMOS?
     </h2>
     <div class="flex items-center justify-center gap-8 mb-8 reveal delay-100">
-      <img src="{{ url_for('static', filename='image/logo/logo.png') }}" alt="Wawalu" class="h-24"
-      />
+      <img src="{{ url_for('static', filename='image/logo/logo.png') }}" alt="Wawalu" class="h-24"/>
       <span class="text-4xl text-gray-400">+</span>
-      <div
-        class="bg-blue-800 text-white rounded-full h-24 w-24 flex items-center justify-center text-center text-xs font-bold p-2"
-      >
+      <div class="bg-blue-800 text-white rounded-full h-24 w-24 flex items-center justify-center text-center text-xs font-bold p-2">
         REGGIO<br />EMILIA
       </div>
     </div>
@@ -40,19 +33,11 @@ block extra_css %}
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 max-w-4xl mx-auto">
-      <div
-        class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-blue-500 text-left"
-      >
+      <div class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-blue-500 text-left">
         <p class="text-gray-700">
-          <span class="font-bold text-blue-600"
-            >REGGIO EMILIA CAÑETE y WAWALU</span
-          >
-          se unen en favor de la educación infantil en Cañete.
-        </p>
+          <span class="font-bold text-blue-600">REGGIO EMILIA CAÑETE y WAWALU</span>se unen en favor de la educación infantil en Cañete.</p>
       </div>
-      <div
-        class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-green-500 text-left"
-      >
+      <div class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-green-500 text-left">
         <p class="text-gray-700">
           Inspirados en la
           <span class="font-bold text-purple-600"

@@ -4,12 +4,12 @@
   <!-- Hero Image -->
   <div class="relative h-[50vh] min-h-[400px]">
     <img
-      src="{{ url_for('static', filename='image/galery/' + news.image_url) }}"
+      src="{{ url_for('static', filename='image/galery/' + news.image_url) if news.image_url else url_for('static', filename='image/default_news.png') }}"
       alt="{{ news.title }}"
       class="w-full h-full object-cover"
     />
     <div
-      class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+      class="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"
     ></div>
 
     <div

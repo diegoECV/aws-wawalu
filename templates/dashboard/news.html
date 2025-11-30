@@ -36,7 +36,7 @@ Wawalu{% endblock %} {% block content %}
       <div class="md:w-1/3 h-64 md:h-auto bg-gray-100 relative">
         {% if item.image_url %}
         <img
-          src="{{ url_for('static', filename='uploads/' + item.image_url) }}"
+          src="{{ url_for('static', filename='uploads/' + item.image_url) if item.image_url else url_for('static', filename='image/default_news.png') }}"
           alt="{{ item.title }}"
           class="w-full h-full object-cover"
         />

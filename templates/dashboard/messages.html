@@ -140,7 +140,7 @@ Wawalu{% endblock %} {% block content %}
 <!-- Compose Modal -->
 <div
   id="composeModal"
-  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+  class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50"
 >
   <div
     class="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 overflow-hidden animate-slide-in-up"
@@ -268,9 +268,8 @@ Wawalu{% endblock %} {% block content %}
     });
 
   function viewMessage(id) {
-    // Future implementation: Open message details
-    // For now, simple alert or expand
-    alert("Funcionalidad de vista detallada en desarrollo");
+    // Redirect to message detail page
+    window.location.href = `/dashboard/messages/view/${id}`;
   }
 </script>
 {% endblock %}

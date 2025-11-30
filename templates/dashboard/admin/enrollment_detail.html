@@ -1,0 +1,259 @@
+{% extends 'dashboard/base_dashboard.html' %} {% block title %}Detalle de
+Matrícula - Wawalu{% endblock %} {% block content %}
+<div class="max-w-5xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <a
+      href="{{ url_for('manage_enrollments') }}"
+      class="text-blue-600 hover:text-blue-700 flex items-center gap-2 mb-4"
+    >
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver a Matrículas
+    </a>
+    <h1 class="text-3xl font-bold text-gray-800">Detalle de Matrícula</h1>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Student Photo & Basic Info -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <!-- Photo -->
+        <div class="mb-6">
+          {% if enrollment.student_photo %}
+          <img
+            src="{{ url_for('static', filename='uploads/students/' + enrollment.student_photo) }}"
+            alt="{{ enrollment.first_name }}"
+            class="w-full h-64 object-cover rounded-lg"
+          />
+          {% else %}
+          <div
+            class="w-full h-64 bg-blue-100 rounded-lg flex items-center justify-center"
+          >
+            <span class="text-6xl font-bold text-blue-600"
+              >{{ enrollment.first_name[0] }}{{ enrollment.last_name[0] }}</span
+            >
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Student Name -->
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800">
+            {{ enrollment.first_name }} {{ enrollment.last_name }}
+          </h2>
+          <p class="text-gray-500">ID: {{ enrollment.student_id }}</p>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="text-center mb-4">
+          <span
+            class="px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full {% if enrollment.status == 'active' %}bg-green-100 text-green-800 {% elif enrollment.status == 'pending' %}bg-yellow-100 text-yellow-800 {% elif enrollment.status == 'rejected' %}bg-red-100 text-red-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
+          >
+            {% if enrollment.status == 'active' %}Matrícula Activa {% elif
+            enrollment.status == 'pending' %}Pendiente {% elif enrollment.status
+            == 'rejected' %}Rechazada {% else %}{{ enrollment.status }}{% endif
+            %}
+          </span>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="space-y-2">
+          {% if enrollment.status != 'active' %}
+          <button
+            onclick="updateStatus('{{ enrollment.id }}', 'active')"
+            class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined">check_circle</span>
+            Aprobar Matrícula
+          </button>
+          {% endif %} {% if enrollment.status != 'rejected' %}
+          <button
+            onclick="updateStatus('{{ enrollment.id }}', 'rejected')"
+            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined">cancel</span>
+            Rechazar Matrícula
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Information -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Student Information -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3
+          class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined">person</span>
+          Información del Estudiante
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500"
+              >Fecha de Nacimiento</label
+            >
+            <p class="text-gray-800">
+              {{ enrollment.dob.strftime('%d/%m/%Y') if enrollment.dob else
+              'N/A' }}
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Género</label>
+            <p class="text-gray-800">
+              {{ 'Masculino' if enrollment.gender == 'M' else 'Femenino' if
+              enrollment.gender == 'F' else 'N/A' }}
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Teléfono</label>
+            <p class="text-gray-800">
+              {{ enrollment.student_phone or 'No registrado' }}
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Email</label>
+            <p class="text-gray-800">
+              {{ enrollment.student_email or 'No registrado' }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <label class="text-sm font-medium text-gray-500">Dirección</label>
+            <p class="text-gray-800">
+              {{ enrollment.address or 'No registrada' }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <label class="text-sm font-medium text-gray-500">Alergias</label>
+            <p class="text-gray-800">
+              {{ enrollment.allergies or 'Ninguna registrada' }}
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <label class="text-sm font-medium text-gray-500"
+              >Información Médica</label
+            >
+            <p class="text-gray-800">
+              {{ enrollment.medical_info or 'Ninguna registrada' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Program Information -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3
+          class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined">school</span>
+          Información del Programa
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Programa</label>
+            <p class="text-lg font-semibold text-gray-800">
+              {{ enrollment.program_name }}
+            </p>
+          </div>
+          {% if enrollment.program_description %}
+          <div>
+            <label class="text-sm font-medium text-gray-500">Descripción</label>
+            <p class="text-gray-800">{{ enrollment.program_description }}</p>
+          </div>
+          {% endif %}
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-medium text-gray-500">Año</label>
+              <p class="text-gray-800">
+                {{ enrollment.enrollment_year or 'N/A' }}
+              </p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-500">Período</label>
+              <p class="text-gray-800">
+                {{ enrollment.enrollment_period or 'N/A' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parent/Guardian Information -->
+      {% if enrollment.parent_name %}
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3
+          class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined">family_restroom</span>
+          Información del Padre/Tutor
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Nombre</label>
+            <p class="text-gray-800">{{ enrollment.parent_name }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Email</label>
+            <p class="text-gray-800">{{ enrollment.parent_email or 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Teléfono</label>
+            <p class="text-gray-800">{{ enrollment.parent_phone or 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Enrollment Details -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3
+          class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined">info</span>
+          Detalles de la Matrícula
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500"
+              >Fecha de Matrícula</label
+            >
+            <p class="text-gray-800">
+              {{ enrollment.created_at.strftime('%d/%m/%Y %H:%M') if
+              enrollment.created_at else 'N/A' }}
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500"
+              >ID de Matrícula</label
+            >
+            <p class="text-gray-800">#{{ enrollment.id }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateStatus(id, status) {
+    if (!confirm("¿Estás seguro de cambiar el estado de esta matrícula?"))
+      return;
+
+    fetch(`/enrollments/update_status/${id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: status }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert("Error al actualizar: " + data.message);
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+</script>
+{% endblock %}

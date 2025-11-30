@@ -47,18 +47,18 @@ INSERT INTO news (title, content, image_url) VALUES
 
 -- Insert Users
 INSERT INTO users (name, email, password, role, is_admin, phone, address, profile_image, is_active, email_verified) VALUES
-('Admin Wawalu', 'admin@wawalu.com', 'hashed_password', 'admin', TRUE, '+51 999999999', 'Av. Mariscal Benavides 1365', 'admin.png', TRUE, TRUE),
-('Padre Ejemplo', 'padre@wawalu.com', 'hashed_password', 'padre', FALSE, '+51 988888888', 'Calle Falsa 123', 'padre.png', TRUE, FALSE),
-('Ana García', 'ana.garcia@test.com', 'hashed_password', 'padre', FALSE, '+51 911111111', 'Av. Arequipa 123, Lima', NULL, TRUE, TRUE),
-('Carlos Mendoza', 'carlos.mendoza@test.com', 'hashed_password', 'padre', FALSE, '+51 922222222', 'Jr. Unión 456, Lima', NULL, TRUE, TRUE),
-('Elena Torres', 'elena.torres@test.com', 'hashed_password', 'padre', FALSE, '+51 933333333', 'Av. Javier Prado 789, Lima', NULL, TRUE, TRUE),
-('Jorge Ruiz', 'jorge.ruiz@test.com', 'hashed_password', 'padre', FALSE, '+51 944444444', 'Calle Los Pinos 321, Lima', NULL, TRUE, TRUE),
-('Lucía Vargas', 'lucia.vargas@test.com', 'hashed_password', 'padre', FALSE, '+51 955555555', 'Av. La Marina 654, Lima', NULL, TRUE, TRUE),
-('Miguel Castro', 'miguel.castro@test.com', 'hashed_password', 'padre', FALSE, '+51 966666666', 'Jr. Cusco 987, Lima', NULL, TRUE, TRUE),
-('Patricia Flores', 'patricia.flores@test.com', 'hashed_password', 'padre', FALSE, '+51 977777777', 'Av. Brasil 159, Lima', NULL, TRUE, TRUE),
-('Roberto Silva', 'roberto.silva@test.com', 'hashed_password', 'padre', FALSE, '+51 988888889', 'Calle Las Begonias 753, Lima', NULL, TRUE, TRUE),
-('Sofia Morales', 'sofia.morales@test.com', 'hashed_password', 'padre', FALSE, '+51 999999990', 'Av. Salaverry 246, Lima', NULL, TRUE, TRUE),
-('Staff Docente', 'staff@wawalu.com', 'hashed_password', 'staff', FALSE, '+51 910101010', 'Av. El Sol 100, Lima', 'staff.png', TRUE, TRUE);
+('Admin Wawalu', 'admin@wawalu.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'admin', TRUE, '+51 999999999', 'Av. Mariscal Benavides 1365', 'admin.png', TRUE, TRUE),
+('Padre Ejemplo', 'padre@wawalu.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 988888888', 'Calle Falsa 123', 'padre.png', TRUE, FALSE),
+('Ana García', 'ana.garcia@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 911111111', 'Av. Arequipa 123, Lima', NULL, TRUE, TRUE),
+('Carlos Mendoza', 'carlos.mendoza@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 922222222', 'Jr. Unión 456, Lima', NULL, TRUE, TRUE),
+('Elena Torres', 'elena.torres@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 933333333', 'Av. Javier Prado 789, Lima', NULL, TRUE, TRUE),
+('Jorge Ruiz', 'jorge.ruiz@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 944444444', 'Calle Los Pinos 321, Lima', NULL, TRUE, TRUE),
+('Lucía Vargas', 'lucia.vargas@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 955555555', 'Av. La Marina 654, Lima', NULL, TRUE, TRUE),
+('Miguel Castro', 'miguel.castro@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 966666666', 'Jr. Cusco 987, Lima', NULL, TRUE, TRUE),
+('Patricia Flores', 'patricia.flores@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 977777777', 'Av. Brasil 159, Lima', NULL, TRUE, TRUE),
+('Roberto Silva', 'roberto.silva@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 988888889', 'Calle Las Begonias 753, Lima', NULL, TRUE, TRUE),
+('Sofia Morales', 'sofia.morales@test.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'padre', FALSE, '+51 999999990', 'Av. Salaverry 246, Lima', NULL, TRUE, TRUE),
+('Staff Docente', 'staff@wawalu.com', 'scrypt:32768:8:1$xP3TF7XvO85bCvDx$5673fdf7aef79875319f8900c0f7628c5a992151cf9b181dc8d6a1680db4c407cfbb66e23782ac8463ba518979a5ace7bd689ff368febc8f970657f41c4d9eb8', 'staff', FALSE, '+51 910101010', 'Av. El Sol 100, Lima', 'staff.png', TRUE, TRUE);
 
 -- Insert Programs
 INSERT INTO programs (name, description, age_range, academic_year, registration_fee, monthly_fee, capacity, is_active) VALUES
@@ -168,3 +168,21 @@ INSERT INTO submissions (assignment_id, student_id, file_url, comments, grade, s
 INSERT INTO internal_messages (sender_id, recipient_id, subject, content, is_read) VALUES
 (1, 2, 'Bienvenida', 'Bienvenido a la plataforma Wawalu. Estamos para servirle.', FALSE),
 (2, 1, 'Consulta sobre uniforme', 'Buenas tardes, ¿dónde puedo adquirir el uniforme de verano?', FALSE);
+
+-- Insert Menu Items
+INSERT INTO menu_items (day, type, meal_description) VALUES
+('Lunes', 'breakfast', 'Avena con manzana y tostadas'),
+('Lunes', 'lunch', 'Lentejas con arroz y ensalada fresca'),
+('Lunes', 'snack', 'Yogurt con cereales'),
+('Martes', 'breakfast', 'Quinoa carretillera con pan con queso'),
+('Martes', 'lunch', 'Pollo al horno con puré de papas'),
+('Martes', 'snack', 'Fruta picada (Papaya y Piña)'),
+('Miércoles', 'breakfast', 'Jugo de papaya y sándwich de pollo'),
+('Miércoles', 'lunch', 'Tallarines rojos con carne'),
+('Miércoles', 'snack', 'Galletas de avena caseras'),
+('Jueves', 'breakfast', 'Leche con chocolate y pan con huevo'),
+('Jueves', 'lunch', 'Ají de gallina con arroz y huevo duro'),
+('Jueves', 'snack', 'Mazamorra morada'),
+('Viernes', 'breakfast', 'Ponche de habas y pan con palta'),
+('Viernes', 'lunch', 'Pescado frito con arroz y lentejas'),
+('Viernes', 'snack', 'Gelatina con leche');

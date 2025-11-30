@@ -18,15 +18,13 @@ Wawalu{% endblock %} {% block content %}
       {% for item in cart_items %}
       <div class="bg-white rounded-xl shadow-sm p-4 flex gap-4 items-center">
         <!-- Image -->
-        <div
-          class="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0"
-        >
+        <div class="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0">
           {% if item.image_url %}
           <img
-            src="{{ url_for('static', filename='image/products/' + item.image_url) }}"
+            src="{{ url_for('static', filename='image/products/' + item.image_url) if item.image_url else url_for('static', filename='image/default_product.png') }}"
             alt="{{ item.name }}"
-            class="w-full h-full object-cover"
-            onerror="this.src='{{ url_for('static', filename='uploads/' + item.image_url) }}'"
+            class="w-full h-full object-cover cart-item-image"
+            data-fallback="{{ url_for('static', filename='uploads/' + item.image_url) if item.image_url else url_for('static', filename='image/default_product.png') }}"
           />
           {% else %}
           <div
@@ -36,7 +34,6 @@ Wawalu{% endblock %} {% block content %}
           </div>
           {% endif %}
         </div>
-
         <!-- Info -->
         <div class="flex-1">
           <h3 class="font-bold text-gray-800">{{ item.name }}</h3>
@@ -74,7 +71,7 @@ Wawalu{% endblock %} {% block content %}
               if
               item.quantity
             >
-              = item.stock %}disabled{% endif %} > +
+              = item.stock %}disabled{% endif %}> +
             </button>
           </form>
           <span class="font-bold text-gray-800"
@@ -157,4 +154,6 @@ Wawalu{% endblock %} {% block content %}
   </div>
   {% endif %}
 </div>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
 {% endblock %}

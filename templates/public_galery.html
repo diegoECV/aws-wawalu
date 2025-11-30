@@ -72,12 +72,12 @@ block extra_css %}
     {% for item in galery_items %}
     <div
       class="gallery-item group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer aspect-[4/3] bg-gray-100"
-      onclick="openGaleryModal('{{ url_for('static', filename='image/galery/' + item.image_url) }}', '{{ item.title }}')"
+      onclick="openGaleryModal('{{ url_for('static', filename='image/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_gallery.png') }}', '{{ item.title }}')"
       data-title="{{ item.title }}"
       data-category="{{ item.category }}"
     >
       <img
-        src="{{ url_for('static', filename='image/galery/' + item.image_url) }}"
+        src="{{ url_for('static', filename='uploads/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_gallery.png') }}"
         alt="{{ item.title }}"
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         loading="lazy"

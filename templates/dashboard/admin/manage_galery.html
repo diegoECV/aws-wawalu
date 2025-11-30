@@ -45,7 +45,7 @@ Galería - Wawalu{% endblock %} {% block content %}
               >
                 {% if item.image_url %}
                 <img
-                  src="{{ url_for('static', filename='image/galery/' + item.image_url) }}"
+                  src="{{ url_for('static', filename='image/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_gallery.png') }}"
                   alt="{{ item.title }}"
                   class="w-full h-full object-cover"
                 />

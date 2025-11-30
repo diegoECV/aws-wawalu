@@ -1,0 +1,233 @@
+{% extends "base.html" %} {% block title %}Carrito de Compras - Wawalu{%
+endblock %} {% block content %}
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-24 pb-16"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Carrito de Compras</h1>
+      <p class="text-gray-600">
+        Revisa tus productos antes de proceder al pago
+      </p>
+    </div>
+
+    {% if cart_items %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Cart Items -->
+      <div class="lg:col-span-2 space-y-4">
+        {% for item in cart_items %}
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow"
+        >
+          <div class="flex gap-6">
+            <!-- Product Image -->
+            <div class="flex-shrink-0">
+              <img
+                src="{{ url_for('static', filename='uploads/' + item.image) if item.image else url_for('static', filename='image/default-product.png') }}"
+                alt="{{ item.name }}"
+                class="w-24 h-24 object-cover rounded-lg"
+              />
+            </div>
+
+            <!-- Product Info -->
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                {{ item.name }}
+              </h3>
+              <p class="text-sm text-gray-500 mb-3">
+                {{ item.description[:100] if item.description else 'Sin
+                descripción' }}...
+              </p>
+
+              <div class="flex items-center justify-between">
+                <!-- Quantity Controls -->
+                <div class="flex items-center gap-3">
+                  <span class="text-sm text-gray-600">Cantidad:</span>
+                  <div
+                    class="flex items-center border border-gray-300 rounded-lg"
+                  >
+                    <button
+                      onclick="updateQuantity({{ item.id }}, {{ item.quantity - 1 }})"
+                      class="px-3 py-1 hover:bg-gray-100 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-lg"
+                        >remove</span
+                      >
+                    </button>
+                    <span class="px-4 py-1 font-medium"
+                      >{{ item.quantity }}</span
+                    >
+                    <button
+                      onclick="updateQuantity({{ item.id }}, {{ item.quantity + 1 }})"
+                      class="px-3 py-1 hover:bg-gray-100 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-lg">add</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Price -->
+                <div class="text-right">
+                  <p class="text-sm text-gray-500">Precio unitario</p>
+                  <p class="text-lg font-bold text-blue-600">
+                    S/ {{ "%.2f"|format(item.price) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Remove Button -->
+            <div>
+              <button
+                onclick="removeFromCart({{ item.id }})"
+                class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                title="Eliminar"
+              >
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subtotal -->
+          <div
+            class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center"
+          >
+            <span class="text-sm text-gray-600">Subtotal:</span>
+            <span class="text-xl font-bold text-gray-900"
+              >S/ {{ "%.2f"|format(item.price * item.quantity) }}</span
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-1">
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24"
+        >
+          <h2 class="text-xl font-bold text-gray-900 mb-6">
+            Resumen del Pedido
+          </h2>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-gray-600">
+              <span>Subtotal</span>
+              <span>S/ {{ "%.2f"|format(subtotal) }}</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+              <span>Envío</span>
+              <span class="text-green-600">Gratis</span>
+            </div>
+            <div
+              class="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold text-gray-900"
+            >
+              <span>Total</span>
+              <span class="text-blue-600">S/ {{ "%.2f"|format(total) }}</span>
+            </div>
+          </div>
+
+          <a
+            href="{{ url_for('checkout') }}"
+            class="block w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-3 rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-blue-500/30 mb-3"
+          >
+            Proceder al Pago
+          </a>
+
+          <a
+            href="{{ url_for('shop') }}"
+            class="block w-full border-2 border-gray-300 text-gray-700 text-center py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+          >
+            Seguir Comprando
+          </a>
+
+          <!-- Trust Badges -->
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+              <span class="material-symbols-outlined text-green-600"
+                >verified</span
+              >
+              <span>Pago 100% seguro</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <span class="material-symbols-outlined text-green-600"
+                >local_shipping</span
+              >
+              <span>Envío gratuito</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- Empty Cart -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center"
+    >
+      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4"
+        >shopping_cart</span
+      >
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        Tu carrito está vacío
+      </h2>
+      <p class="text-gray-600 mb-6">
+        ¡Agrega productos para comenzar tu compra!
+      </p>
+      <a
+        href="{{ url_for('shop') }}"
+        class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-blue-500/30"
+      >
+        Ir a la Tienda
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  function updateQuantity(productId, newQuantity) {
+    if (newQuantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
+
+    fetch("/cart/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `product_id=${productId}&quantity=${newQuantity}`,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert("Error al actualizar cantidad");
+        }
+      });
+  }
+
+  function removeFromCart(productId) {
+    if (!confirm("¿Eliminar este producto del carrito?")) return;
+
+    fetch("/cart/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `product_id=${productId}`,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert("Error al eliminar producto");
+        }
+      });
+  }
+</script>
+{% endblock %}

@@ -66,7 +66,7 @@ function deleteEnrollment(id) {
     .catch((error) => console.error("Error:", error));
 }
 
-// View Enrollment (Placeholder for now)
+// View Enrollment Details
 function viewEnrollment(id) {
-  alert("Funcionalidad de ver detalles completa en desarrollo. ID: " + id);
+  window.location.href = `/enrollments/view/${id}`;
 }

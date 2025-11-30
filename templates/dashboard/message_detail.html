@@ -1,0 +1,190 @@
+{% extends 'dashboard/base_dashboard.html' %} {% block title %}{{
+message.subject }} - Mensajería - Wawalu{% endblock %} {% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <a
+      href="{{ url_for('messages') }}"
+      class="text-blue-600 hover:text-blue-700 flex items-center gap-2 mb-4"
+    >
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver a Mensajes
+    </a>
+  </div>
+
+  <!-- Message Detail -->
+  <div
+    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+  >
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-100">
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">
+        {{ message.subject }}
+      </h1>
+
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-4">
+          <!-- Sender Info -->
+          <div class="flex items-center">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-3 text-blue-600 font-bold"
+            >
+              {{ message.sender_name[:2].upper() }}
+            </div>
+            <div>
+              <div class="font-medium text-gray-800">
+                {{ message.sender_name }}
+              </div>
+              <div class="text-sm text-gray-500">
+                {{ message.sender_role|capitalize }}
+              </div>
+            </div>
+          </div>
+
+          <span class="text-gray-400">→</span>
+
+          <!-- Recipient Info -->
+          <div class="flex items-center">
+            <div
+              class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-gray-600 font-bold"
+            >
+              {{ message.recipient_name[:2].upper() }}
+            </div>
+            <div>
+              <div class="font-medium text-gray-800">
+                {{ message.recipient_name }}
+              </div>
+              <div class="text-sm text-gray-500">
+                {{ message.recipient_role|capitalize }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="text-sm text-gray-500">
+          {{ message.created_at.strftime('%d/%m/%Y %H:%M') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Content -->
+    <div class="p-8">
+      <div class="prose max-w-none">
+        <p class="text-gray-700 whitespace-pre-wrap">{{ message.content }}</p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="p-6 bg-gray-50 border-t border-gray-100 flex gap-3">
+      {% if message.sender_id != session.get('user_id') %}
+      <button
+        onclick="replyToMessage()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+      >
+        <span class="material-symbols-outlined">reply</span>
+        Responder
+      </button>
+      {% endif %}
+      <a
+        href="{{ url_for('messages') }}"
+        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+      >
+        Cerrar
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Reply Modal -->
+<div
+  id="replyModal"
+  class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50"
+>
+  <div
+    class="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 overflow-hidden"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-xl font-bold text-gray-800">Responder Mensaje</h3>
+      <button
+        onclick="closeReplyModal()"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form action="{{ url_for('send_message') }}" method="POST" class="p-6">
+      <input
+        type="hidden"
+        name="recipient_id"
+        value="{{ message.sender_id }}"
+      />
+      <input type="hidden" name="subject" value="Re: {{ message.subject }}" />
+
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Para:</label>
+        <div class="text-gray-600">
+          {{ message.sender_name }} ({{ message.sender_role|capitalize }})
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2"
+          >Asunto:</label
+        >
+        <div class="text-gray-600">Re: {{ message.subject }}</div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2"
+          >Mensaje</label
+        >
+        <textarea
+          name="content"
+          rows="5"
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-blue-500"
+          placeholder="Escribe tu respuesta aquí..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button
+          type="button"
+          onclick="closeReplyModal()"
+          class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+        >
+          <span class="material-symbols-outlined mr-2">send</span>
+          Enviar Respuesta
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function replyToMessage() {
+    const modal = document.getElementById("replyModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+  }
+
+  function closeReplyModal() {
+    const modal = document.getElementById("replyModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+
+  // Close on outside click
+  document.getElementById("replyModal").addEventListener("click", function (e) {
+    if (e.target === this) closeReplyModal();
+  });
+</script>
+{% endblock %}

@@ -28,7 +28,7 @@ Wawalu{% endblock %} {% block content %}
             >
               {% if session.get('profile_image') %}
               <img
-                src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) }}"
+                src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) if session.get('profile_image') else url_for('static', filename='image/default_profile.png') }}"
                 alt="Profile"
                 class="w-full h-full object-cover"
               />
@@ -68,13 +68,14 @@ Wawalu{% endblock %} {% block content %}
       <!-- Navigation Menu -->
       <div class="bg-white rounded-xl shadow-sm overflow-hidden sticky top-6">
         <nav class="flex flex-col">
-          <a
-            href="#personal-info"
-            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          <button
+            onclick="switchTab('personal-info')"
+            id="tab-personal-info"
+            class="profile-tab-link flex items-center px-6 py-4 hover:bg-gray-50 transition-colors border-l-4 w-full text-left bg-blue-50 border-blue-600 text-blue-600"
           >
             <span class="material-symbols-outlined mr-3">person</span>
             Información Personal
-          </a>
+          </button>
           <a
             href="{{ url_for('orders') }}"
             class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
@@ -82,20 +83,22 @@ Wawalu{% endblock %} {% block content %}
             <span class="material-symbols-outlined mr-3">shopping_bag</span>
             Mis Pedidos
           </a>
-          <a
-            href="#security"
-            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          <button
+            onclick="switchTab('security')"
+            id="tab-security"
+            class="profile-tab-link flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600 w-full text-left"
           >
             <span class="material-symbols-outlined mr-3">lock</span>
             Seguridad
-          </a>
-          <a
-            href="#preferences"
-            class="flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600"
+          </button>
+          <button
+            onclick="switchTab('preferences')"
+            id="tab-preferences"
+            class="profile-tab-link flex items-center px-6 py-4 text-gray-600 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-600 w-full text-left"
           >
             <span class="material-symbols-outlined mr-3">settings</span>
             Preferencias
-          </a>
+          </button>
           <a
             href="{{ url_for('logout') }}"
             class="flex items-center px-6 py-4 text-red-500 hover:bg-red-50 transition-colors border-t border-gray-100"
@@ -112,7 +115,7 @@ Wawalu{% endblock %} {% block content %}
       <!-- Personal Information -->
       <div
         id="personal-info"
-        class="bg-white rounded-2xl shadow-sm p-6 md:p-8 scroll-mt-24"
+        class="profile-section bg-white rounded-2xl shadow-sm p-6 md:p-8 animate-fade-in"
       >
         <div class="flex items-center justify-between mb-6">
           <div>
@@ -155,7 +158,7 @@ Wawalu{% endblock %} {% block content %}
               >
                 {% if session.get('profile_image') %}
                 <img
-                  src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) }}"
+                  src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) if session.get('profile_image') else url_for('static', filename='image/default_profile.png') }}"
                   alt="Preview"
                   class="w-full h-full object-cover"
                 />
@@ -259,7 +262,7 @@ Wawalu{% endblock %} {% block content %}
       <!-- Security Section -->
       <div
         id="security"
-        class="bg-white rounded-2xl shadow-sm p-6 md:p-8 scroll-mt-24"
+        class="profile-section bg-white rounded-2xl shadow-sm p-6 md:p-8 animate-fade-in hidden"
       >
         <div class="flex items-center justify-between mb-6">
           <div>
@@ -356,7 +359,7 @@ Wawalu{% endblock %} {% block content %}
       <!-- Preferences Section -->
       <div
         id="preferences"
-        class="bg-white rounded-2xl shadow-sm p-6 md:p-8 scroll-mt-24"
+        class="profile-section bg-white rounded-2xl shadow-sm p-6 md:p-8 animate-fade-in hidden"
       >
         <div class="mb-6">
           <h2 class="text-lg font-bold text-gray-800 flex items-center">
@@ -483,4 +486,29 @@ Wawalu{% endblock %} {% block content %}
     </div>
   </div>
 </div>
+
+<script>
+  function switchTab(tabId) {
+    // Hide all sections
+    document.querySelectorAll(".profile-section").forEach((el) => {
+      el.classList.add("hidden");
+    });
+
+    // Remove active styles from all tabs
+    document.querySelectorAll(".profile-tab-link").forEach((el) => {
+      el.classList.remove("bg-blue-50", "border-blue-600", "text-blue-600");
+      el.classList.add("text-gray-600", "border-transparent");
+    });
+
+    // Show selected section
+    document.getElementById(tabId).classList.remove("hidden");
+
+    // Add active styles to selected tab
+    const activeTab = document.getElementById("tab-" + tabId);
+    if (activeTab) {
+      activeTab.classList.remove("text-gray-600", "border-transparent");
+      activeTab.classList.add("bg-blue-50", "border-blue-600", "text-blue-600");
+    }
+  }
+</script>
 {% endblock %}

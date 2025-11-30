@@ -47,7 +47,7 @@ Productos - Wawalu{% endblock %} {% block content %}
                 >
                   {% if product.image_url %}
                   <img
-                    src="{{ url_for('static', filename='image/products/' + product.image_url) }}"
+                    src="{{ url_for('static', filename='uploads/products/' + product.image_url) if product.image_url else url_for('static', filename='image/default_product.png') }}"
                     alt="{{ product.name }}"
                     class="w-full h-full object-cover"
                   />
@@ -90,20 +90,6 @@ Productos - Wawalu{% endblock %} {% block content %}
               </span>
               {% else %}
               <span class="text-red-600 font-medium flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                Agotado
-              </span>
-              {% endif %}
-            </td>
-            <td class="px-6 py-4 text-right">
-              <div
-                class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <a
-                  href="{{ url_for('edit_product', product_id=product.id) }}"
-                  class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  title="Editar"
-                >
                   <span class="material-symbols-outlined">edit</span>
                 </a>
                 <a

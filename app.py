@@ -132,6 +132,50 @@ def send_acceptance_email(to_email, name, password, child_name):
         print(f"Error sending acceptance email: {e}")
         return False
 
+def send_order_status_email(to_email, name, order_id, status):
+    sender_email = os.getenv('SMTP_USER')
+    sender_password = os.getenv('SMTP_PASS')
+    smtp_server = os.getenv('SMTP_HOST')
+    smtp_port = int(os.getenv('SMTP_PORT', 587))
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = to_email
+    msg['Subject'] = f"Actualización de Pedido #{order_id} - Wawalu"
+
+    status_messages = {
+        'pending': 'está pendiente de procesamiento',
+        'paid': 'ha sido confirmado y pagado',
+        'shipped': 'ha sido enviado',
+        'completed': 'ha sido completado',
+        'cancelled': 'ha sido cancelado'
+    }
+
+    body = f"""
+    Estimado/a {name},
+
+    Le informamos que su pedido #{order_id} {status_messages.get(status, 'ha sido actualizado')}.
+
+    Puede revisar los detalles de su pedido en su panel de usuario.
+
+    Gracias por su compra.
+
+    Atentamente,
+    El equipo de Wawalu
+    """
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Error sending order status email: {e}")
+        return False
+
 # ========================================
 # RUTAS PÚBLICAS
 # ========================================
@@ -402,7 +446,7 @@ def add_comment():
             cursor.execute('INSERT INTO comments (name, relation, comment) VALUES (%s, %s, %s)',
                          (name, relation, comment))
             conn.commit()
-            flash('¡Gracias por tu comentario!', 'success')
+            flash('¡Gracias por tu comentario! Será publicado después de ser aprobado.', 'success')
     except Exception as e:
         flash(f'Error al enviar comentario: {str(e)}', 'error')
     finally:
@@ -1048,7 +1092,17 @@ def news():
 def cart():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('dashboard/cart.html')
+    
+    cart_items = session.get('cart', [])
+    # Calculate total
+    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in cart_items if isinstance(item, dict))
+    
+    # Calculate subtotals for display if needed (though template might do it)
+    for item in cart_items:
+        if isinstance(item, dict):
+            item['subtotal'] = item.get('price', 0) * item.get('quantity', 0)
+            
+    return render_template('dashboard/cart.html', cart_items=cart_items, total=total)
 
 @app.route('/api/cart', methods=['GET', 'POST', 'DELETE'])
 def api_cart():
@@ -1325,15 +1379,97 @@ def reject_admission(admission_id):
 def add_admission_admin():
     if 'user_id' not in session or session.get('user_role') != 'admin':
         return redirect(url_for('login'))
-    flash('Funcionalidad en desarrollo', 'info')
-    return redirect(url_for('manage_admissions'))
+    
+    if request.method == 'POST':
+        # Parent Info
+        parent_name = request.form.get('parent_name')
+        parent_lastname = request.form.get('parent_lastname')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        doc_type = request.form.get('doc_type')
+        doc_number = request.form.get('doc_number')
+        
+        # Child Info
+        child_name = request.form.get('child_name')
+        child_lastname = request.form.get('child_lastname')
+        child_dob = request.form.get('child_dob')
+        child_gender = request.form.get('child_gender')
+        
+        # Academic Info
+        program = request.form.get('program')
+        status = request.form.get('status', 'pending')
+        
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('''
+                    INSERT INTO admissions (
+                        parent_name, parent_lastname, email, phone, doc_type, doc_number,
+                        child_name, child_lastname, child_dob, child_gender,
+                        program, status
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ''', (parent_name, parent_lastname, email, phone, doc_type, doc_number,
+                      child_name, child_lastname, child_dob, child_gender,
+                      program, status))
+                conn.commit()
+                flash('Admisión creada exitosamente', 'success')
+                return redirect(url_for('manage_admissions'))
+        except Exception as e:
+            flash(f'Error al crear admisión: {str(e)}', 'error')
+        finally:
+            conn.close()
+            
+    return render_template('dashboard/admin/admission_form.html', admission=None)
 
 @app.route('/admissions/edit_admin/<int:admission_id>', methods=['GET', 'POST'])
 def edit_admission_admin(admission_id):
     if 'user_id' not in session or session.get('user_role') != 'admin':
         return redirect(url_for('login'))
-    flash('Funcionalidad en desarrollo', 'info')
-    return redirect(url_for('manage_admissions'))
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            if request.method == 'POST':
+                # Parent Info
+                parent_name = request.form.get('parent_name')
+                parent_lastname = request.form.get('parent_lastname')
+                email = request.form.get('email')
+                phone = request.form.get('phone')
+                doc_type = request.form.get('doc_type')
+                doc_number = request.form.get('doc_number')
+                
+                # Child Info
+                child_name = request.form.get('child_name')
+                child_lastname = request.form.get('child_lastname')
+                child_dob = request.form.get('child_dob')
+                child_gender = request.form.get('child_gender')
+                
+                # Academic Info
+                program = request.form.get('program')
+                status = request.form.get('status')
+                
+                cursor.execute('''
+                    UPDATE admissions SET
+                        parent_name=%s, parent_lastname=%s, email=%s, phone=%s, doc_type=%s, doc_number=%s,
+                        child_name=%s, child_lastname=%s, child_dob=%s, child_gender=%s,
+                        program=%s, status=%s
+                    WHERE id=%s
+                ''', (parent_name, parent_lastname, email, phone, doc_type, doc_number,
+                      child_name, child_lastname, child_dob, child_gender,
+                      program, status, admission_id))
+                conn.commit()
+                flash('Admisión actualizada exitosamente', 'success')
+                return redirect(url_for('manage_admissions'))
+            
+            cursor.execute('SELECT * FROM admissions WHERE id = %s', (admission_id,))
+            admission = cursor.fetchone()
+            if not admission:
+                flash('Admisión no encontrada', 'error')
+                return redirect(url_for('manage_admissions'))
+                
+            return render_template('dashboard/admin/admission_form.html', admission=admission)
+    finally:
+        conn.close()
 
 @app.route('/admissions/delete_admin/<int:admission_id>')
 def delete_admission_admin(admission_id):
@@ -1441,6 +1577,69 @@ def delete_user(user_id):
     return redirect(url_for('manage_users'))
 
 
+
+# ========================================
+# GESTIÓN DE PEDIDOS (ADMIN/STAFF)
+# ========================================
+
+@app.route('/orders/manage')
+def manage_orders():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''SELECT o.*, u.name as user_name, u.email as user_email 
+                            FROM orders o
+                            JOIN users u ON o.user_id = u.id
+                            ORDER BY o.created_at DESC''')
+            orders = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    if session.get('user_role') == 'admin':
+        return render_template('dashboard/admin/manage_orders.html', orders=orders)
+    else:
+        return render_template('dashboard/staff/manage_orders.html', orders=orders)
+
+@app.route('/orders/update_status/<int:order_id>', methods=['POST'])
+def update_order_status(order_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    data = request.get_json()
+    new_status = data.get('status')
+    
+    if not new_status:
+        return jsonify({'success': False, 'message': 'Status required'}), 400
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Get order details for email
+            cursor.execute('SELECT o.*, u.email, u.name FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = %s', (order_id,))
+            order = cursor.fetchone()
+            
+            if not order:
+                return jsonify({'success': False, 'message': 'Order not found'}), 404
+            
+            # Update status
+            cursor.execute('UPDATE orders SET status = %s WHERE id = %s', (new_status, order_id))
+            conn.commit()
+            
+            # Send email notification
+            try:
+                send_order_status_email(order['email'], order['name'], order_id, new_status)
+            except Exception as e:
+                print(f"Error sending email: {e}")
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        conn.close()
+    
+    return jsonify({'success': True})
 
 # ========================================
 # GESTIÓN DE PRODUCTOS (ADMIN/STAFF)
@@ -1573,6 +1772,39 @@ def delete_enrollment(id):
         conn.close()
         
     return jsonify({'success': True})
+
+@app.route('/enrollments/view/<int:enrollment_id>')
+def view_enrollment(enrollment_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Get enrollment details with student and program info
+            cursor.execute('''
+                SELECT e.*, 
+                       s.first_name, s.last_name, s.dob, s.gender, s.student_photo,
+                       s.allergies, s.medical_info,
+                       s.phone as student_phone, s.email as student_email, s.address,
+                       p.name as program_name, p.description as program_description,
+                       u.name as parent_name, u.email as parent_email, u.phone as parent_phone
+                FROM enrollments e
+                JOIN students s ON e.student_id = s.id
+                JOIN programs p ON e.program_id = p.id
+                LEFT JOIN users u ON s.parent_id = u.id
+                WHERE e.id = %s
+            ''', (enrollment_id,))
+            enrollment = cursor.fetchone()
+            
+            if not enrollment:
+                flash('Matrícula no encontrada', 'error')
+                return redirect(url_for('manage_enrollments'))
+            
+            return render_template('dashboard/admin/enrollment_detail.html', enrollment=enrollment)
+    finally:
+        conn.close()
+
 
 # ========================================
 # RUTAS ADICIONALES PARA FORMULARIOS
@@ -1715,8 +1947,8 @@ def delete_product(product_id):
 def add_product_staff():
     if 'user_id' not in session or session.get('user_role') != 'staff':
         return redirect(url_for('login'))
-    flash('Funcionalidad en desarrollo', 'info')
-    return redirect(url_for('manage_products'))
+    # Staff can use the same add_product function as admin
+    return add_product()
 
 @app.route('/news/add', methods=['GET', 'POST'])
 def add_news():
@@ -1924,8 +2156,43 @@ def student_messages():
         
     return render_template('dashboard/messages.html', received_messages=received_messages, sent_messages=sent_messages, recipients=recipients)
 
+@app.route('/dashboard/messages/view/<int:message_id>')
+def view_message(message_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Get message details
+            cursor.execute('''
+                SELECT m.*, 
+                       sender.name as sender_name, sender.role as sender_role,
+                       recipient.name as recipient_name, recipient.role as recipient_role
+                FROM internal_messages m
+                JOIN users sender ON m.sender_id = sender.id
+                JOIN users recipient ON m.recipient_id = recipient.id
+                WHERE m.id = %s AND (m.sender_id = %s OR m.recipient_id = %s)
+            ''', (message_id, session['user_id'], session['user_id']))
+            message = cursor.fetchone()
+            
+            if not message:
+                flash('Mensaje no encontrado', 'error')
+                return redirect(url_for('student_messages'))
+            
+            # Mark as read if user is recipient
+            if message['recipient_id'] == session['user_id'] and not message['is_read']:
+                cursor.execute('UPDATE internal_messages SET is_read = TRUE WHERE id = %s', (message_id,))
+                conn.commit()
+                
+            return render_template('dashboard/message_detail.html', message=message)
+            
+    finally:
+        conn.close()
+
 @app.route('/dashboard/messages/send', methods=['POST'])
 def send_message():
+    # Handle internal message sending
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
@@ -1933,6 +2200,10 @@ def send_message():
     subject = request.form.get('subject')
     content = request.form.get('content')
     
+    if not all([recipient_id, subject, content]):
+        flash('Todos los campos son requeridos', 'error')
+        return redirect(url_for('student_messages'))
+        
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -1942,6 +2213,7 @@ def send_message():
             ''', (session['user_id'], recipient_id, subject, content))
             conn.commit()
             flash('Mensaje enviado exitosamente', 'success')
+            
     except Exception as e:
         flash(f'Error al enviar mensaje: {str(e)}', 'error')
     finally:
@@ -1950,16 +2222,12 @@ def send_message():
     return redirect(url_for('student_messages'))
 
 
-@app.route('/add_news_staff', methods=['GET', 'POST'])
-def add_news_staff():
-    return add_news()
-
 @app.route('/add_galery_staff', methods=['GET', 'POST'])
 def add_galery_staff():
     if 'user_id' not in session or session.get('user_role') != 'staff':
         return redirect(url_for('login'))
-    flash('Funcionalidad en desarrollo', 'info')
-    return redirect(url_for('manage_galery'))
+    # Staff can use the same add_gallery_item function as admin
+    return add_gallery_item()
 
 @app.route('/galery/add', methods=['GET', 'POST'])
 def add_gallery_item():
@@ -2060,8 +2328,37 @@ def delete_gallery_item(item_id):
 def add_enrollment_staff():
     if 'user_id' not in session or session.get('user_role') != 'staff':
         return redirect(url_for('login'))
-    flash('Funcionalidad en desarrollo', 'info')
-    return redirect(url_for('manage_enrollments'))
+    
+    if request.method == 'POST':
+        student_id = request.form.get('student_id')
+        program_id = request.form.get('program_id')
+        status = request.form.get('status', 'active')
+        
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('INSERT INTO enrollments (student_id, program_id, status) VALUES (%s, %s, %s)',
+                             (student_id, program_id, status))
+                conn.commit()
+                flash('Matrícula creada exitosamente', 'success')
+                return redirect(url_for('manage_enrollments'))
+        except Exception as e:
+            flash(f'Error al crear matrícula: {str(e)}', 'error')
+        finally:
+            conn.close()
+    
+    # Get students and programs for the form
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM students')
+            students = cursor.fetchall()
+            cursor.execute('SELECT * FROM programs WHERE is_active = TRUE')
+            programs = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/staff/enrollment_form.html', students=students, programs=programs)
 
 @app.route('/add_admission_staff', methods=['GET', 'POST'])
 def add_admission_staff():
@@ -2180,8 +2477,50 @@ def delete_admission_staff(admission_id):
 def add_report():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    flash('Funcionalidad en desarrollo', 'info')
+    
+    title = request.form.get('title')
+    student_name = request.form.get('student_name')
+    file = request.files.get('file')
+    
+    if not file or not file.filename:
+        flash('Debe seleccionar un archivo PDF', 'error')
+        return redirect(url_for('reports'))
+    
+    filename = secure_filename(file.filename)
+    base, ext = os.path.splitext(filename)
+    filename = f"{base}_{int(time.time())}{ext}"
+    
+    # Ensure directory exists
+    upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'reports')
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    file.save(os.path.join(upload_dir, filename))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # For parents/students, use their user_id for both student_id and user_id
+            cursor.execute('INSERT INTO student_reports (student_id, user_id, title, file_url) VALUES (%s, %s, %s, %s)',
+                         (session['user_id'], session['user_id'], title, filename))
+            conn.commit()
+            flash('Reporte subido exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al subir reporte: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
     return redirect(url_for('reports'))
+
+@app.route('/download_report/<filename>')
+def download_report(filename):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Secure the filename to prevent directory traversal attacks
+    filename = secure_filename(filename)
+    reports_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'reports')
+    
+    return send_from_directory(reports_dir, filename, as_attachment=True)
 
 
 @app.route('/reports/manage')
@@ -2230,7 +2569,7 @@ def upload_report():
                     
                     file.save(os.path.join(upload_dir, filename))
                     
-                    cursor.execute('INSERT INTO reports (student_id, title, description, file_url) VALUES (%s, %s, %s, %s)',
+                    cursor.execute('INSERT INTO student_reports (student_id, title, description, file_url) VALUES (%s, %s, %s, %s)',
                                  (student_id, title, description, filename))
                     conn.commit()
                     flash('Reporte subido exitosamente', 'success')
@@ -2276,6 +2615,330 @@ def delete_report(report_id):
         conn.close()
         
     return redirect(url_for('manage_reports'))
+
+# ========================================
+# GESTIÓN ACADÉMICA (ADMIN/STAFF)
+# ========================================
+
+@app.route('/schedule/manage')
+def manage_schedule():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''SELECT cs.*, c.name as course_name, p.name as program_name
+                            FROM class_schedule cs
+                            JOIN courses c ON cs.course_id = c.id
+                            JOIN programs p ON c.program_id = p.id
+                            ORDER BY cs.day_of_week, cs.start_time''')
+            schedules = cursor.fetchall()
+            
+            cursor.execute('SELECT c.*, p.name as program_name FROM courses c JOIN programs p ON c.program_id = p.id')
+            courses = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_schedule.html', schedules=schedules, courses=courses)
+
+# ========================================
+# COURSE MANAGEMENT ROUTES
+# ========================================
+
+@app.route('/courses/manage')
+def manage_courses():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''SELECT c.*, p.name as program_name 
+                            FROM courses c 
+                            JOIN programs p ON c.program_id = p.id 
+                            ORDER BY p.name, c.name''')
+            courses = cursor.fetchall()
+            
+            cursor.execute('SELECT id, name FROM programs WHERE is_active = TRUE ORDER BY name')
+            programs = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_courses.html', courses=courses, programs=programs)
+
+@app.route('/courses/add', methods=['POST'])
+def add_course():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    program_id = request.form.get('program_id')
+    name = request.form.get('name')
+    description = request.form.get('description', '')
+    teacher_name = request.form.get('teacher_name', '')
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''INSERT INTO courses (program_id, name, description, teacher_name) 
+                            VALUES (%s, %s, %s, %s)''',
+                         (program_id, name, description, teacher_name))
+            conn.commit()
+            flash('Curso agregado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al agregar curso: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_courses'))
+
+@app.route('/courses/edit/<int:course_id>', methods=['POST'])
+def edit_course(course_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    program_id = request.form.get('program_id')
+    name = request.form.get('name')
+    description = request.form.get('description', '')
+    teacher_name = request.form.get('teacher_name', '')
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''UPDATE courses 
+                            SET program_id = %s, name = %s, description = %s, teacher_name = %s 
+                            WHERE id = %s''',
+                         (program_id, name, description, teacher_name, course_id))
+            conn.commit()
+            flash('Curso actualizado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al actualizar curso: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_courses'))
+
+@app.route('/courses/delete/<int:course_id>')
+def delete_course(course_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM courses WHERE id = %s', (course_id,))
+            conn.commit()
+            flash('Curso eliminado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar curso: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_courses'))
+
+
+@app.route('/schedule/add', methods=['POST'])
+def add_schedule():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return jsonify({'success': False}), 403
+    
+    course_id = request.form.get('course_id')
+    day_of_week = request.form.get('day_of_week')
+    start_time = request.form.get('start_time')
+    end_time = request.form.get('end_time')
+    room = request.form.get('room')
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('INSERT INTO class_schedule (course_id, day_of_week, start_time, end_time, room) VALUES (%s, %s, %s, %s, %s)',
+                         (course_id, day_of_week, start_time, end_time, room))
+            conn.commit()
+            flash('Horario agregado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al agregar horario: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_schedule'))
+
+@app.route('/schedule/delete/<int:schedule_id>')
+def delete_schedule(schedule_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM class_schedule WHERE id = %s', (schedule_id,))
+            conn.commit()
+            flash('Horario eliminado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar horario: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_schedule'))
+
+@app.route('/assignments/manage')
+def manage_assignments_admin():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''SELECT a.*, c.name as course_name, p.name as program_name,
+                            COUNT(s.id) as submission_count
+                            FROM assignments a
+                            JOIN courses c ON a.course_id = c.id
+                            JOIN programs p ON c.program_id = p.id
+                            LEFT JOIN submissions s ON a.id = s.assignment_id
+                            GROUP BY a.id
+                            ORDER BY a.due_date DESC''')
+            assignments = cursor.fetchall()
+            
+            cursor.execute('SELECT c.*, p.name as program_name FROM courses c JOIN programs p ON c.program_id = p.id')
+            courses = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_assignments.html', assignments=assignments, courses=courses)
+
+@app.route('/assignments/add_admin', methods=['POST'])
+def add_assignment_admin():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    course_id = request.form.get('course_id')
+    title = request.form.get('title')
+    description = request.form.get('description')
+    due_date = request.form.get('due_date')
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('INSERT INTO assignments (course_id, title, description, due_date) VALUES (%s, %s, %s, %s)',
+                         (course_id, title, description, due_date))
+            conn.commit()
+            flash('Tarea creada exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al crear tarea: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_assignments_admin'))
+
+@app.route('/assignments/grade/<int:assignment_id>')
+def grade_assignment(assignment_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM assignments WHERE id = %s', (assignment_id,))
+            assignment = cursor.fetchone()
+            
+            cursor.execute('''SELECT s.*, st.first_name, st.last_name
+                            FROM submissions s
+                            JOIN students st ON s.student_id = st.id
+                            WHERE s.assignment_id = %s''', (assignment_id,))
+            submissions = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/grade_assignment.html', assignment=assignment, submissions=submissions)
+
+@app.route('/submissions/grade/<int:submission_id>', methods=['POST'])
+def grade_submission(submission_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return jsonify({'success': False}), 403
+    
+    grade = request.form.get('grade')
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('UPDATE submissions SET grade = %s, status = %s WHERE id = %s',
+                         (grade, 'graded', submission_id))
+            conn.commit()
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        conn.close()
+    
+    return jsonify({'success': True})
+
+@app.route('/attendance/manage')
+def manage_attendance():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM programs WHERE is_active = TRUE')
+            programs = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_attendance.html', programs=programs)
+
+@app.route('/attendance/take', methods=['POST'])
+def take_attendance():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return jsonify({'success': False}), 403
+    
+    data = request.get_json()
+    program_id = data.get('program_id')
+    date = data.get('date')
+    attendance_records = data.get('records', [])
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            for record in attendance_records:
+                enrollment_id = record.get('enrollment_id')
+                status = record.get('status')
+                remarks = record.get('remarks', '')
+                
+                cursor.execute('''INSERT INTO attendance (enrollment_id, date, status, remarks)
+                                VALUES (%s, %s, %s, %s)
+                                ON DUPLICATE KEY UPDATE status = VALUES(status), remarks = VALUES(remarks)''',
+                             (enrollment_id, date, status, remarks))
+            conn.commit()
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        conn.close()
+    
+    return jsonify({'success': True})
+
+@app.route('/attendance/get/<int:program_id>/<date>')
+def get_attendance(program_id, date):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return jsonify({'success': False}), 403
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''SELECT e.id as enrollment_id, s.first_name, s.last_name,
+                            a.status, a.remarks
+                            FROM enrollments e
+                            JOIN students s ON e.student_id = s.id
+                            LEFT JOIN attendance a ON e.id = a.enrollment_id AND a.date = %s
+                            WHERE e.program_id = %s AND e.status = 'active'
+                            ORDER BY s.last_name, s.first_name''',
+                         (date, program_id))
+            students = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return jsonify({'success': True, 'students': students})
+
+# ========================================
+# GESTIÓN DE EVENTOS (ADMIN/STAFF)
 
 @app.route('/events/manage')
 def manage_events():

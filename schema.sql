@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS products (
     stock INT DEFAULT 0,
     material VARCHAR(50),
     usage_info TEXT,
-    dimensions Text,
+    dimensions TEXT,
     sizes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,5 +1,7 @@
 {% extends "base.html" %} {% block title %}Inicio - PG Wawalu{% endblock %} {%
-block extra_css %}
+block meta_description %}Wawalu: Centro de educación inicial y estimulación
+temprana inspirado en Reggio Emilia. Un espacio seguro y amoroso para el
+desarrollo integral de tu hijo.{% endblock %} {% block extra_css %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/slide.css') }}"
@@ -8,6 +10,7 @@ block extra_css %}
   rel="stylesheet"
   href="{{ url_for('static', filename='css/index.css') }}"
 />
+
 {% endblock %} {% block content %}
 <!-- Hero Slider -->
 <section class="relative">
@@ -20,12 +23,12 @@ block extra_css %}
         alt="Niños jugando"
       />
       <div class="slide-content animate-slide-in-up">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1 class="text-3xl md:text-6xl font-bold mb-4">
           Bienvenidos a Wawalu
         </h1>
-        <p class="text-lg md:text-xl mb-8">
-          Descubre un espacio donde aprender, crecer y ser feliz es lo más
-          importante.
+        <p class="text-base md:text-xl mb-8">
+          Descubre un espacio donde aprender, crecer y ser feliz es lo
+          másimportante.
         </p>
         <a
           href="{{ url_for('admission') }}"
@@ -41,10 +44,10 @@ block extra_css %}
         alt="Aprendizaje creativo"
       />
       <div class="slide-content">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1 class="text-3xl md:text-6xl font-bold mb-4">
           Metodología Reggio Emilia
         </h1>
-        <p class="text-lg md:text-xl mb-8">
+        <p class="text-base md:text-xl mb-8">
           El niño es el protagonista de su propio aprendizaje, explorando el
           mundo a través de sus cien lenguajes.
         </p>
@@ -62,12 +65,12 @@ block extra_css %}
         alt="Ambiente seguro"
       />
       <div class="slide-content">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1 class="text-3xl md:text-6xl font-bold mb-4">
           Un Ambiente Seguro y Amoroso
         </h1>
-        <p class="text-lg md:text-xl mb-8">
-          Espacios diseñados para inspirar la curiosidad y la creatividad en un
-          entorno cálido y familiar.
+        <p class="text-base md:text-xl mb-8">
+          Espacios diseñados para inspirar la curiosidad y la creatividad en
+          unentorno cálido y familiar.
         </p>
         <a
           href="{{ url_for('about') }}"
@@ -83,10 +86,10 @@ block extra_css %}
         alt="Talleres especializados"
       />
       <div class="slide-content">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1 class="text-3xl md:text-6xl font-bold mb-4">
           Talleres Especializados
         </h1>
-        <p class="text-lg md:text-xl mb-8">
+        <p class="text-base md:text-xl mb-8">
           Arte, música, movimiento y más actividades para complementar el
           desarrollo integral.
         </p>
@@ -104,10 +107,10 @@ block extra_css %}
         alt="Comunidad Wawalu"
       />
       <div class="slide-content">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1 class="text-3xl md:text-6xl font-bold mb-4">
           Únete a la Familia Wawalu
         </h1>
-        <p class="text-lg md:text-xl mb-8">
+        <p class="text-base md:text-xl mb-8">
           Formamos una comunidad educativa comprometida con el bienestar y
           futuro de nuestros niños.
         </p>
@@ -194,8 +197,8 @@ block extra_css %}
             Programa Preescolar
           </h3>
           <p class="text-gray-600 text-sm mb-4">
-            Educación integral basada en la metodología Reggio Emilia para niños
-            de 3 a 5 años.
+            Educación integral basada en la metodología Reggio Emilia para
+            niñosde 3 a 5 años.
           </p>
           <ul class="space-y-2">
             <li class="flex items-center text-sm text-gray-700">
@@ -533,7 +536,7 @@ block extra_css %}
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 max-w-4xl mx-auto">
       {% for comment in comments %}
-      <div class="testimonial-card p-8 text-left">
+      <div class="testimonial-card p-6 md:p-8 text-left">
         <div class="flex items-center mb-4">
           <div class="bg-blue-100 rounded-full p-2 mr-4">
             <span class="material-symbols-outlined text-blue-600">person</span>
@@ -553,17 +556,17 @@ block extra_css %}
       </div>
       {% endfor %}
     </div>
-    <div class="mt-8 flex justify-center gap-4">
+    <div class="mt-8 flex flex-col md:flex-row justify-center gap-4">
       <button
         onclick="document.getElementById('comment-modal').classList.remove('hidden'); document.getElementById('comment-modal').classList.add('flex')"
-        class="bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2 px-6 rounded-full transition-colors flex items-center"
+        class="bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2 px-6 rounded-full transition-colors flex items-center justify-center"
       >
         <span class="material-symbols-outlined mr-2">add_comment</span> Agregar
         Comentario
       </button>
       <a
         href="{{ url_for('comments') }}"
-        class="bg-blue-600 border-2 border-blue-600 text-white hover:bg-blue-700 font-bold py-2 px-6 rounded-full transition-colors flex items-center"
+        class="bg-blue-600 border-2 border-blue-600 text-white hover:bg-blue-700 font-bold py-2 px-6 rounded-full transition-colors flex items-center justify-center"
       >
         <span class="material-symbols-outlined mr-2">forum</span> Ver todos los
         comentarios
@@ -594,10 +597,10 @@ block extra_css %}
 <!-- Comment Modal -->
 <div
   id="comment-modal"
-  class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 hidden"
+  class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm hidden"
 >
   <div
-    class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative animate-slide-in-up"
+    class="bg-white rounded-xl shadow-2xl p-6 md:p-8 max-w-md w-full mx-4 relative animate-slide-in-up"
   >
     <button
       onclick="document.getElementById('comment-modal').classList.add('hidden'); document.getElementById('comment-modal').classList.remove('flex')"

@@ -26,10 +26,10 @@ endblock %} {% block content %}
           >
             {% if item.image_url %}
             <img
-              src="{{ url_for('static', filename='image/products/' + item.image_url) }}"
+              src="{{ url_for('static', filename='image/products/' + item.image_url) if item.image_url else url_for('static', filename='image/default_product.png') }}"
               alt="{{ item.name }}"
               class="w-full h-full object-cover"
-              onerror="this.src='{{ url_for('static', filename='uploads/' + item.image_url) }}'"
+              onerror="this.src='{{ url_for('static', filename='uploads/' + item.image_url) if item.image_url else url_for('static', filename='image/default_product.png') }}'"
             />
             {% else %}
             <div

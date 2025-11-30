@@ -1,0 +1,368 @@
+{% extends "base.html" %} {% block title %}Finalizar Compra - Wawalu{% endblock
+%} {% block content %}
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-24 pb-16"
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Finalizar Compra</h1>
+      <p class="text-gray-600">
+        Completa tu información y selecciona tu método de pago
+      </p>
+    </div>
+
+    <form
+      action="{{ url_for('process_checkout') }}"
+      method="POST"
+      enctype="multipart/form-data"
+      class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+    >
+      <!-- Left Column - Customer Info & Payment -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Customer Information -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h2
+            class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-blue-600">person</span>
+            Información del Cliente
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Nombre Completo *</label
+              >
+              <input
+                type="text"
+                name="customer_name"
+                required
+                value="{{ session.get('user_name', '') }}"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Juan Pérez"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Email *</label
+              >
+              <input
+                type="email"
+                name="customer_email"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Teléfono *</label
+              >
+              <input
+                type="tel"
+                name="customer_phone"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="999 999 999"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >DNI *</label
+              >
+              <input
+                type="text"
+                name="customer_dni"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="12345678"
+              />
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Dirección de Entrega *</label
+            >
+            <textarea
+              name="delivery_address"
+              required
+              rows="3"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Av. Principal 123, Distrito, Ciudad"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h2
+            class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-blue-600">payment</span>
+            Método de Pago
+          </h2>
+
+          <div class="space-y-4">
+            <!-- Bank Transfer Option -->
+            <div
+              class="border-2 border-gray-200 rounded-lg p-4 hover:border-blue-500 transition-colors cursor-pointer"
+              onclick="selectPaymentMethod('bank_transfer')"
+            >
+              <label class="flex items-start gap-4 cursor-pointer">
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value="bank_transfer"
+                  required
+                  class="mt-1"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-blue-600"
+                      >account_balance</span
+                    >
+                    <span class="font-bold text-gray-900"
+                      >Transferencia Bancaria</span
+                    >
+                  </div>
+                  <div
+                    id="bank_transfer_details"
+                    class="hidden mt-4 p-4 bg-blue-50 rounded-lg"
+                  >
+                    <p class="text-sm font-medium text-gray-900 mb-3">
+                      Realiza tu transferencia a:
+                    </p>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Banco:</span>
+                        <span class="font-medium">BCP</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Cuenta:</span>
+                        <span class="font-medium">191-12345678-0-00</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">CCI:</span>
+                        <span class="font-medium">002-191-001234567800-00</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Titular:</span>
+                        <span class="font-medium">Jardín Wawalu S.A.C.</span>
+                      </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-blue-200">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-2"
+                        >Subir comprobante de pago *</label
+                      >
+                      <input
+                        type="file"
+                        name="payment_proof"
+                        accept="image/*,.pdf"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                      />
+                      <p class="text-xs text-gray-500 mt-2">
+                        Formatos: JPG, PNG, PDF (máx. 5MB)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <!-- Yape Option -->
+            <div
+              class="border-2 border-gray-200 rounded-lg p-4 hover:border-purple-500 transition-colors cursor-pointer"
+              onclick="selectPaymentMethod('yape')"
+            >
+              <label class="flex items-start gap-4 cursor-pointer">
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value="yape"
+                  required
+                  class="mt-1"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-purple-600"
+                      >qr_code_scanner</span
+                    >
+                    <span class="font-bold text-gray-900">Yape</span>
+                  </div>
+                  <div
+                    id="yape_details"
+                    class="hidden mt-4 p-4 bg-purple-50 rounded-lg"
+                  >
+                    <p class="text-sm font-medium text-gray-900 mb-3">
+                      Escanea el código QR o envía al número:
+                    </p>
+                    <div class="flex flex-col md:flex-row gap-6 items-center">
+                      <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <img
+                          src="{{ url_for('static', filename='image/yape-qr.png') }}"
+                          alt="Yape QR"
+                          class="w-48 h-48 object-contain"
+                        />
+                      </div>
+                      <div class="text-center md:text-left">
+                        <p class="text-2xl font-bold text-purple-600 mb-2">
+                          999 999 999
+                        </p>
+                        <p class="text-sm text-gray-600">Jardín Wawalu</p>
+                        <p class="text-lg font-bold text-gray-900 mt-4">
+                          S/ {{ "%.2f"|format(total) }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-purple-200">
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-2"
+                        >Subir captura de Yape *</label
+                      >
+                      <input
+                        type="file"
+                        name="payment_proof"
+                        accept="image/*"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700"
+                      />
+                      <p class="text-xs text-gray-500 mt-2">
+                        Sube la captura de pantalla de tu Yape
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Notas Adicionales (Opcional)</label
+          >
+          <textarea
+            name="order_notes"
+            rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Instrucciones especiales de entrega, preferencias, etc."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Right Column - Order Summary -->
+      <div class="lg:col-span-1">
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24"
+        >
+          <h2 class="text-xl font-bold text-gray-900 mb-6">
+            Resumen del Pedido
+          </h2>
+
+          <!-- Products List -->
+          <div class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+            {% for item in cart_items %}
+            <div class="flex gap-3 pb-3 border-b border-gray-100">
+              <img
+                src="{{ url_for('static', filename='uploads/' + item.image) if item.image else url_for('static', filename='image/default-product.png') }}"
+                alt="{{ item.name }}"
+                class="w-16 h-16 object-cover rounded-lg"
+              />
+              <div class="flex-1">
+                <p class="font-medium text-gray-900 text-sm">{{ item.name }}</p>
+                <p class="text-xs text-gray-500">
+                  Cantidad: {{ item.quantity }}
+                </p>
+                <p class="text-sm font-bold text-blue-600">
+                  S/ {{ "%.2f"|format(item.price * item.quantity) }}
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Totals -->
+          <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-gray-600">
+              <span>Subtotal</span>
+              <span>S/ {{ "%.2f"|format(subtotal) }}</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+              <span>Envío</span>
+              <span class="text-green-600">Gratis</span>
+            </div>
+            <div
+              class="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold text-gray-900"
+            >
+              <span>Total</span>
+              <span class="text-blue-600">S/ {{ "%.2f"|format(total) }}</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-blue-500/30 mb-3"
+          >
+            Confirmar Pedido
+          </button>
+
+          <a
+            href="{{ url_for('cart') }}"
+            class="block w-full text-center border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+          >
+            Volver al Carrito
+          </a>
+
+          <!-- Security Info -->
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+              <span class="material-symbols-outlined text-green-600">lock</span>
+              <span>Pago 100% seguro</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <span class="material-symbols-outlined text-green-600"
+                >verified</span
+              >
+              <span>Verificación de pago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function selectPaymentMethod(method) {
+    // Hide all payment details
+    document.getElementById("bank_transfer_details").classList.add("hidden");
+    document.getElementById("yape_details").classList.add("hidden");
+
+    // Show selected payment details
+    if (method === "bank_transfer") {
+      document
+        .getElementById("bank_transfer_details")
+        .classList.remove("hidden");
+    } else if (method === "yape") {
+      document.getElementById("yape_details").classList.remove("hidden");
+    }
+
+    // Check the radio button
+    document.querySelector(`input[value="${method}"]`).checked = true;
+  }
+
+  // Auto-show details when radio is clicked
+  document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {
+    radio.addEventListener("change", function () {
+      selectPaymentMethod(this.value);
+    });
+  });
+</script>
+{% endblock %}

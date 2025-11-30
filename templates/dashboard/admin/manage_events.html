@@ -82,9 +82,7 @@ Eventos - Wawalu{% endblock %} {% block content %}
               else 'N/A' }}
             </td>
             <td class="px-6 py-4 text-right">
-              <div
-                class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
+              <div class="flex items-center justify-end gap-2">
                 <a
                   href="{{ url_for('edit_event', event_id=event.id) }}"
                   class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"

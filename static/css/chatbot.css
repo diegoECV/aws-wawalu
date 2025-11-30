@@ -1,10 +1,5 @@
 /* Chatbot Styles */
-.chatbot-container {
-  position: fixed;
-  bottom: 180px;
-  right: 24px;
-  z-index: 50;
-}
+/* .chatbot-container removed as button is now in shared flex container */
 
 .chatbot-button {
   width: 56px;
@@ -34,7 +29,7 @@
 
 .chatbot-window {
   position: fixed;
-  bottom: 180px;
+  bottom: 230px; /* Adjusted to sit above the button stack (approx 160px + 56px + gap) */
   right: 24px;
   width: 380px;
   height: 550px;
@@ -47,7 +42,7 @@
   transform: scale(0.8) translateY(20px);
   pointer-events: none;
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  z-index: 51;
+  z-index: 31;
 }
 
 .chatbot-window.active {
@@ -199,12 +194,7 @@
     width: calc(100vw - 32px);
     height: calc(100vh - 220px);
     right: 16px;
-    bottom: 160px;
-  }
-
-  .chatbot-container {
-    right: 16px;
-    bottom: 160px;
+    bottom: 230px; /* Match desktop bottom or adjust if needed */
   }
 }
 
