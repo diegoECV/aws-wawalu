@@ -1,0 +1,251 @@
+{% extends 'dashboard/base_dashboard.html' %} {% block title %}Gestión de
+Comentarios - Wawalu{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+  >
+    <div>
+      <span class="text-gray-500 text-sm font-medium mb-1 block"
+        >Gestión de Contenido > Comentarios</span
+      >
+      <h1 class="text-3xl font-bold text-gray-800">Gestión de Comentarios</h1>
+      <p class="text-gray-600 mt-1">
+        Modera y gestiona los comentarios de padres y tutores
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <div
+        class="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm"
+      >
+        <div class="text-xs text-gray-500 uppercase font-semibold">Total</div>
+        <div class="text-2xl font-bold text-gray-800">
+          {{ comments|length }}
+        </div>
+      </div>
+      <div
+        class="bg-green-50 px-4 py-2 rounded-lg border border-green-200 shadow-sm"
+      >
+        <div class="text-xs text-green-600 uppercase font-semibold">
+          Aprobados
+        </div>
+        <div class="text-2xl font-bold text-green-700">
+          {{ comments|selectattr('is_approved', 'equalto', 1)|list|length }}
+        </div>
+      </div>
+      <div
+        class="bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200 shadow-sm"
+      >
+        <div class="text-xs text-yellow-600 uppercase font-semibold">
+          Pendientes
+        </div>
+        <div class="text-2xl font-bold text-yellow-700">
+          {{ comments|selectattr('is_approved', 'equalto', 0)|list|length }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="mb-6">
+    <div class="flex gap-2 border-b border-gray-200">
+      <button
+        onclick="filterComments('all')"
+        class="filter-tab px-6 py-3 font-semibold text-gray-600 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition-colors active"
+        data-filter="all"
+      >
+        Todos ({{ comments|length }})
+      </button>
+      <button
+        onclick="filterComments('approved')"
+        class="filter-tab px-6 py-3 font-semibold text-gray-600 hover:text-green-600 border-b-2 border-transparent hover:border-green-600 transition-colors"
+        data-filter="approved"
+      >
+        Aprobados ({{ comments|selectattr('is_approved', 'equalto',
+        1)|list|length }})
+      </button>
+      <button
+        onclick="filterComments('pending')"
+        class="filter-tab px-6 py-3 font-semibold text-gray-600 hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-colors"
+        data-filter="pending"
+      >
+        Pendientes ({{ comments|selectattr('is_approved', 'equalto',
+        0)|list|length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Comments Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for comment in comments %}
+    <div
+      class="comment-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+      data-status="{{ 'approved' if comment.is_approved else 'pending' }}"
+    >
+      <!-- Card Header -->
+      <div class="p-6 pb-4">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md"
+            >
+              {{ comment.name[:2].upper() }}
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800">{{ comment.name }}</h3>
+              <p class="text-sm text-gray-500">{{ comment.relation }}</p>
+            </div>
+          </div>
+          {% if comment.is_approved %}
+          <span
+            class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            Aprobado
+          </span>
+          {% else %}
+          <span
+            class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">schedule</span>
+            Pendiente
+          </span>
+          {% endif %}
+        </div>
+
+        <!-- Comment Text -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+          <p class="text-gray-700 text-sm leading-relaxed italic">
+            "{{ comment.comment }}"
+          </p>
+        </div>
+
+        <!-- Metadata -->
+        <div class="flex items-center gap-4 text-xs text-gray-500 mb-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm"
+              >calendar_today</span
+            >
+            {{ comment.created_at.strftime('%d/%m/%Y') }}
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">schedule</span>
+            {{ comment.created_at.strftime('%H:%M') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Actions -->
+      <div class="border-t border-gray-100 p-4 bg-gray-50 flex gap-2">
+        {% if comment.is_approved %}
+        <form
+          action="{{ url_for('toggle_comment_approval', comment_id=comment.id) }}"
+          method="POST"
+          class="flex-1"
+        >
+          <button
+            type="submit"
+            class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+            onclick="return confirm('¿Desaprobar este comentario?')"
+          >
+            <span class="material-symbols-outlined text-sm">cancel</span>
+            Desaprobar
+          </button>
+        </form>
+        {% else %}
+        <form
+          action="{{ url_for('toggle_comment_approval', comment_id=comment.id) }}"
+          method="POST"
+          class="flex-1"
+        >
+          <button
+            type="submit"
+            class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            Aprobar
+          </button>
+        </form>
+        {% endif %}
+        <form
+          action="{{ url_for('delete_comment', comment_id=comment.id) }}"
+          method="POST"
+        >
+          <button
+            type="submit"
+            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+            onclick="return confirm('¿Estás seguro de eliminar este comentario? Esta acción no se puede deshacer.')"
+            title="Eliminar comentario"
+          >
+            <span class="material-symbols-outlined text-sm">delete</span>
+          </button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-span-full text-center py-16">
+      <div class="inline-block p-6 rounded-full bg-gray-100 mb-4">
+        <span class="material-symbols-outlined text-6xl text-gray-400"
+          >chat_bubble_outline</span
+        >
+      </div>
+      <h3 class="text-xl font-bold text-gray-700 mb-2">No hay comentarios</h3>
+      <p class="text-gray-500">
+        Los comentarios de los padres aparecerán aquí.
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  function filterComments(status) {
+    const cards = document.querySelectorAll(".comment-card");
+    const tabs = document.querySelectorAll(".filter-tab");
+
+    // Update active tab
+    tabs.forEach((tab) => {
+      tab.classList.remove(
+        "active",
+        "border-blue-600",
+        "text-blue-600",
+        "border-green-600",
+        "text-green-600",
+        "border-yellow-600",
+        "text-yellow-600"
+      );
+      if (tab.dataset.filter === status) {
+        tab.classList.add("active");
+        if (status === "all") {
+          tab.classList.add("border-blue-600", "text-blue-600");
+        } else if (status === "approved") {
+          tab.classList.add("border-green-600", "text-green-600");
+        } else if (status === "pending") {
+          tab.classList.add("border-yellow-600", "text-yellow-600");
+        }
+      }
+    });
+
+    // Filter cards
+    cards.forEach((card) => {
+      if (status === "all") {
+        card.style.display = "block";
+      } else {
+        const cardStatus = card.dataset.status;
+        card.style.display = cardStatus === status ? "block" : "none";
+      }
+    });
+  }
+
+  // Initialize with 'all' filter
+  document.addEventListener("DOMContentLoaded", function () {
+    filterComments("all");
+  });
+</script>
+
+<style>
+  .filter-tab.active {
+    font-weight: 600;
+  }
+</style>
+{% endblock %}

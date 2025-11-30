@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS comments (
     relation VARCHAR(100) NOT NULL, -- Ej: Mamá de..., Papá de...
     comment TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_approved BOOLEAN DEFAULT TRUE -- Por defecto aprobados para que se muestren, se puede cambiar a FALSE si se requiere moderación
+    is_approved BOOLEAN DEFAULT FALSE -- Por defecto requiere aprobación del administrador
 );
 
 -- ========================================

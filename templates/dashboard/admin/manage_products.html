@@ -90,6 +90,18 @@ Productos - Wawalu{% endblock %} {% block content %}
               </span>
               {% else %}
               <span class="text-red-600 font-medium flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                Agotado
+              </span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center justify-end gap-2">
+                <a
+                  href="{{ url_for('edit_product', product_id=product.id) }}"
+                  class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="Editar"
+                >
                   <span class="material-symbols-outlined">edit</span>
                 </a>
                 <a

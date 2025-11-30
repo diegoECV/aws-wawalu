@@ -422,10 +422,10 @@ def comments():
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, TRUE)',
+                cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, FALSE)',
                              (name, relation, comment))
                 conn.commit()
-                flash('Comentario enviado exitosamente', 'success')
+                flash('Comentario enviado exitosamente. Será revisado por un administrador antes de publicarse.', 'success')
         except Exception as e:
             flash(f'Error al enviar comentario: {str(e)}', 'error')
         finally:
@@ -451,10 +451,10 @@ def add_comment():
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, TRUE)',
+            cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, FALSE)',
                          (name, relation, comment))
             conn.commit()
-            flash('¡Gracias por tu comentario! Ha sido publicado exitosamente.', 'success')
+            flash('¡Gracias por tu comentario! Será revisado por un administrador antes de publicarse.', 'success')
     except Exception as e:
         flash(f'Error al enviar comentario: {str(e)}', 'error')
     finally:
@@ -627,32 +627,62 @@ def profile():
                 phone = request.form.get('phone')
                 address = request.form.get('address')
                 
+                # Manejo de imagen de perfil
                 if 'profile_image' in request.files:
                     file = request.files['profile_image']
-                    if file and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        import time
-                        filename = f"profile_{session['user_id']}_{int(time.time())}_{filename}"
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        
-                        cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s, profile_image = %s WHERE id = %s',
-                                     (name, phone, address, filename, session['user_id']))
-                        session['profile_image'] = filename
+                    if file and file.filename != '':
+                        if allowed_file(file.filename):
+                            try:
+                                filename = secure_filename(file.filename)
+                                # Generar nombre único para evitar conflictos
+                                filename = f"profile_{session['user_id']}_{int(time.time())}_{filename}"
+                                
+                                # Asegurar que la carpeta existe
+                                upload_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+                                os.makedirs(upload_path, exist_ok=True)
+                                
+                                # Guardar el archivo
+                                file_path = os.path.join(upload_path, filename)
+                                file.save(file_path)
+                                
+                                # Actualizar base de datos con la imagen
+                                cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s, profile_image = %s WHERE id = %s',
+                                             (name, phone, address, filename, session['user_id']))
+                                session['profile_image'] = filename
+                                flash('Perfil e imagen actualizados exitosamente', 'success')
+                            except Exception as e:
+                                flash(f'Error al subir la imagen: {str(e)}', 'error')
+                                # Actualizar sin imagen si hay error
+                                cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s WHERE id = %s',
+                                             (name, phone, address, session['user_id']))
+                        else:
+                            flash('Formato de imagen no permitido. Use PNG, JPG, JPEG o GIF', 'warning')
+                            cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s WHERE id = %s',
+                                         (name, phone, address, session['user_id']))
+                    else:
+                        # No se seleccionó archivo, solo actualizar otros campos
+                        cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s WHERE id = %s',
+                                     (name, phone, address, session['user_id']))
                 else:
+                    # No hay campo de imagen en el formulario
                     cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s WHERE id = %s',
                                  (name, phone, address, session['user_id']))
                 
                 conn.commit()
                 session['user_name'] = name
-                flash('Perfil actualizado exitosamente', 'success')
+                if 'Perfil e imagen actualizados' not in [msg[1] for msg in session.get('_flashes', [])]:
+                    flash('Perfil actualizado exitosamente', 'success')
                 return redirect(url_for('profile'))
             
             cursor.execute('SELECT * FROM users WHERE id = %s', (session['user_id'],))
             user = cursor.fetchone()
+    except Exception as e:
+        flash(f'Error al actualizar perfil: {str(e)}', 'error')
     finally:
         conn.close()
     
     return render_template('dashboard/profile.html', user=user)
+
 
 # ========================================
 # MATRÍCULA Y MATRÍCULAS
@@ -3176,6 +3206,74 @@ def update_preferences():
 def process_order():
     """Alias para checkout POST"""
     return checkout()
+
+# ========================================
+# GESTIÓN DE COMENTARIOS (ADMIN)
+# ========================================
+
+@app.route('/admin/comments')
+def manage_comments():
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM comments ORDER BY created_at DESC')
+            comments = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_comments.html', comments=comments)
+
+@app.route('/admin/comments/toggle/<int:comment_id>', methods=['POST'])
+def toggle_comment_approval(comment_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Get current status
+            cursor.execute('SELECT is_approved FROM comments WHERE id = %s', (comment_id,))
+            comment = cursor.fetchone()
+            
+            if comment:
+                new_status = not comment['is_approved']
+                cursor.execute('UPDATE comments SET is_approved = %s WHERE id = %s', 
+                             (new_status, comment_id))
+                conn.commit()
+                
+                if new_status:
+                    flash('Comentario aprobado exitosamente', 'success')
+                else:
+                    flash('Comentario desaprobado', 'warning')
+            else:
+                flash('Comentario no encontrado', 'error')
+    except Exception as e:
+        flash(f'Error al actualizar comentario: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_comments'))
+
+@app.route('/admin/comments/delete/<int:comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM comments WHERE id = %s', (comment_id,))
+            conn.commit()
+            flash('Comentario eliminado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar comentario: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_comments'))
 
 # ========================================
 # INICIALIZACIÓN
