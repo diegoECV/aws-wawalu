@@ -1,4 +1,3 @@
-
 Flask==3.0.0
 Flask-Session
 PyMySQL==1.1.0
@@ -8,4 +7,6 @@ Werkzeug==3.0.1
 Jinja2
 itsdangerous
 email-validator
-pillow
+Pillow>=10.0.0
+PyPDF2>=3.0.0
+python-docx>=0.8.11
