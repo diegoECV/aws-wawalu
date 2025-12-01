@@ -326,6 +326,24 @@ def send_order_status_email(to_email, name, order_id, status):
 # RUTAS PÚBLICAS
 # ========================================
 
+# Lista de palabras inapropiadas para filtrar comentarios
+BAD_WORDS = [
+    'puta', 'puto', 'mierda', 'coño', 'carajo', 'pendejo', 'idiota', 'estúpido',
+    'imbécil', 'bastardo', 'cabrón', 'chingar', 'joder', 'cojudo', 'huevón',
+    'marica', 'perra', 'zorra', 'verga', 'concha', 'chucha', 'ctm', 'hdp',
+    'ptm', 'mrd', 'malparido', 'gonorrea', 'hijueputa', 'chimba'
+]
+
+def contains_bad_words(text):
+    """Verifica si el texto contiene palabras inapropiadas"""
+    if not text:
+        return False
+    text_lower = text.lower()
+    for bad_word in BAD_WORDS:
+        if bad_word in text_lower:
+            return True
+    return False
+
 @app.route('/')
 def index():
     conn = get_db_connection()
@@ -364,7 +382,16 @@ def public_shop():
                 FROM products 
                 ORDER BY created_at DESC
             ''')
-            products = cursor.fetchall()
+            products_raw = cursor.fetchall()
+            
+            # Convert products to JSON-safe format
+            products = []
+            for product in products_raw:
+                product_dict = dict(product)
+                # Convert bytes to string if needed
+                if 'image_url' in product_dict and isinstance(product_dict['image_url'], bytes):
+                    product_dict['image_url'] = product_dict['image_url'].decode('utf-8') if product_dict['image_url'] else None
+                products.append(product_dict)
     finally:
         conn.close()
     return render_template('public_shop.html', products=products)
@@ -428,12 +455,17 @@ def add_to_cart(product_id):
                 if existing_item:
                     existing_item['quantity'] += quantity
                 else:
+                    # Ensure image_url is a string, not bytes
+                    image_url = product['image_url']
+                    if isinstance(image_url, bytes):
+                        image_url = image_url.decode('utf-8') if image_url else None
+                    
                     cart_item = {
                         'id': product['id'],
                         'name': product['name'],
                         'price': float(product['price']),
                         'quantity': quantity,
-                        'image_url': product['image_url'],
+                        'image_url': image_url,
                         'category': product['category'],
                         'stock': product['stock']
                     }
@@ -586,13 +618,20 @@ def comments():
         relation = request.form.get('relation')
         comment = request.form.get('comment')
         
+        # Verificar si contiene malas palabras
+        has_bad_words = contains_bad_words(name) or contains_bad_words(comment)
+        is_approved = not has_bad_words  # Aprobar automáticamente si no hay malas palabras
+        
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, FALSE)',
-                             (name, relation, comment))
+                cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, %s)',
+                             (name, relation, comment, is_approved))
                 conn.commit()
-                flash('Comentario enviado exitosamente. Será revisado por un administrador antes de publicarse.', 'success')
+                if is_approved:
+                    flash('¡Gracias por tu comentario! Ya está publicado.', 'success')
+                else:
+                    flash('Tu comentario está en revisión debido a su contenido. Será evaluado por un administrador.', 'warning')
         except Exception as e:
             flash(f'Error al enviar comentario: {str(e)}', 'error')
         finally:
@@ -615,13 +654,20 @@ def add_comment():
     relation = request.form.get('relation')
     comment = request.form.get('comment')
     
+    # Verificar si contiene malas palabras
+    has_bad_words = contains_bad_words(name) or contains_bad_words(comment)
+    is_approved = not has_bad_words  # Aprobar automáticamente si no hay malas palabras
+    
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, FALSE)',
-                         (name, relation, comment))
+            cursor.execute('INSERT INTO comments (name, relation, comment, is_approved) VALUES (%s, %s, %s, %s)',
+                         (name, relation, comment, is_approved))
             conn.commit()
-            flash('¡Gracias por tu comentario! Será revisado por un administrador antes de publicarse.', 'success')
+            if is_approved:
+                flash('¡Gracias por tu comentario! Ya está publicado.', 'success')
+            else:
+                flash('Tu comentario está en revisión debido a su contenido. Será evaluado por un administrador.', 'warning')
     except Exception as e:
         flash(f'Error al enviar comentario: {str(e)}', 'error')
     finally:
@@ -658,7 +704,11 @@ def login():
                 cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
                 user = cursor.fetchone()
                 
-                if user and check_password_hash(user['password'], password):
+                if not user:
+                    flash('No existe usuario con ese email', 'error')
+                elif not check_password_hash(user['password'], password):
+                    flash('Contraseña incorrecta', 'error')
+                else:
                     session['user_id'] = user['id']
                     session['user_name'] = user['name']
                     session['user_email'] = user['email']
@@ -673,8 +723,6 @@ def login():
                     if next_url:
                         return redirect(next_url)
                     return redirect(url_for('dashboard'))
-                else:
-                    flash('Credenciales incorrectas', 'error')
         except Exception as e:
             flash(f'Error al iniciar sesión: {str(e)}', 'error')
         finally:
@@ -898,9 +946,17 @@ def matricula():
                 
                 # Procesar archivos subidos
                 parent_id_front_file = None
+                parent_id_front_data = None
+                parent_id_front_type = None
                 parent_id_back_file = None
+                parent_id_back_data = None
+                parent_id_back_type = None
                 birth_certificate_file = None
+                birth_certificate_data = None
+                birth_certificate_type = None
                 student_photo_file = None
+                student_photo_data = None
+                student_photo_type = None
                 
                 try:
                     # DNI Frontal
@@ -908,7 +964,7 @@ def matricula():
                         file = request.files['parent_id_front']
                         if file and file.filename and allowed_file(file.filename):
                             filename = secure_filename(f"dni_front_{session['user_id']}_{int(time.time())}_{file.filename}")
-                            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                            parent_id_front_data, parent_id_front_type = compress_pdf(file)
                             parent_id_front_file = filename
                     
                     # DNI Reverso
@@ -916,7 +972,7 @@ def matricula():
                         file = request.files['parent_id_back']
                         if file and file.filename and allowed_file(file.filename):
                             filename = secure_filename(f"dni_back_{session['user_id']}_{int(time.time())}_{file.filename}")
-                            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                            parent_id_back_data, parent_id_back_type = compress_pdf(file)
                             parent_id_back_file = filename
                     
                     # Certificado de Nacimiento
@@ -924,7 +980,7 @@ def matricula():
                         file = request.files['birth_certificate']
                         if file and file.filename and allowed_file(file.filename):
                             filename = secure_filename(f"birth_cert_{session['user_id']}_{int(time.time())}_{file.filename}")
-                            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                            birth_certificate_data, birth_certificate_type = compress_pdf(file)
                             birth_certificate_file = filename
                     
                     # Foto del Estudiante
@@ -948,11 +1004,17 @@ def matricula():
                 # Crear estudiante con documentos
                 cursor.execute('''INSERT INTO students 
                     (parent_id, first_name, last_name, dob, gender, allergies, medical_info,
-                     parent_id_front, parent_id_back, birth_certificate, student_photo, student_photo_data, student_photo_type)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''',
+                     parent_id_front, parent_id_front_data, parent_id_front_type,
+                     parent_id_back, parent_id_back_data, parent_id_back_type,
+                     birth_certificate, birth_certificate_data, birth_certificate_type,
+                     student_photo, student_photo_data, student_photo_type)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''',
                     (session['user_id'], student_first_name, student_last_name, 
                      student_dob, student_gender, allergies, medical_info,
-                     parent_id_front_file, parent_id_back_file, birth_certificate_file, student_photo_file, student_photo_data, student_photo_type))
+                     parent_id_front_file, parent_id_front_data, parent_id_front_type,
+                     parent_id_back_file, parent_id_back_data, parent_id_back_type,
+                     birth_certificate_file, birth_certificate_data, birth_certificate_type,
+                     student_photo_file, student_photo_data, student_photo_type))
                 
                 student_id = cursor.lastrowid
                 
@@ -1261,7 +1323,19 @@ def shop():
     try:
         with conn.cursor() as cursor:
             cursor.execute('SELECT * FROM products ORDER BY created_at DESC')
-            products = cursor.fetchall()
+            products_raw = cursor.fetchall()
+            
+            # Convert products to JSON-safe format
+            products = []
+            for product in products_raw:
+                product_dict = dict(product)
+                # Remove binary fields that can't be JSON serialized
+                if 'image_data' in product_dict:
+                    del product_dict['image_data']
+                # Convert bytes to string if needed
+                if 'image_url' in product_dict and isinstance(product_dict['image_url'], bytes):
+                    product_dict['image_url'] = product_dict['image_url'].decode('utf-8') if product_dict['image_url'] else None
+                products.append(product_dict)
     finally:
         conn.close()
     
@@ -1332,12 +1406,17 @@ def api_cart():
                 product = cursor.fetchone()
                 
                 if product:
+                    # Ensure image_url is a string, not bytes
+                    image_url = product['image_url']
+                    if isinstance(image_url, bytes):
+                        image_url = image_url.decode('utf-8') if image_url else None
+                    
                     cart_item = {
                         'id': product['id'],
                         'name': product['name'],
                         'price': float(product['price']),
                         'quantity': quantity,
-                        'image_url': product['image_url']
+                        'image_url': image_url
                     }
                     
                     existing_item = next((item for item in session['cart'] if item['id'] == product_id), None)
@@ -1429,7 +1508,10 @@ def checkout():
     user_name = session.get('user_name', '')
     user_first_name = user_name.split()[0] if user_name else ''
     
-    return render_template('dashboard/checkout.html', cart=session.get('cart', []), user_first_name=user_first_name)
+    cart_items = session.get('cart', [])
+    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in cart_items)
+    
+    return render_template('dashboard/checkout.html', cart=cart_items, user_first_name=user_first_name, total=total)
 
 @app.route('/order/confirmation/<int:order_id>')
 def order_confirmation(order_id):
@@ -1546,6 +1628,7 @@ def accept_admission(admission_id):
             
             if existing_user:
                 user_id = existing_user['id']
+                flash(f'Usuario ya existía con ID: {user_id}', 'info')
             else:
                 # Crear nuevo usuario
                 hashed_password = generate_password_hash(admission['doc_number'])
@@ -1555,13 +1638,19 @@ def accept_admission(admission_id):
                               admission['email'], hashed_password, 'padre', admission['phone']))
                 user_id = cursor.lastrowid
                 
+                flash(f'Usuario creado con ID: {user_id}, Email: {admission["email"]}, Contraseña: {admission["doc_number"]}', 'info')
+                
                 # Enviar email con credenciales
-                send_acceptance_email(
-                    admission['email'],
-                    admission['parent_name'],
-                    admission['doc_number'],
-                    f"{admission['child_name']} {admission['child_lastname']}"
-                )
+                try:
+                    send_acceptance_email(
+                        admission['email'],
+                        admission['parent_name'],
+                        admission['doc_number'],
+                        f"{admission['child_name']} {admission['child_lastname']}"
+                    )
+                    flash('Email enviado exitosamente', 'success')
+                except Exception as email_error:
+                    flash(f'Usuario creado pero error al enviar email: {str(email_error)}', 'warning')
             
             # Crear registro de estudiante
             cursor.execute('''INSERT INTO students 
@@ -1576,8 +1665,9 @@ def accept_admission(admission_id):
                          ('accepted', user_id, admission_id))
             
             conn.commit()
-            flash('Admisión aceptada y usuario creado exitosamente', 'success')
+            flash('Admisión aceptada exitosamente', 'success')
     except Exception as e:
+        conn.rollback()
         flash(f'Error al aceptar admisión: {str(e)}', 'error')
     finally:
         conn.close()
@@ -1881,7 +1971,19 @@ def manage_products():
     try:
         with conn.cursor() as cursor:
             cursor.execute('SELECT * FROM products ORDER BY created_at DESC')
-            products = cursor.fetchall()
+            products_raw = cursor.fetchall()
+            
+            # Convert products to JSON-safe format
+            products = []
+            for product in products_raw:
+                product_dict = dict(product)
+                # Remove binary fields that can't be JSON serialized
+                if 'image_data' in product_dict:
+                    del product_dict['image_data']
+                # Convert bytes to string if needed
+                if 'image_url' in product_dict and isinstance(product_dict['image_url'], bytes):
+                    product_dict['image_url'] = product_dict['image_url'].decode('utf-8') if product_dict['image_url'] else None
+                products.append(product_dict)
     finally:
         conn.close()
     
@@ -2195,7 +2297,6 @@ def view_enrollment(enrollment_id):
                 SELECT e.*, 
                        s.first_name, s.last_name, s.dob, s.gender, s.student_photo,
                        s.allergies, s.medical_info,
-                       s.phone as student_phone, s.email as student_email, s.address,
                        p.name as program_name, p.description as program_description,
                        u.name as parent_name, u.email as parent_email, u.phone as parent_phone
                 FROM enrollments e
@@ -2331,17 +2432,9 @@ def delete_product(product_id):
         
     return redirect(url_for('manage_products'))
 
-@app.route('/add_product_staff', methods=['GET', 'POST'])
-def add_product_staff():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    # Secure the filename to prevent directory traversal attacks
-    filename = secure_filename(filename)
-    reports_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'reports')
-    
-    return send_from_directory(reports_dir, filename, as_attachment=True)
-
+# ========================================
+# REPORTES
+# ========================================
 
 @app.route('/reports/manage')
 def manage_reports():
@@ -2421,19 +2514,10 @@ def delete_report(report_id):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            # Get file url to delete from filesystem
-            cursor.execute('SELECT file_url FROM student_reports WHERE id = %s', (report_id,))
-            report = cursor.fetchone()
-            
-            if report:
-                try:
-                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'reports', report['file_url']))
-                except OSError:
-                    pass # File might not exist
-                
-                cursor.execute('DELETE FROM student_reports WHERE id = %s', (report_id,))
-                conn.commit()
-                flash('Reporte eliminado exitosamente', 'success')
+            # Delete report from database
+            cursor.execute('DELETE FROM student_reports WHERE id = %s', (report_id,))
+            conn.commit()
+            flash('Reporte eliminado exitosamente', 'success')
     except Exception as e:
         flash(f'Error al eliminar reporte: {str(e)}', 'error')
     finally:
@@ -2699,6 +2783,38 @@ def grade_assignment(assignment_id):
         conn.close()
     
     return render_template('dashboard/admin/grade_assignment.html', assignment=assignment, submissions=submissions)
+
+@app.route('/student/assignments')
+def student_assignments():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # For now, return a simple message or empty assignments list
+    # You can implement the full functionality later
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Get assignments for the student (placeholder query)
+            cursor.execute('''SELECT a.*, c.name as course_name
+                            FROM assignments a
+                            JOIN courses c ON a.course_id = c.id
+                            ORDER BY a.due_date DESC
+                            LIMIT 10''')
+            assignments = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/student/assignments.html', assignments=assignments)
+
+@app.route('/student/messages')
+def student_messages():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Placeholder for messages functionality
+    messages = []
+    
+    return render_template('dashboard/student/messages.html', messages=messages)
 
 @app.route('/submissions/grade/<int:submission_id>', methods=['POST'])
 def grade_submission(submission_id):
@@ -3085,6 +3201,284 @@ def delete_comment(comment_id):
         conn.close()
     
     return redirect(url_for('manage_comments'))
+
+# ========================================
+# GESTIÓN DE RECLAMOS (ADMIN)
+# ========================================
+
+@app.route('/admin/complaints')
+def manage_complaints():
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM complaints ORDER BY created_at DESC')
+            complaints = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_complaints.html', complaints=complaints)
+
+@app.route('/admin/complaints/view/<int:complaint_id>')
+def view_complaint(complaint_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM complaints WHERE id = %s', (complaint_id,))
+            complaint = cursor.fetchone()
+            
+            if not complaint:
+                flash('Reclamo no encontrado', 'error')
+                return redirect(url_for('manage_complaints'))
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/complaint_detail.html', complaint=complaint)
+
+@app.route('/admin/complaints/update_status/<int:complaint_id>', methods=['POST'])
+def update_complaint_status(complaint_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    data = request.get_json()
+    new_status = data.get('status')
+    
+    if new_status not in ['pending', 'in_process', 'resolved']:
+        return jsonify({'success': False, 'message': 'Invalid status'}), 400
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('UPDATE complaints SET status = %s WHERE id = %s', (new_status, complaint_id))
+            conn.commit()
+            
+            # Get complainant email for notification
+            cursor.execute('SELECT email, name, lastname FROM complaints WHERE id = %s', (complaint_id,))
+            complaint = cursor.fetchone()
+            
+            # TODO: Send email notification to complainant
+            
+        return jsonify({'success': True, 'message': 'Estado actualizado correctamente'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/admin/complaints/delete/<int:complaint_id>', methods=['POST'])
+def delete_complaint(complaint_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM complaints WHERE id = %s', (complaint_id,))
+            conn.commit()
+            flash('Reclamo eliminado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar reclamo: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_complaints'))
+
+# ========================================
+# GESTIÓN DE PROGRAMAS
+# ========================================
+
+@app.route('/admin/programs')
+def manage_programs():
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        flash('Acceso denegado. Solo administradores pueden acceder.', 'error')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('''
+                SELECT p.*, 
+                    (SELECT COUNT(*) FROM enrollments WHERE program_id = p.id) as enrolled_count
+                FROM programs p
+                ORDER BY p.created_at DESC
+            ''')
+            programs = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/manage_programs.html', programs=programs)
+
+@app.route('/admin/programs/create', methods=['GET', 'POST'])
+def create_program():
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        flash('Acceso denegado. Solo administradores pueden acceder.', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        age_range = request.form.get('age_range')
+        academic_year = request.form.get('academic_year')
+        registration_fee = request.form.get('registration_fee', 0)
+        monthly_fee = request.form.get('monthly_fee', 0)
+        capacity = request.form.get('capacity', 20)
+        is_active = request.form.get('is_active') == 'on'
+        
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('''
+                    INSERT INTO programs (name, description, age_range, academic_year, 
+                                         registration_fee, monthly_fee, capacity, is_active)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ''', (name, description, age_range, academic_year, registration_fee, 
+                      monthly_fee, capacity, is_active))
+                conn.commit()
+                flash('Programa creado exitosamente', 'success')
+                return redirect(url_for('manage_programs'))
+        except Exception as e:
+            flash(f'Error al crear programa: {str(e)}', 'error')
+        finally:
+            conn.close()
+    
+    return render_template('dashboard/admin/program_form.html', program=None)
+
+@app.route('/admin/programs/edit/<int:program_id>', methods=['GET', 'POST'])
+def edit_program(program_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        flash('Acceso denegado. Solo administradores pueden acceder.', 'error')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        age_range = request.form.get('age_range')
+        academic_year = request.form.get('academic_year')
+        registration_fee = request.form.get('registration_fee', 0)
+        monthly_fee = request.form.get('monthly_fee', 0)
+        capacity = request.form.get('capacity', 20)
+        is_active = request.form.get('is_active') == 'on'
+        
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('''
+                    UPDATE programs 
+                    SET name = %s, description = %s, age_range = %s, academic_year = %s,
+                        registration_fee = %s, monthly_fee = %s, capacity = %s, is_active = %s
+                    WHERE id = %s
+                ''', (name, description, age_range, academic_year, registration_fee,
+                      monthly_fee, capacity, is_active, program_id))
+                conn.commit()
+                flash('Programa actualizado exitosamente', 'success')
+                return redirect(url_for('manage_programs'))
+        except Exception as e:
+            flash(f'Error al actualizar programa: {str(e)}', 'error')
+        finally:
+            conn.close()
+    
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM programs WHERE id = %s', (program_id,))
+            program = cursor.fetchone()
+            if not program:
+                flash('Programa no encontrado', 'error')
+                return redirect(url_for('manage_programs'))
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/program_form.html', program=program)
+
+@app.route('/admin/programs/toggle/<int:program_id>', methods=['POST'])
+def toggle_program_status(program_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Acceso denegado'}), 403
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT is_active FROM programs WHERE id = %s', (program_id,))
+            program = cursor.fetchone()
+            if not program:
+                return jsonify({'success': False, 'message': 'Programa no encontrado'}), 404
+            
+            new_status = not program['is_active']
+            cursor.execute('UPDATE programs SET is_active = %s WHERE id = %s', 
+                          (new_status, program_id))
+            conn.commit()
+            
+            return jsonify({
+                'success': True, 
+                'is_active': new_status,
+                'message': 'Estado actualizado correctamente'
+            })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/admin/programs/delete/<int:program_id>', methods=['POST'])
+def delete_program(program_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        flash('Acceso denegado. Solo administradores pueden acceder.', 'error')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Verificar si hay matrículas asociadas
+            cursor.execute('SELECT COUNT(*) as count FROM enrollments WHERE program_id = %s', (program_id,))
+            result = cursor.fetchone()
+            
+            if result['count'] > 0:
+                flash(f'No se puede eliminar el programa. Tiene {result["count"]} matrícula(s) asociada(s).', 'error')
+            else:
+                cursor.execute('DELETE FROM programs WHERE id = %s', (program_id,))
+                conn.commit()
+                flash('Programa eliminado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar programa: {str(e)}', 'error')
+    finally:
+        conn.close()
+    
+    return redirect(url_for('manage_programs'))
+
+@app.route('/admin/programs/view/<int:program_id>')
+def view_program(program_id):
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        flash('Acceso denegado. Solo administradores pueden acceder.', 'error')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM programs WHERE id = %s', (program_id,))
+            program = cursor.fetchone()
+            
+            if not program:
+                flash('Programa no encontrado', 'error')
+                return redirect(url_for('manage_programs'))
+            
+            # Obtener matrículas asociadas
+            cursor.execute('''
+                SELECT e.*, u.name as student_name, u.lastname as student_lastname, 
+                       u.email as student_email
+                FROM enrollments e
+                JOIN users u ON e.user_id = u.id
+                WHERE e.program_id = %s
+                ORDER BY e.created_at DESC
+            ''', (program_id,))
+            enrollments = cursor.fetchall()
+    finally:
+        conn.close()
+    
+    return render_template('dashboard/admin/program_detail.html', 
+                         program=program, enrollments=enrollments)
 
 # ========================================
 # INICIALIZACIÓN

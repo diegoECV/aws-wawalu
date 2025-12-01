@@ -1,0 +1,225 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block title %}Gestión de Programas - Wawalu{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+      <span class="text-gray-500 text-sm font-medium mb-1 block">Gestión Académica > Programas</span>
+      <h1 class="text-3xl font-bold text-gray-800">Programas Académicos</h1>
+      <p class="text-gray-600 mt-2">Gestiona los programas educativos de la institución</p>
+    </div>
+    
+    <a href="{{ url_for('create_program') }}" 
+       class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/30">
+      <span class="material-symbols-outlined">add</span>
+      Nuevo Programa
+    </a>
+  </div>
+
+  <!-- Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white border border-gray-200 rounded-xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-600 text-sm font-medium">Total Programas</p>
+          <p class="text-3xl font-bold text-gray-800 mt-2">{{ programs|length }}</p>
+        </div>
+        <span class="material-symbols-outlined text-5xl text-blue-300">school</span>
+      </div>
+    </div>
+
+    <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-green-600 text-sm font-medium">Activos</p>
+          <p class="text-3xl font-bold text-green-800 mt-2">
+            {{ programs|selectattr('is_active', 'equalto', true)|list|length }}
+          </p>
+        </div>
+        <span class="material-symbols-outlined text-5xl text-green-300">check_circle</span>
+      </div>
+    </div>
+
+    <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-red-600 text-sm font-medium">Inactivos</p>
+          <p class="text-3xl font-bold text-red-800 mt-2">
+            {{ programs|selectattr('is_active', 'equalto', false)|list|length }}
+          </p>
+        </div>
+        <span class="material-symbols-outlined text-5xl text-red-300">cancel</span>
+      </div>
+    </div>
+
+    <div class="bg-purple-50 border border-purple-200 rounded-xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-purple-600 text-sm font-medium">Total Matriculados</p>
+          <p class="text-3xl font-bold text-purple-800 mt-2">
+            {{ programs|sum(attribute='enrolled_count') }}
+          </p>
+        </div>
+        <span class="material-symbols-outlined text-5xl text-purple-300">groups</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Buttons -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <div class="flex flex-wrap gap-3">
+      <button onclick="filterPrograms('all')" 
+              class="filter-btn px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all bg-blue-600 text-white border-blue-600 inline-flex items-center justify-center gap-2"
+              data-status="all">
+        <span class="material-symbols-outlined text-base">list</span>
+        <span>Todos</span>
+        <span class="px-2 py-0.5 rounded-full text-xs bg-white/20">{{ programs|length }}</span>
+      </button>
+      <button onclick="filterPrograms('active')" 
+              class="filter-btn px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all bg-white text-gray-700 border-gray-200 hover:border-green-300 inline-flex items-center justify-center gap-2"
+              data-status="active">
+        <span class="material-symbols-outlined text-base">check_circle</span>
+        <span>Activos</span>
+        <span class="px-2 py-0.5 rounded-full text-xs bg-gray-100">{{ programs|selectattr('is_active', 'equalto', true)|list|length }}</span>
+      </button>
+      <button onclick="filterPrograms('inactive')" 
+              class="filter-btn px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all bg-white text-gray-700 border-gray-200 hover:border-red-300 inline-flex items-center justify-center gap-2"
+              data-status="inactive">
+        <span class="material-symbols-outlined text-base">cancel</span>
+        <span>Inactivos</span>
+        <span class="px-2 py-0.5 rounded-full text-xs bg-gray-100">{{ programs|selectattr('is_active', 'equalto', false)|list|length }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Programs Table -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-semibold tracking-wider">
+            <th class="px-6 py-4">ID</th>
+            <th class="px-6 py-4">Programa</th>
+            <th class="px-6 py-4">Edad</th>
+            <th class="px-6 py-4">Año Académico</th>
+            <th class="px-6 py-4">Cuota Matrícula</th>
+            <th class="px-6 py-4">Pensión Mensual</th>
+            <th class="px-6 py-4">Capacidad</th>
+            <th class="px-6 py-4">Matriculados</th>
+            <th class="px-6 py-4">Estado</th>
+            <th class="px-6 py-4 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% if programs %}
+            {% for program in programs %}
+            <tr class="hover:bg-gray-50 transition-colors program-row" data-program-id="{{ program.id }}">
+              <td class="px-6 py-4">
+                <span class="font-mono text-sm text-gray-600">#{{ program.id }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="font-medium text-gray-800">{{ program.name }}</div>
+                {% if program.description %}
+                <div class="text-xs text-gray-500 mt-1 line-clamp-2">{{ program.description[:60] }}...</div>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                  {{ program.age_range or 'N/A' }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ program.academic_year }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-800 font-medium">
+                S/ {{ "%.2f"|format(program.registration_fee) }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-800 font-medium">
+                S/ {{ "%.2f"|format(program.monthly_fee) }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ program.capacity }}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-gray-800">{{ program.enrolled_count or 0 }}</span>
+                  <div class="w-20 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" 
+                         style="width: {{ ((program.enrolled_count or 0) / program.capacity * 100)|round|int if program.capacity > 0 else 0 }}%"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" 
+                         class="sr-only peer status-toggle" 
+                         {% if program.is_active %}checked{% endif %}
+                         data-program-id="{{ program.id }}"
+                         onchange="toggleProgramStatus(this)">
+                  <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                </label>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-2">
+                  <a href="{{ url_for('view_program', program_id=program.id) }}" 
+                     class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                     title="Ver detalles">
+                    <span class="material-symbols-outlined text-xl">visibility</span>
+                  </a>
+                  <a href="{{ url_for('edit_program', program_id=program.id) }}" 
+                     class="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
+                     title="Editar">
+                    <span class="material-symbols-outlined text-xl">edit</span>
+                  </a>
+                  <form action="{{ url_for('delete_program', program_id=program.id) }}" 
+                        method="POST" 
+                        class="inline"
+                        onsubmit="return confirm('¿Está seguro de eliminar este programa? Esta acción no se puede deshacer.')">
+                    <button type="submit" 
+                            class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Eliminar">
+                      <span class="material-symbols-outlined text-xl">delete</span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="10" class="px-6 py-12 text-center">
+              <div class="flex flex-col items-center gap-3 text-gray-400">
+                <span class="material-symbols-outlined text-6xl">school</span>
+                <p class="text-lg font-medium">No hay programas registrados</p>
+                <a href="{{ url_for('create_program') }}" 
+                   class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Crear primer programa
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer Info -->
+  <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+    <div class="flex items-start gap-3">
+      <span class="material-symbols-outlined text-blue-600 text-2xl">info</span>
+      <div class="text-sm text-blue-900">
+        <p class="font-medium mb-1">Información sobre Programas</p>
+        <ul class="list-disc list-inside space-y-1 text-blue-800">
+          <li>Los programas activos son visibles en la web pública</li>
+          <li>No se pueden eliminar programas con matrículas asociadas</li>
+          <li>La capacidad determina el máximo de estudiantes por programa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/manage_programs.js') }}"></script>
+{% endblock %}

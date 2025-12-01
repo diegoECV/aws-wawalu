@@ -206,20 +206,5 @@ Horarios - Wawalu{% endblock %} {% block content %}
   </div>
 </div>
 
-<script>
-  function openAddModal() {
-    document.getElementById("addModal").classList.remove("hidden");
-    document.getElementById("addModal").classList.add("flex");
-  }
-
-  function closeAddModal() {
-    document.getElementById("addModal").classList.add("hidden");
-    document.getElementById("addModal").classList.remove("flex");
-  }
-
-  // Close modal on outside click
-  document.getElementById("addModal").addEventListener("click", function (e) {
-    if (e.target === this) closeAddModal();
-  });
-</script>
+<script src="{{ url_for('static', filename='js/manage_schedule.js') }}"></script>
 {% endblock %}

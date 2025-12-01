@@ -186,3 +186,166 @@ INSERT INTO menu_items (day, type, meal_description) VALUES
 ('Viernes', 'breakfast', 'Ponche de habas y pan con palta'),
 ('Viernes', 'lunch', 'Pescado frito con arroz y lentejas'),
 ('Viernes', 'snack', 'Gelatina con leche');
+
+-- ============================================================================
+-- EJEMPLOS DE OPERACIONES CRUD (CREATE, READ, UPDATE, DELETE)
+-- ============================================================================
+-- Los siguientes ejemplos muestran cómo realizar operaciones comunes en la base de datos
+-- ¡IMPORTANTE! Estos son ejemplos educativos. Descomenta solo las que necesites ejecutar.
+-- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- UPDATE (EDITAR) - Ejemplos de actualización de registros
+-- ----------------------------------------------------------------------------
+
+-- Ejemplo 1: Actualizar el precio de un producto específico
+-- UPDATE products 
+-- SET price = 45.00, stock = 100 
+-- WHERE name = 'Polo Manga Corta Wawalu' AND category = 'uniforms';
+
+-- Ejemplo 2: Actualizar múltiples productos de una categoría
+-- UPDATE products 
+-- SET stock = stock + 50 
+-- WHERE category = 'uniforms';
+
+-- Ejemplo 3: Cambiar la categoría de un elemento de galería
+-- UPDATE galery_items 
+-- SET category = 'eventos' 
+-- WHERE title = 'Actividad cultural en el patio' AND category = 'facilities';
+
+-- Ejemplo 4: Actualizar información de un usuario
+-- UPDATE users 
+-- SET phone = '987654321', address = 'Av. Nueva Dirección 456, Lima' 
+-- WHERE email = 'padre@wawalu.com';
+
+-- Ejemplo 5: Marcar noticias como destacadas
+-- UPDATE news 
+-- SET featured = TRUE 
+-- WHERE title LIKE '%Inauguración%';
+
+-- Ejemplo 6: Actualizar el estado de un programa
+-- UPDATE programs 
+-- SET is_active = FALSE, enrollment_end = '2024-12-31' 
+-- WHERE program_name = 'Inicial 3 años' AND academic_year = '2023';
+
+-- Ejemplo 7: Modificar el stock cuando se agota un producto
+-- UPDATE products 
+-- SET stock = 0, is_available = FALSE 
+-- WHERE id = 5;
+
+-- Ejemplo 8: Actualizar precio con descuento del 10%
+-- UPDATE products 
+-- SET price = price * 0.9 
+-- WHERE category = 'supplies' AND stock > 50;
+
+-- ----------------------------------------------------------------------------
+-- DELETE (ELIMINAR) - Ejemplos de eliminación de registros
+-- ----------------------------------------------------------------------------
+
+-- Ejemplo 1: Eliminar una noticia antigua específica
+-- DELETE FROM news 
+-- WHERE title = 'Charla sobre Nutrición Infantil' AND created_at < '2024-01-01';
+
+-- Ejemplo 2: Eliminar productos sin stock y no disponibles
+-- DELETE FROM products 
+-- WHERE stock = 0 AND is_available = FALSE;
+
+-- Ejemplo 3: Eliminar elementos de galería de una categoría
+-- DELETE FROM galery_items 
+-- WHERE category = 'eventos' AND image_url LIKE '%2023%';
+
+-- Ejemplo 4: Eliminar usuarios inactivos (sin estudiantes asociados)
+-- DELETE FROM users 
+-- WHERE role = 'padre' 
+-- AND id NOT IN (SELECT DISTINCT parent_id FROM students WHERE parent_id IS NOT NULL);
+
+-- Ejemplo 5: Eliminar un producto específico por ID
+-- DELETE FROM products 
+-- WHERE id = 15;
+
+-- Ejemplo 6: Eliminar noticias de más de 2 años
+-- DELETE FROM news 
+-- WHERE created_at < DATE_SUB(NOW(), INTERVAL 2 YEAR);
+
+-- Ejemplo 7: Eliminar menú semanal de una semana específica
+-- DELETE FROM weekly_menu 
+-- WHERE day = 'Lunes' AND meal_type = 'breakfast';
+
+-- ----------------------------------------------------------------------------
+-- SELECT (CONSULTAR) - Ejemplos de consultas útiles
+-- ----------------------------------------------------------------------------
+
+-- Ejemplo 1: Buscar todos los productos de una categoría
+-- SELECT * FROM products WHERE category = 'uniforms' ORDER BY price ASC;
+
+-- Ejemplo 2: Contar cuántos productos hay por categoría
+-- SELECT category, COUNT(*) as total, SUM(stock) as stock_total 
+-- FROM products 
+-- GROUP BY category;
+
+-- Ejemplo 3: Buscar noticias recientes con límite
+-- SELECT title, content, created_at 
+-- FROM news 
+-- ORDER BY created_at DESC 
+-- LIMIT 5;
+
+-- Ejemplo 4: Buscar usuarios por rol
+-- SELECT name, email, phone, role 
+-- FROM users 
+-- WHERE role = 'padre';
+
+-- Ejemplo 5: Buscar productos con stock bajo (menos de 20)
+-- SELECT name, category, stock, price 
+-- FROM products 
+-- WHERE stock < 20 AND is_available = TRUE 
+-- ORDER BY stock ASC;
+
+-- Ejemplo 6: Buscar elementos de galería por categoría
+-- SELECT title, category, image_url 
+-- FROM galery_items 
+-- WHERE category = 'facilities';
+
+-- Ejemplo 7: Buscar estudiantes con su información de padres (JOIN)
+-- SELECT s.first_name, s.last_name, s.birth_date, u.name as parent_name, u.email as parent_email
+-- FROM students s
+-- INNER JOIN users u ON s.parent_id = u.id
+-- WHERE s.grade = 'Inicial 3 años';
+
+-- Ejemplo 8: Buscar pedidos con sus productos (JOIN)
+-- SELECT o.id, o.total, o.status, u.name, u.email
+-- FROM orders o
+-- INNER JOIN users u ON o.user_id = u.id
+-- WHERE o.status = 'completed'
+-- ORDER BY o.created_at DESC;
+
+-- ----------------------------------------------------------------------------
+-- TRANSACCIONES - Ejemplos de operaciones múltiples
+-- ----------------------------------------------------------------------------
+
+-- Ejemplo 1: Actualizar precio y stock en una transacción
+-- START TRANSACTION;
+-- UPDATE products SET price = 55.00 WHERE id = 1;
+-- UPDATE products SET stock = stock - 10 WHERE id = 1;
+-- COMMIT;
+
+-- Ejemplo 2: Eliminar producto y sus referencias
+-- START TRANSACTION;
+-- DELETE FROM order_items WHERE product_id = 10;
+-- DELETE FROM products WHERE id = 10;
+-- COMMIT;
+
+-- Ejemplo 3: Rollback en caso de error
+-- START TRANSACTION;
+-- UPDATE products SET price = -50.00 WHERE id = 1; -- Error: precio negativo
+-- ROLLBACK; -- Deshacer cambios si hay error
+
+-- ============================================================================
+-- NOTAS IMPORTANTES:
+-- ============================================================================
+-- 1. Siempre haz un SELECT antes de hacer UPDATE o DELETE para verificar qué registros afectarás
+-- 2. Usa WHERE en tus UPDATE y DELETE, o modificarás/eliminarás TODA la tabla
+-- 3. Considera usar LIMIT en DELETE para eliminar por lotes
+-- 4. Haz respaldos antes de ejecutar DELETE masivos
+-- 5. Usa transacciones (START TRANSACTION, COMMIT, ROLLBACK) para operaciones críticas
+-- 6. Verifica las relaciones de clave foránea antes de eliminar registros
+-- ============================================================================

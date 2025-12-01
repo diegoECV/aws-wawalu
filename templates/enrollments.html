@@ -83,30 +83,5 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-<script>
-// Animación DOM y validación
-const form = document.getElementById('enrollmentForm');
-const errorMsg = document.getElementById('formError');
-form.addEventListener('submit', function(e) {
-  let valid = true;
-  errorMsg.classList.add('hidden');
-  // Validación básica
-  ['student_id','program_id','academic_year','status','enrollment_date','monthly_fee'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el.value) {
-      valid = false;
-      el.classList.add('border-red-500');
-    } else {
-      el.classList.remove('border-red-500');
-    }
-  });
-  if (!valid) {
-    e.preventDefault();
-    errorMsg.textContent = 'Por favor completa todos los campos obligatorios.';
-    errorMsg.classList.remove('hidden');
-    form.classList.add('animate-shake');
-    setTimeout(()=>form.classList.remove('animate-shake'), 500);
-  }
-});
-</script>
+<script src="{{ url_for('static', filename='js/enrollments.js') }}"></script>
 {% endblock %}

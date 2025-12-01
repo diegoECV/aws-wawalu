@@ -1,0 +1,179 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block title %}{{ 'Editar Programa' if program else 'Nuevo Programa' }} - Wawalu{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <a href="{{ url_for('manage_programs') }}" 
+       class="text-blue-600 hover:text-blue-700 flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver a Programas
+    </a>
+    <h1 class="text-3xl font-bold text-gray-800">
+      {% if program %}Editar Programa{% else %}Nuevo Programa{% endif %}
+    </h1>
+    <p class="text-gray-600 mt-2">
+      {% if program %}Actualiza la información del programa académico{% else %}Completa los datos del nuevo programa académico{% endif %}
+    </p>
+  </div>
+
+  <!-- Form -->
+  <form method="POST" class="space-y-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+      <!-- Basic Information -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined">info</span>
+          Información Básica
+        </h2>
+        
+        <div class="space-y-6">
+          <!-- Program Name -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+              Nombre del Programa <span class="text-red-500">*</span>
+            </label>
+            <input type="text" 
+                   id="name" 
+                   name="name" 
+                   value="{{ program.name if program else '' }}"
+                   required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                   placeholder="Ej: Inicial 3 años">
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+              Descripción
+            </label>
+            <textarea id="description" 
+                      name="description" 
+                      rows="4"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Descripción detallada del programa educativo...">{{ program.description if program else '' }}</textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Age Range -->
+            <div>
+              <label for="age_range" class="block text-sm font-medium text-gray-700 mb-2">
+                Rango de Edad <span class="text-red-500">*</span>
+              </label>
+              <input type="text" 
+                     id="age_range" 
+                     name="age_range" 
+                     value="{{ program.age_range if program else '' }}"
+                     required
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                     placeholder="Ej: 3-4 años">
+            </div>
+
+            <!-- Academic Year -->
+            <div>
+              <label for="academic_year" class="block text-sm font-medium text-gray-700 mb-2">
+                Año Académico <span class="text-red-500">*</span>
+              </label>
+              <input type="number" 
+                     id="academic_year" 
+                     name="academic_year" 
+                     value="{{ program.academic_year if program else 2025 }}"
+                     min="2020"
+                     max="2050"
+                     required
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fees and Capacity -->
+      <div class="mb-8 pt-8 border-t border-gray-100">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined">payments</span>
+          Costos y Capacidad
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Registration Fee -->
+          <div>
+            <label for="registration_fee" class="block text-sm font-medium text-gray-700 mb-2">
+              Cuota de Matrícula (S/) <span class="text-red-500">*</span>
+            </label>
+            <input type="number" 
+                   id="registration_fee" 
+                   name="registration_fee" 
+                   value="{{ program.registration_fee if program else 0 }}"
+                   min="0"
+                   step="0.01"
+                   required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <!-- Monthly Fee -->
+          <div>
+            <label for="monthly_fee" class="block text-sm font-medium text-gray-700 mb-2">
+              Pensión Mensual (S/) <span class="text-red-500">*</span>
+            </label>
+            <input type="number" 
+                   id="monthly_fee" 
+                   name="monthly_fee" 
+                   value="{{ program.monthly_fee if program else 0 }}"
+                   min="0"
+                   step="0.01"
+                   required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <!-- Capacity -->
+          <div>
+            <label for="capacity" class="block text-sm font-medium text-gray-700 mb-2">
+              Capacidad <span class="text-red-500">*</span>
+            </label>
+            <input type="number" 
+                   id="capacity" 
+                   name="capacity" 
+                   value="{{ program.capacity if program else 20 }}"
+                   min="1"
+                   required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="pt-8 border-t border-gray-100">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined">settings</span>
+          Estado
+        </h2>
+        
+        <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+          <input type="checkbox" 
+                 id="is_active" 
+                 name="is_active"
+                 {% if not program or program.is_active %}checked{% endif %}
+                 class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+          <label for="is_active" class="text-sm font-medium text-gray-700">
+            Programa activo (visible en la web pública)
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-4">
+      <button type="submit" 
+              class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30">
+        <span class="material-symbols-outlined">save</span>
+        {% if program %}Actualizar Programa{% else %}Crear Programa{% endif %}
+      </button>
+      <a href="{{ url_for('manage_programs') }}" 
+         class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">cancel</span>
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

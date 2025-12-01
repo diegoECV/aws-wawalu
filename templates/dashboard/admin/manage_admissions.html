@@ -75,8 +75,29 @@ Admisiones - Wawalu{% endblock %} {% block content %}
               {% else %}
               <span
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+              >
+                Pendiente
+              </span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center justify-end gap-2">
+                {% if admission.status == 'pending' %}
+                <a
+                  href="{{ url_for('accept_admission', admission_id=admission.id) }}"
+                  class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                  title="Aceptar"
+                  onclick="return confirm('¿Aceptar esta admisión? Se creará un usuario automáticamente.')"
                 >
                   <span class="material-symbols-outlined">check_circle</span>
+                </a>
+                <a
+                  href="{{ url_for('reject_admission', admission_id=admission.id) }}"
+                  class="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                  title="Rechazar"
+                  onclick="return confirm('¿Rechazar esta admisión?')"
+                >
+                  <span class="material-symbols-outlined">cancel</span>
                 </a>
                 {% endif %}
                 <a

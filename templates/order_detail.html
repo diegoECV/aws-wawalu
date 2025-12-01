@@ -265,22 +265,4 @@ PG Wawalu{% endblock %} {% block content %}
   </div>
 </div>
 
-<script>
-  function updateOrderStatus(orderId, newStatus) {
-    if (!confirm("¿Confirmar que el pago ha sido verificado?")) return;
-
-    fetch(`/orders/update_status/${orderId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          location.reload();
-        } else {
-          alert("Error: " + data.message);
-        }
-      });
-  }
-</script>
+<script src="{{ url_for('static', filename='js/order_detail.js') }}"></script>

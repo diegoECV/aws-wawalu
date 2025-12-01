@@ -119,36 +119,8 @@ news else 'Nueva' }} Noticia - Wawalu{% endblock %} {% block content %}
     </form>
   </div>
 </div>
-{% endblock %} {% block scripts %}
-<script>
-  document.getElementById("image").addEventListener("change", function (e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        // Create or update preview container
-        let previewContainer = document.getElementById(
-          "image-preview-container"
-        );
-        if (!previewContainer) {
-          previewContainer = document.createElement("div");
-          previewContainer.id = "image-preview-container";
-          previewContainer.className = "mb-4 text-center";
+{% endblock %} 
 
-          const uploadArea = document
-            .querySelector('label[for="image"]')
-            .closest(".border-dashed").parentElement;
-          uploadArea.insertBefore(previewContainer, uploadArea.firstChild);
-        }
-
-        previewContainer.innerHTML = `
-          <p class="text-xs text-gray-500 mb-2">Vista previa:</p>
-          <img src="${e.target.result}" class="h-48 w-auto object-cover rounded-lg border border-gray-200 mx-auto shadow-sm" />
-          <p class="text-xs text-blue-600 mt-2 font-medium">${file.name}</p>
-        `;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-</script>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/news_form.js') }}"></script>
 {% endblock %}

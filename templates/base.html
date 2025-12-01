@@ -547,6 +547,48 @@
       </div>
     </header>
 
+    <!-- Flash Messages Container -->
+    <div id="flash-container" class="fixed top-24 right-4 z-[200] space-y-3 max-w-md">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash-message bg-white rounded-lg shadow-lg border-l-4 p-4 flex items-start gap-3 transition-all duration-300 
+              {% if category == 'success' %}border-green-500
+              {% elif category == 'error' %}border-red-500
+              {% elif category == 'warning' %}border-yellow-500
+              {% elif category == 'info' %}border-blue-500
+              {% else %}border-gray-500{% endif %}" role="alert">
+              
+              <!-- Icon -->
+              <div class="flex-shrink-0">
+                {% if category == 'success' %}
+                  <span class="material-symbols-outlined text-green-500 text-2xl">check_circle</span>
+                {% elif category == 'error' %}
+                  <span class="material-symbols-outlined text-red-500 text-2xl">error</span>
+                {% elif category == 'warning' %}
+                  <span class="material-symbols-outlined text-yellow-500 text-2xl">warning</span>
+                {% elif category == 'info' %}
+                  <span class="material-symbols-outlined text-blue-500 text-2xl">info</span>
+                {% else %}
+                  <span class="material-symbols-outlined text-gray-500 text-2xl">notifications</span>
+                {% endif %}
+              </div>
+              
+              <!-- Message -->
+              <div class="flex-1 pt-0.5">
+                <p class="text-sm font-medium text-gray-900">{{ message }}</p>
+              </div>
+              
+              <!-- Close Button -->
+              <button type="button" class="flash-dismiss flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                <span class="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
     <!-- Main Content -->
     <main class="grow pt-20">{% block content %}{% endblock %}</main>
 
@@ -867,6 +909,7 @@
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/flash_messages.js') }}"></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>

@@ -72,11 +72,9 @@ endblock %} {% block content %}
                 name="quantity"
                 value="{{ item.quantity + 1 }}"
                 class="px-2 py-1 text-gray-500 hover:bg-gray-100 rounded-r-lg"
-                {%
-                if
-                item.quantity
+                {% if item.quantity >= item.stock %}disabled{% endif %}
               >
-                = item.stock %}disabled{% endif %} > +
+                +
               </button>
             </form>
             <span class="font-bold text-gray-800"

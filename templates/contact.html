@@ -343,20 +343,5 @@
 <!-- Leaflet.js para mapa gratuito -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<script>
-  // Espera a que el DOM esté listo
-  document.addEventListener('DOMContentLoaded', function() {
-    // Si existe el contenedor del mapa, inicializa Leaflet
-    var mapContainer = document.getElementById('map');
-    if (mapContainer) {
-      var map = L.map('map').setView([-12.634, -76.635], 15); // Coordenadas de Wawalu
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-      L.marker([-12.634, -76.635]).addTo(map)
-        .bindPopup('Wawalu')
-        .openPopup();
-    }
-  });
-</script>
+<script src="{{ url_for('static', filename='js/contact.js') }}"></script>
 {% endblock %}

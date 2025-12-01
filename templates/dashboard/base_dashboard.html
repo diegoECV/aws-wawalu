@@ -129,6 +129,13 @@
             Cursos
           </a>
           <a
+            href="{{ url_for('manage_programs') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_programs' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">menu_book</span>
+            Programas
+          </a>
+          <a
             href="{{ url_for('manage_schedule') }}"
             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_schedule' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
           >
@@ -218,6 +225,20 @@
               >gallery_thumbnail</span
             >
             Galería
+          </a>
+          <a
+            href="{{ url_for('manage_comments') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_comments' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">comment</span>
+            Comentarios
+          </a>
+          <a
+            href="{{ url_for('manage_complaints') }}"
+            class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors {% if request.endpoint == 'manage_complaints' %}bg-blue-50 text-blue-600 font-medium{% endif %}"
+          >
+            <span class="material-symbols-outlined mr-3">gavel</span>
+            Reclamos
           </a>
           <a
             href="{{ url_for('menu') }}"
@@ -652,6 +673,13 @@
               Galería
             </a>
             <a
+              href="{{ url_for('manage_comments') }}"
+              class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              <span class="material-symbols-outlined mr-3">comment</span>
+              Comentarios
+            </a>
+            <a
               href="{{ url_for('manage_products') }}"
               class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
             >
@@ -850,50 +878,55 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-8">
-          {% with messages = get_flashed_messages(with_categories=true) %} {% if
-          messages %}
-          <div class="mb-6 space-y-2">
-            {% for category, message in messages %}
-            <div
-              class="p-4 rounded-lg shadow-sm flex items-center {% if category == 'error' %}bg-red-50 text-red-700 border-l-4 border-red-500{% elif category == 'success' %}bg-green-50 text-green-700 border-l-4 border-green-500{% else %}bg-blue-50 text-blue-700 border-l-4 border-blue-500{% endif %}"
-            >
-              <span class="material-symbols-outlined mr-2">
-                {% if category == 'error' %}error{% elif category == 'success'
-                %}check_circle{% else %}info{% endif %}
-              </span>
-              {{ message }}
-            </div>
-            {% endfor %}
+          <!-- Flash Messages -->
+          <div id="flash-container-dashboard" class="mb-6 space-y-3">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="flash-message bg-white rounded-lg shadow-lg border-l-4 p-4 flex items-start gap-3 transition-all duration-300
+                    {% if category == 'success' %}border-green-500
+                    {% elif category == 'error' %}border-red-500
+                    {% elif category == 'warning' %}border-yellow-500
+                    {% elif category == 'info' %}border-blue-500
+                    {% else %}border-gray-500{% endif %}" role="alert">
+                    
+                    <!-- Icon -->
+                    <div class="flex-shrink-0">
+                      {% if category == 'success' %}
+                        <span class="material-symbols-outlined text-green-500 text-2xl">check_circle</span>
+                      {% elif category == 'error' %}
+                        <span class="material-symbols-outlined text-red-500 text-2xl">error</span>
+                      {% elif category == 'warning' %}
+                        <span class="material-symbols-outlined text-yellow-500 text-2xl">warning</span>
+                      {% elif category == 'info' %}
+                        <span class="material-symbols-outlined text-blue-500 text-2xl">info</span>
+                      {% else %}
+                        <span class="material-symbols-outlined text-gray-500 text-2xl">notifications</span>
+                      {% endif %}
+                    </div>
+                    
+                    <!-- Message -->
+                    <div class="flex-1 pt-0.5">
+                      <p class="text-sm font-medium text-gray-900">{{ message }}</p>
+                    </div>
+                    
+                    <!-- Close Button -->
+                    <button type="button" class="flash-dismiss flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                      <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
           </div>
-          {% endif %} {% endwith %} {% block content %}{% endblock %}
+          
+          {% block content %}{% endblock %}
         </main>
       </div>
     </div>
 
-    <script>
-      // Simple Mobile Sidebar Logic
-      document.addEventListener("DOMContentLoaded", () => {
-        const sidebarBtn = document.getElementById("mobile-sidebar-btn");
-        const closeBtn = document.getElementById("close-sidebar-btn");
-        const sidebar = document.getElementById("mobile-sidebar");
-        const overlay = document.getElementById("sidebar-overlay");
-
-        function toggleSidebar() {
-          const isClosed = sidebar.classList.contains("-translate-x-full");
-          if (isClosed) {
-            sidebar.classList.remove("-translate-x-full");
-            overlay.classList.remove("hidden");
-          } else {
-            sidebar.classList.add("-translate-x-full");
-            overlay.classList.add("hidden");
-          }
-        }
-
-        if (sidebarBtn) sidebarBtn.addEventListener("click", toggleSidebar);
-        if (closeBtn) closeBtn.addEventListener("click", toggleSidebar);
-        if (overlay) overlay.addEventListener("click", toggleSidebar);
-      });
-    </script>
+    <script src="{{ url_for('static', filename='js/base_dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/flash_messages.js') }}"></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>

@@ -135,14 +135,5 @@ block extra_css %}
 </div>
 {% endblock %} {% block extra_js %}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    new PageFilters({
-      containerId: "newsGrid",
-      itemSelector: ".news-item",
-      searchInputId: "newsSearch",
-      sortSelectId: "newsSort",
-    });
-  });
-</script>
+<script src="{{ url_for('static', filename='js/public_news.js') }}"></script>
 {% endblock %}

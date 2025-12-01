@@ -1,14 +1,15 @@
 # 🎓 Wawalu Centro Educativo
 
-![Wawalu Banner](static/img/banner.jpg)
+![Wawalu Banner](static/image/logo/logo.png)
 
 > Plataforma web integral para el Centro Educativo Wawalu, basada en la metodología Reggio Emilia. Incluye sistema de inscripciones, tienda virtual, gestión administrativa, libro de reclamaciones y portal para padres.
 
-![Estado](https://img.shields.io/badge/Estado-Activo-success)
-![Versión](https://img.shields.io/badge/Versión-2.0-blue)
+![Estado](https://img.shields.io/badge/Estado-Producción-success)
+![Versión](https://img.shields.io/badge/Versión-2.1-blue)
 ![Licencia](https://img.shields.io/badge/Licencia-MIT-green)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.0.0-lightgrey)
+![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-orange)
 
 ## 📋 Tabla de Contenidos
 
@@ -70,10 +71,12 @@
 ### 🔧 Panel Administrativo (Admin/Staff)
 
 - **Gestión de Contenido**: Noticias, Galería, Eventos, Menú.
-- **Gestión Académica**: Cursos, Notas, Asistencia, Horarios.
-- **Gestión Administrativa**: Pensiones, Documentos, Matrículas.
-- **Gestión de Tienda**: Productos, Pedidos.
-- **Gestión de Usuarios**: Admisiones, Usuarios, Reclamos.
+- **Gestión Académica**: Cursos, Notas, Asistencia, Horarios, Programas.
+- **Gestión Administrativa**: Pensiones, Documentos, Matrículas, Admisiones.
+- **Gestión de Tienda**: Productos, Pedidos, Inventario.
+- **Gestión de Usuarios**: Admisiones automáticas, Usuarios, Roles.
+- **Libro de Reclamaciones**: Gestión completa de quejas y reclamos con seguimiento.
+- **Almacenamiento en BD**: Todos los archivos (imágenes, PDFs) se guardan como BLOBs comprimidos.
 
 ---
 
@@ -115,8 +118,8 @@
 1.  **Clonar el repositorio**
 
     ```bash
-    git clone https://github.com/vallegrande/ASE251S2_T13_wp.git
-    cd ASE251S2_T13_wp
+    git clone https://github.com/diegoECV/aws-wawalu.git
+    cd aws-wawalu
     ```
 
 2.  **Configurar entorno virtual**
@@ -197,26 +200,45 @@ DB_NAME = os.getenv('DB_NAME', 'wawalu_db')
 ## 📁 Estructura del Proyecto
 
 ```text
-wawalu/
-├── .git/                # Control de versiones
-├── static/              # Archivos estáticos
-│   ├── css/             # Estilos CSS
-│   ├── img/             # Imágenes del sitio
-│   ├── js/              # Scripts JavaScript
-│   └── uploads/         # Archivos subidos
-├── templates/           # Plantillas HTML (Jinja2)
-│   ├── dashboard/       # Plantillas del panel administrativo
-│   │   ├── admin/       # Vistas de administrador
-│   │   ├── staff/       # Vistas de personal
-│   │   └── ...          # Vistas de estudiante/padre
-│   └── ...              # Plantillas públicas
-├── venv/                # Entorno virtual Python
-├── .env                 # Variables de entorno
-├── app.py               # 🚀 Aplicación principal Flask
-├── requirements.txt     # Dependencias Backend
-├── schema.sql           # Estructura de Base de Datos (Completa)
-├── schema_insert.sql    # Datos de prueba (Completo)
-└── README.md            # Documentación
+aws-wawalu/
+├── .git/                      # Control de versiones
+├── static/                    # Archivos estáticos
+│   ├── css/                   # Estilos CSS (Tailwind + Custom)
+│   ├── image/                 # Imágenes del sitio
+│   │   ├── logo/              # Logos institucionales
+│   │   ├── products/          # Imágenes de productos
+│   │   ├── teachers/          # Fotos de docentes
+│   │   └── galery/            # Galería fotográfica
+│   ├── js/                    # Scripts JavaScript
+│   └── icons/                 # Iconos y recursos gráficos
+├── templates/                 # Plantillas HTML (Jinja2)
+│   ├── dashboard/             # Dashboard privado
+│   │   ├── admin/             # Panel de administración
+│   │   │   ├── manage_programs.html
+│   │   │   ├── manage_complaints.html
+│   │   │   ├── manage_admissions.html
+│   │   │   ├── manage_enrollments.html
+│   │   │   └── ...            # Otras vistas admin
+│   │   ├── staff/             # Panel de personal
+│   │   └── ...                # Vistas padre/estudiante
+│   ├── components/            # Componentes reutilizables
+│   └── ...                    # Plantillas públicas
+├── utils/                     # Utilidades
+│   └── file_compression.py    # Compresión de imágenes/PDFs
+├── venv/                      # Entorno virtual Python
+├── .env                       # Variables de entorno (NO SUBIR)
+├── app.py                     # 🚀 Aplicación Flask principal (3490 líneas)
+├── requirements.txt           # Dependencias Python
+├── package.json               # Configuración Tailwind CSS
+├── tailwind.config.js         # Configuración Tailwind
+├── schema.sql                 # Esquema de BD (actualizado v2.1)
+├── schema_insert.sql          # Datos de prueba
+├── update_students_columns.py # Script de migración BD
+├── sitemap.xml                # SEO sitemap
+├── sitemap.md                 # Documentación del sitemap
+├── structure-web.md           # Estructura del proyecto
+├── VERIFICACION_APP.md        # Reporte de verificación
+└── README.md                  # Esta documentación
 ```
 
 ---
@@ -251,15 +273,39 @@ wawalu/
 
 ## 🗄️ Base de Datos
 
-El sistema utiliza MySQL con un esquema relacional completo que incluye tablas para:
+El sistema utiliza MySQL con un esquema relacional completo que incluye:
 
-- **Usuarios**: `users`, `students`
+### Tablas Principales
+
+- **Usuarios**: `users`, `students` (con campos BLOB para documentos)
 - **Académico**: `programs`, `courses`, `enrollments`, `grades`, `attendance`, `class_schedule`
 - **Administrativo**: `pensions`, `student_documents`, `admissions`
 - **Interacción**: `assignments`, `submissions`, `internal_messages`
-- **Contenido**: `news`, `events`, `galery_items`, `menus`
-- **Tienda**: `products`, `orders`, `order_items`
+- **Contenido**: `news`, `events`, `galery_items`, `menus` (imágenes en BLOB)
+- **Tienda**: `products`, `orders`, `order_items` (imágenes en BLOB)
 - **Otros**: `complaints`, `messages`, `comments`
+
+### Características de Almacenamiento
+
+- ✅ **Almacenamiento BLOB**: Todos los archivos (imágenes, PDFs) se guardan comprimidos en la BD
+- ✅ **Columnas de tipo MEDIUMBLOB**: Para archivos de hasta 16MB
+- ✅ **Columnas de MIME type**: Para identificar el tipo de archivo
+- ✅ **Sin dependencia del sistema de archivos**: No requiere carpeta `uploads/`
+
+### Tabla `students` (Actualizada v2.1)
+
+```sql
+students (
+  id, parent_id, first_name, last_name, dob, gender,
+  allergies, medical_info,
+  -- Documentos con datos BLOB
+  parent_id_front, parent_id_front_data, parent_id_front_type,
+  parent_id_back, parent_id_back_data, parent_id_back_type,
+  birth_certificate, birth_certificate_data, birth_certificate_type,
+  student_photo, student_photo_data, student_photo_type,
+  created_at, updated_at
+)
+```
 
 ---
 
@@ -285,11 +331,41 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para má
 
 - 📍 **Dirección**: Av. Mariscal Benavides 1365, Cañete, Lima, Perú
 - 📧 **Email**: contacto@wawalu.edu.pe
-- 🌐 **Web**: [wawalu.com](http://wawalu.com)
+- 📱 **WhatsApp**: +51 987 654 321
+- 🌐 **Web**: [wawalu.edu.pe](http://wawalu.edu.pe)
 
 ### Desarrolladores
 
-- **Diego Centeno** - _Full Stack Developer_ - [GitHub](https://github.com/vallegrande)
+- **Diego Centeno** - _Full Stack Developer_ - [GitHub](https://github.com/diegoECV)
+
+### Repositorio
+
+- 🔗 **GitHub**: [https://github.com/diegoECV/aws-wawalu](https://github.com/diegoECV/aws-wawalu)
+- 🌟 **Branch**: `version2`
+
+## 📝 Changelog v2.1 (Diciembre 2025)
+
+### ✨ Nuevas Funcionalidades
+
+- ✅ **Sistema de Programas Académicos**: CRUD completo con capacidad y filtros
+- ✅ **Gestión de Quejas**: Libro de reclamaciones con estados y seguimiento
+- ✅ **Admisiones Automáticas**: Creación automática de usuarios al aceptar
+- ✅ **Matrícula Digital**: Formulario con carga de documentos
+
+### 🔧 Mejoras Técnicas
+
+- ✅ **Migración a BLOB Storage**: Eliminación completa de dependencia de archivos físicos
+- ✅ **Compresión de Archivos**: Imágenes y PDFs comprimidos antes de guardar
+- ✅ **Validación CVE**: Verificación de vulnerabilidades en dependencias Java
+- ✅ **Código Limpio**: Eliminación de prints debug y código deprecated
+
+### 🐛 Correcciones
+
+- ✅ Fix: Error UPLOAD_FOLDER en formulario de matrícula
+- ✅ Fix: Columna 's.phone' inexistente en enrollment_detail
+- ✅ Fix: HTML roto en manage_admissions y manage_users
+- ✅ Fix: Botones desalineados en filtros
+- ✅ Fix: Fondos negros en modales
 
 ---
 

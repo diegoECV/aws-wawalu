@@ -1,5 +1,6 @@
-{% extends 'dashboard/base_dashboard.html' %} {% block title %}Gestión de
-Comentarios - Wawalu{% endblock %} {% block content %}
+{% extends 'dashboard/base_dashboard.html' %} 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage_comments.css') }}">
+{% block title %}Gestión de Comentarios - Wawalu{% endblock %} {% block content %}
 <div class="max-w-7xl mx-auto">
   <!-- Header -->
   <div
@@ -81,6 +82,19 @@ Comentarios - Wawalu{% endblock %} {% block content %}
     <div
       class="comment-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
       data-status="{{ 'approved' if comment.is_approved else 'pending' }}"
+    >
+      <!-- Card Header -->
+      <div class="p-4 border-b border-gray-100">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg"
+            >
+              {{ comment.name[0].upper() if comment.name else '?' }}
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-900">{{ comment.name }}</h3>
+              <p class="text-sm text-gray-500">{{ comment.relation }}</p>
             </div>
           </div>
           {% if comment.is_approved %}
@@ -184,55 +198,5 @@ Comentarios - Wawalu{% endblock %} {% block content %}
     {% endfor %}
   </div>
 </div>
-
-<script>
-  function filterComments(status) {
-    const cards = document.querySelectorAll(".comment-card");
-    const tabs = document.querySelectorAll(".filter-tab");
-
-    // Update active tab
-    tabs.forEach((tab) => {
-      tab.classList.remove(
-        "active",
-        "border-blue-600",
-        "text-blue-600",
-        "border-green-600",
-        "text-green-600",
-        "border-yellow-600",
-        "text-yellow-600"
-      );
-      if (tab.dataset.filter === status) {
-        tab.classList.add("active");
-        if (status === "all") {
-          tab.classList.add("border-blue-600", "text-blue-600");
-        } else if (status === "approved") {
-          tab.classList.add("border-green-600", "text-green-600");
-        } else if (status === "pending") {
-          tab.classList.add("border-yellow-600", "text-yellow-600");
-        }
-      }
-    });
-
-    // Filter cards
-    cards.forEach((card) => {
-      if (status === "all") {
-        card.style.display = "block";
-      } else {
-        const cardStatus = card.dataset.status;
-        card.style.display = cardStatus === status ? "block" : "none";
-      }
-    });
-  }
-
-  // Initialize with 'all' filter
-  document.addEventListener("DOMContentLoaded", function () {
-    filterComments("all");
-  });
-</script>
-
-<style>
-  .filter-tab.active {
-    font-weight: 600;
-  }
-</style>
+<script src="{{ url_for('static', filename='js/manage_comments.js') }}"></script>
 {% endblock %}

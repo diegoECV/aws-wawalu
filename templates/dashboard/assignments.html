@@ -145,28 +145,5 @@
     </div>
 </div>
 
-<script>
-function openSubmissionModal(assignmentId, title) {
-    const modal = document.getElementById('submissionModal');
-    const form = document.getElementById('submissionForm');
-    const titleEl = document.getElementById('modalTitle');
-    
-    form.action = `/dashboard/assignments/submit/${assignmentId}`;
-    titleEl.textContent = `Entregar: ${title}`;
-    
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-
-function closeSubmissionModal() {
-    const modal = document.getElementById('submissionModal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-
-// Close on outside click
-document.getElementById('submissionModal').addEventListener('click', function(e) {
-    if (e.target === this) closeSubmissionModal();
-});
-</script>
+<script src="{{ url_for('static', filename='js/assignments.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,191 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block title %}Detalle del Reclamo #{{ complaint.id }} - Wawalu{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <a href="{{ url_for('manage_complaints') }}" 
+       class="text-blue-600 hover:text-blue-700 flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver a Reclamos
+    </a>
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Reclamo #{{ complaint.id }}</h1>
+        <p class="text-gray-600 mt-1">
+          Presentado el {{ complaint.created_at.strftime('%d de %B de %Y a las %H:%M') if complaint.created_at else 'N/A' }}
+        </p>
+      </div>
+      <div>
+        <select class="status-select-large px-4 py-2 rounded-lg text-sm font-medium border-2 focus:ring-2 focus:ring-blue-500 cursor-pointer
+          {% if complaint.status == 'pending' %}bg-yellow-50 text-yellow-800 border-yellow-300
+          {% elif complaint.status == 'in_process' %}bg-blue-50 text-blue-800 border-blue-300
+          {% elif complaint.status == 'resolved' %}bg-green-50 text-green-800 border-green-300
+          {% endif %}"
+          data-complaint-id="{{ complaint.id }}"
+          onchange="updateComplaintStatus(this)">
+          <option value="pending" {% if complaint.status == 'pending' %}selected{% endif %}>⏱️ Pendiente</option>
+          <option value="in_process" {% if complaint.status == 'in_process' %}selected{% endif %}>🔄 En Proceso</option>
+          <option value="resolved" {% if complaint.status == 'resolved' %}selected{% endif %}>✅ Resuelto</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Tipo de Reclamo -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <span class="material-symbols-outlined">category</span>
+            Tipo de Reclamación
+          </h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+            {% if complaint.claim_type == 'reclamo' %}bg-red-100 text-red-800
+            {% else %}bg-orange-100 text-orange-800{% endif %}">
+            {{ 'Reclamo' if complaint.claim_type == 'reclamo' else 'Queja' }}
+          </span>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-sm text-gray-600 mb-2 font-medium">
+            {% if complaint.claim_type == 'reclamo' %}
+              <strong>Reclamo:</strong> Disconformidad relacionada a los productos o servicios.
+            {% else %}
+              <strong>Queja:</strong> Disconformidad no relacionada a los productos o servicios, o malestar sobre la atención al público.
+            {% endif %}
+          </p>
+        </div>
+      </div>
+
+      <!-- Detalle del Bien/Servicio -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          Detalle del Bien/Servicio
+        </h2>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-sm font-medium text-gray-500">Tipo</label>
+              <p class="text-gray-800 mt-1">
+                <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-purple-100 text-purple-800">
+                  {{ 'Producto' if complaint.good_type == 'producto' else 'Servicio' }}
+                </span>
+              </p>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-500">Monto</label>
+              <p class="text-gray-800 mt-1 text-lg font-semibold">S/ {{ "%.2f"|format(complaint.amount) }}</p>
+            </div>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Descripción del Bien/Servicio</label>
+            <p class="text-gray-800 mt-1 bg-gray-50 rounded-lg p-4">{{ complaint.good_description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalle del Reclamo -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined">description</span>
+          Detalle del Reclamo
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Descripción del Problema</label>
+            <p class="text-gray-800 mt-1 bg-gray-50 rounded-lg p-4 whitespace-pre-wrap">{{ complaint.claim_detail }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Pedido del Consumidor</label>
+            <p class="text-gray-800 mt-1 bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500 whitespace-pre-wrap">{{ complaint.consumer_request }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Datos del Cliente -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined">person</span>
+          Datos del Cliente
+        </h2>
+        <div class="space-y-3">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Nombre Completo</label>
+            <p class="text-gray-800 mt-1 font-medium">{{ complaint.name }} {{ complaint.lastname }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Documento</label>
+            <p class="text-gray-800 mt-1">{{ complaint.doc_type }}: {{ complaint.document_number }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Email</label>
+            <p class="text-gray-800 mt-1">
+              <a href="mailto:{{ complaint.email }}" class="text-blue-600 hover:underline">
+                {{ complaint.email }}
+              </a>
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Teléfono</label>
+            <p class="text-gray-800 mt-1">
+              <a href="tel:{{ complaint.phone }}" class="text-blue-600 hover:underline">
+                {{ complaint.phone }}
+              </a>
+            </p>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Dirección</label>
+            <p class="text-gray-800 mt-1 text-sm">{{ complaint.address }}</p>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-6 pt-6 border-t border-gray-100 space-y-2">
+          <a href="mailto:{{ complaint.email }}?subject=Respuesta a Reclamo #{{ complaint.id }}" 
+             class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">email</span>
+            Enviar Email
+          </a>
+          <a href="https://wa.me/51{{ complaint.phone }}?text=Hola {{ complaint.name }}, nos comunicamos respecto a su reclamo #{{ complaint.id }}" 
+             target="_blank"
+             class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">phone</span>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <!-- Timeline / Legal Info -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-yellow-600 text-2xl">schedule</span>
+          <div class="text-sm text-yellow-900">
+            <p class="font-medium mb-2">Plazo Legal</p>
+            <p>Este reclamo debe ser atendido en un plazo máximo de <strong>15 días hábiles</strong> desde su presentación.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Action -->
+      <form action="{{ url_for('delete_complaint', complaint_id=complaint.id) }}" 
+            method="POST" 
+            class="bg-white rounded-xl shadow-sm border border-red-200 p-4"
+            onsubmit="return confirm('¿Está seguro de eliminar este reclamo? Esta acción no se puede deshacer.')">
+        <button type="submit" 
+                class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined">delete</span>
+          Eliminar Reclamo
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/complaint_detail.js') }}"></script>
+{% endblock %}

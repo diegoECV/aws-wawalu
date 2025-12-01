@@ -286,8 +286,14 @@ CREATE TABLE IF NOT EXISTS students (
     medical_info TEXT,
     -- Documentos requeridos
     parent_id_front VARCHAR(255),  -- Foto DNI padre/madre (frontal)
+    parent_id_front_data MEDIUMBLOB,
+    parent_id_front_type VARCHAR(50),
     parent_id_back VARCHAR(255),   -- Foto DNI padre/madre (reverso)
+    parent_id_back_data MEDIUMBLOB,
+    parent_id_back_type VARCHAR(50),
     birth_certificate VARCHAR(255), -- Certificado de nacimiento
+    birth_certificate_data MEDIUMBLOB,
+    birth_certificate_type VARCHAR(50),
     student_photo VARCHAR(255),     -- Foto del estudiante
     student_photo_data MEDIUMBLOB,
     student_photo_type VARCHAR(50),
