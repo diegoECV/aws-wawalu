@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(20),
     address TEXT,
     profile_image VARCHAR(255),
+    profile_image_data MEDIUMBLOB,
+    profile_image_type VARCHAR(50),
     is_active BOOLEAN DEFAULT TRUE,
     email_verified BOOLEAN DEFAULT FALSE,
     verification_token VARCHAR(255),
@@ -126,6 +128,8 @@ CREATE TABLE IF NOT EXISTS products (
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
     image_url VARCHAR(255),
+    image_data MEDIUMBLOB,
+    image_type VARCHAR(50),
     category VARCHAR(50),
     stock INT DEFAULT 0,
     material VARCHAR(50),
@@ -156,7 +160,10 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS galery_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100),
+    description TEXT,
     image_url VARCHAR(255) NOT NULL,
+    image_data MEDIUMBLOB,
+    image_type VARCHAR(50),
     category VARCHAR(50), -- e.g., 'deportes', 'salidas', 'promos'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -170,6 +177,8 @@ CREATE TABLE IF NOT EXISTS news (
     title VARCHAR(200) NOT NULL,
     content TEXT NOT NULL,
     image_url VARCHAR(255),
+    image_data MEDIUMBLOB,
+    image_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -199,13 +208,13 @@ CREATE TABLE IF NOT EXISTS menu_items (
 
 CREATE TABLE IF NOT EXISTS student_reports (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL, -- Link to a student (could be a user or a separate student table if we had one, for now linking to users table if students are users, or just storing name)
-    -- Assuming for now reports are linked to the parent's account or a specific child record. 
-    -- Let's link to the parent user_id for simplicity in this phase, or we might need a 'students' table later.
+    student_id INT NOT NULL, 
     user_id INT NOT NULL, 
     title VARCHAR(100) NOT NULL,
     content TEXT,
     file_url VARCHAR(255), -- For PDF reports
+    file_data MEDIUMBLOB,
+    file_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -280,6 +289,8 @@ CREATE TABLE IF NOT EXISTS students (
     parent_id_back VARCHAR(255),   -- Foto DNI padre/madre (reverso)
     birth_certificate VARCHAR(255), -- Certificado de nacimiento
     student_photo VARCHAR(255),     -- Foto del estudiante
+    student_photo_data MEDIUMBLOB,
+    student_photo_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -377,6 +388,8 @@ CREATE TABLE IF NOT EXISTS pensions (
     status ENUM('pending', 'paid', 'overdue') DEFAULT 'pending',
     payment_date DATE,
     receipt_url VARCHAR(255),
+    receipt_data MEDIUMBLOB,
+    receipt_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (enrollment_id) REFERENCES enrollments(id) ON DELETE CASCADE,
     UNIQUE KEY unique_pension (enrollment_id, month, due_date)
@@ -391,6 +404,8 @@ CREATE TABLE IF NOT EXISTS student_documents (
     title VARCHAR(100) NOT NULL, -- e.g., 'Constancia de Estudios', 'Certificado de Notas'
     description TEXT,
     file_url VARCHAR(255) NOT NULL,
+    file_data MEDIUMBLOB,
+    file_type VARCHAR(50),
     document_type ENUM('certificate', 'report', 'administrative') NOT NULL,
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
@@ -406,6 +421,8 @@ CREATE TABLE IF NOT EXISTS assignments (
     description TEXT,
     due_date DATETIME,
     file_url VARCHAR(255),
+    file_data MEDIUMBLOB,
+    file_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
@@ -419,6 +436,8 @@ CREATE TABLE IF NOT EXISTS submissions (
     student_id INT NOT NULL,
     submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     file_url VARCHAR(255),
+    file_data MEDIUMBLOB,
+    file_type VARCHAR(50),
     comments TEXT,
     grade DECIMAL(5, 2),
     status ENUM('submitted', 'graded', 'late') DEFAULT 'submitted',
@@ -442,3 +461,36 @@ CREATE TABLE IF NOT EXISTS internal_messages (
 );
 
 COMMIT;
+
+-- ========================================
+-- DATOS INICIALES (SEMILLA)
+-- ========================================
+
+-- Usuario Admin (Password: admin123)
+-- Nota: El hash puede variar, se recomienda cambiar la contraseña al primer inicio o generar uno nuevo.
+INSERT INTO users (name, email, password, role, is_admin, is_active, email_verified)
+VALUES ('Administrador', 'admin@wawalu.edu.pe', 'scrypt:32768:8:1$SesahuA98bZekZ$f31ce9996461f0777eec1e8a15dbabaf', 'admin', TRUE, TRUE, TRUE);
+
+-- Programas
+INSERT INTO programs (name, description, age_range, academic_year, registration_fee, monthly_fee, capacity) VALUES 
+('Nido (2 años)', 'Programa de estimulación temprana y socialización.', '2 años', 2025, 350.00, 450.00, 15),
+('Pre-Kinder (3 años)', 'Desarrollo de habilidades motoras y cognitivas.', '3 años', 2025, 350.00, 480.00, 18),
+('Kinder (4 años)', 'Preparación pre-escolar y lectoescritura.', '4 años', 2025, 350.00, 500.00, 20),
+('Pre-School (5 años)', 'Consolidación de habilidades para primaria.', '5 años', 2025, 350.00, 520.00, 20);
+
+-- Noticias de Ejemplo
+INSERT INTO news (title, content) VALUES 
+('¡Bienvenidos al Año Escolar 2025!', 'Estamos muy emocionados de iniciar un nuevo año lleno de aprendizaje y diversión. Las clases inician el 1 de Marzo.'),
+('Feria de Ciencias', 'Nuestros pequeños científicos presentarán sus proyectos este viernes en el patio principal.');
+
+-- Productos de Ejemplo
+INSERT INTO products (name, description, price, category, stock, material) VALUES 
+('Uniforme de Verano - Polo', 'Polo de algodón pima con logo bordado.', 45.00, 'Uniformes', 100, 'Algodón'),
+('Uniforme de Verano - Short', 'Short azul marino resistente.', 35.00, 'Uniformes', 100, 'Drill'),
+('Pack de Útiles Nido', 'Lista completa de útiles para el aula de 2 años.', 250.00, 'Útiles', 50, 'Varios');
+
+-- Galería de Ejemplo
+INSERT INTO galery_items (title, category, description, image_url) VALUES 
+('Día del Logro', 'Eventos', 'Nuestros alumnos demostrando lo aprendido.', 'default_gallery.png'),
+('Visita al Zoológico', 'Salidas', 'Un día divertido conociendo a los animales.', 'default_gallery.png');
+

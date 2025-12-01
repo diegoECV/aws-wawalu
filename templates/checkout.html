@@ -13,7 +13,7 @@
     </div>
 
     <form
-      action="{{ url_for('process_checkout') }}"
+      action="{{ url_for('checkout') }}"
       method="POST"
       enctype="multipart/form-data"
       class="grid grid-cols-1 lg:grid-cols-3 gap-8"
@@ -270,7 +270,7 @@
             {% for item in cart_items %}
             <div class="flex gap-3 pb-3 border-b border-gray-100">
               <img
-                src="{{ url_for('static', filename='uploads/' + item.image) if item.image else url_for('static', filename='image/default-product.png') }}"
+                src="{{ url_for('serve_image', table='products', id=item.id) }}"
                 alt="{{ item.name }}"
                 class="w-16 h-16 object-cover rounded-lg"
               />

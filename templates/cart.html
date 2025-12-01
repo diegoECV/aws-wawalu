@@ -24,7 +24,7 @@ endblock %} {% block content %}
             <!-- Product Image -->
             <div class="flex-shrink-0">
               <img
-                src="{{ url_for('static', filename='uploads/' + item.image) if item.image else url_for('static', filename='image/default-product.png') }}"
+                src="{{ url_for('serve_image', table='products', id=item.id) }}"
                 alt="{{ item.name }}"
                 class="w-24 h-24 object-cover rounded-lg"
               />

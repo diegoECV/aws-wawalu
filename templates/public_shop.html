@@ -89,11 +89,12 @@ extra_css %}
       <div
         class="relative h-64 bg-black flex items-center justify-center overflow-hidden group-image-container"
       >
-        {% if product.image_url %}
+        {% if product.has_image or product.image_url %}
         <img
-          src="{{ url_for('static', filename='uploads/products/' + product.image_url) if product.image_url else url_for('static', filename='image/default_product.png') }}"
+          src="{{ url_for('serve_image', table='products', id=product.id) }}"
           alt="{{ product.name }}"
           class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+          onerror="this.src='{{ url_for('static', filename='image/default_product.png') }}'"
         />
         {% else %}
         <div class="text-gray-600">
@@ -219,7 +220,7 @@ extra_css %}
 <!-- Product Detail Modal -->
 <div
   id="productModal"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm"
+  class="fixed inset-0 bg-black bg-opacity-50 z-[150] hidden items-center justify-center p-4 backdrop-blur-sm"
 >
   <div
     class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden animate-scale-in flex flex-col md:flex-row max-h-[90vh]"

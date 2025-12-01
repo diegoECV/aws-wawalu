@@ -23,10 +23,13 @@ function openProductModal(product) {
   document.getElementById("modalMaterial").textContent = product.material || "N/A";
   document.getElementById("modalUsage").textContent = product.usage_info || "N/A";
   const img = document.getElementById("modalImage");
-  if (product.image_url && product.image_url.startsWith("product_")) {
-    img.src = "/static/uploads/" + product.image_url;
+  if (product.has_image) {
+    img.src = "/serve_image/products/" + product.id;
+  } else if (product.image_url) {
+    // Fallback for legacy images if needed, or just use serve_image if it handles legacy
+    img.src = "/serve_image/products/" + product.id;
   } else {
-    img.src = "/static/image/products/" + product.image_url;
+    img.src = "/static/image/default_product.png";
   }
   const dimContainer = document.getElementById("modalDimensionsContainer");
   const sizeContainer = document.getElementById("modalSizesContainer");

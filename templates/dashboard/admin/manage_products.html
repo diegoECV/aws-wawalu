@@ -45,17 +45,12 @@ Productos - Wawalu{% endblock %} {% block content %}
                 <div
                   class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200"
                 >
-                  {% if product.image_url %}
                   <img
-                    src="{{ url_for('static', filename='uploads/products/' + product.image_url) if product.image_url else url_for('static', filename='image/default_product.png') }}"
+                    src="{{ url_for('serve_image', table='products', id=product.id) }}"
                     alt="{{ product.name }}"
                     class="w-full h-full object-cover"
+                    onerror="this.src='{{ url_for('static', filename='image/default_product.png') }}'"
                   />
-                  {% else %}
-                  <span class="material-symbols-outlined text-gray-400"
-                    >image</span
-                  >
-                  {% endif %}
                 </div>
                 <div>
                   <div class="font-medium text-gray-800">

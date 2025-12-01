@@ -43,17 +43,12 @@ Galería - Wawalu{% endblock %} {% block content %}
               <div
                 class="w-24 h-16 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200"
               >
-                {% if item.image_url %}
                 <img
-                  src="{{ url_for('static', filename='image/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_gallery.png') }}"
+                  src="{{ url_for('serve_image', table='galery_items', id=item.id) }}"
                   alt="{{ item.title }}"
                   class="w-full h-full object-cover"
+                  onerror="this.src='{{ url_for('static', filename='image/default_gallery.png') }}'"
                 />
-                {% else %}
-                <span class="material-symbols-outlined text-gray-400"
-                  >image</span
-                >
-                {% endif %}
               </div>
             </td>
             <td class="px-6 py-4">

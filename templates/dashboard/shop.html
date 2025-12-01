@@ -330,19 +330,15 @@ Wawalu{% endblock %} {% block content %}
     const modalForm = document.getElementById("modalForm");
 
     // Populate data
-    if (product.image_url) {
-      modalImage.src =
-        "{{ url_for('static', filename='uploads/products/') }}" +
-        product.image_url;
-      modalImage.onerror = function () {
-        this.src =
-          "{{ url_for('static', filename='image/products/') }}" +
-          product.image_url;
-      };
-    } else {
-      modalImage.src =
+    // Use serve_image route
+    const baseUrl =
+      "{{ url_for('serve_image', table='products', id=0) }}".replace("/0", "");
+    modalImage.src = baseUrl + "/" + product.id;
+
+    modalImage.onerror = function () {
+      this.src =
         "{{ url_for('static', filename='image/default_product.png') }}";
-    }
+    };
 
     modalTitle.textContent = product.name;
     modalPrice.textContent = "S/ " + parseFloat(product.price).toFixed(2);

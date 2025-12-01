@@ -38,12 +38,16 @@
                     <span class="material-symbols-outlined text-blue-600 text-2xl">description</span>
                 </div>
                 <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {{ doc.upload_date.strftime('%d/%m/%Y') }}
+                    {% if doc.upload_date %}
+                        {{ doc.upload_date.strftime('%d/%m/%Y') }}
+                    {% else %}
+                        N/A
+                    {% endif %}
                 </span>
             </div>
             <h3 class="font-bold text-gray-800 mb-2">{{ doc.title }}</h3>
             <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ doc.description or 'Sin descripción' }}</p>
-            <a href="{{ url_for('static', filename='uploads/documents/' + doc.file_url) if doc.file_url else '#' }}" download 
+            <a href="{{ url_for('download_file', file_type='document', id=doc.id) }}" download 
                class="flex items-center justify-center w-full bg-white border border-blue-600 text-blue-600 font-medium py-2 px-4 rounded-lg hover:bg-blue-50 transition-colors">
                 <span class="material-symbols-outlined mr-2 text-lg">download</span>
                 Descargar

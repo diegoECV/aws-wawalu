@@ -67,9 +67,10 @@ Wawalu{% endblock %} {% block content %}
       <!-- Image -->
       <div class="aspect-square overflow-hidden bg-gray-100">
         <img
-          src="{{ url_for('static', filename='uploads/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_gallery.png') }}"
+          src="{{ url_for('serve_image', table='galery_items', id=item.id) }}"
           alt="{{ item.title }}"
           class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+          onerror="this.src='{{ url_for('static', filename='image/default_gallery.png') }}'"
         />
       </div>
 

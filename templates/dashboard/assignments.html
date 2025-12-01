@@ -81,7 +81,7 @@
                             Vence: {{ assignment.due_date.strftime('%d/%m/%Y') }}
                         </span>
                         {% if assignment.file_url %}
-                        <a href="{{ url_for('static', filename='uploads/' + assignment.file_url) }}" class="flex items-center text-blue-600 hover:underline" target="_blank">
+                        <a href="{{ url_for('download_file', file_type='assignment', id=assignment.id) }}" class="flex items-center text-blue-600 hover:underline" target="_blank">
                             <span class="material-symbols-outlined text-base mr-1">attach_file</span>
                             Descargar adjunto
                         </a>

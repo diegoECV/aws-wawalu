@@ -28,9 +28,10 @@ Wawalu{% endblock %} {% block content %}
             >
               {% if session.get('profile_image') %}
               <img
-                src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) if session.get('profile_image') else url_for('static', filename='image/default_profile.png') }}"
+                src="{{ url_for('serve_image', table='users', id=user.id) }}"
                 alt="Profile"
                 class="w-full h-full object-cover"
+                onerror="this.src='{{ url_for('static', filename='image/default_profile.png') }}'"
               />
               {% else %}
               <span class="text-3xl font-bold text-gray-400"
@@ -158,9 +159,10 @@ Wawalu{% endblock %} {% block content %}
               >
                 {% if session.get('profile_image') %}
                 <img
-                  src="{{ url_for('static', filename='uploads/' + session.get('profile_image')) if session.get('profile_image') else url_for('static', filename='image/default_profile.png') }}"
+                  src="{{ url_for('serve_image', table='users', id=user.id) }}"
                   alt="Preview"
                   class="w-full h-full object-cover"
+                  onerror="this.src='{{ url_for('static', filename='image/default_profile.png') }}'"
                 />
                 {% else %}
                 <span

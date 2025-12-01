@@ -21,7 +21,7 @@ Matrícula - Wawalu{% endblock %} {% block content %}
         <div class="mb-6">
           {% if enrollment.student_photo %}
           <img
-            src="{{ url_for('static', filename='uploads/students/' + enrollment.student_photo) }}"
+            src="{{ url_for('serve_image', table='students', id=enrollment.student_id) }}"
             alt="{{ enrollment.first_name }}"
             class="w-full h-64 object-cover rounded-lg"
           />

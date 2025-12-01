@@ -185,16 +185,16 @@ PG Wawalu{% endblock %} {% block content %}
       <!-- Payment Info -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Método de Pago</h3>
-        <div class="flex items-center">
+        <div class="flex items-center mb-4">
           <div
             class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 mr-3"
           >
             {% if order.payment_method == 'yape' %}
-            <i class="fas fa-qrcode"></i>
+            <span class="material-symbols-outlined">qr_code_scanner</span>
             {% elif order.payment_method == 'transfer' %}
-            <i class="fas fa-university"></i>
+            <span class="material-symbols-outlined">account_balance</span>
             {% else %}
-            <i class="fas fa-money-bill"></i>
+            <span class="material-symbols-outlined">payments</span>
             {% endif %}
           </div>
           <div>
@@ -207,8 +207,80 @@ PG Wawalu{% endblock %} {% block content %}
             </p>
           </div>
         </div>
+
+        <!-- Payment Proof Display -->
+        {% if order.payment_proof_type %}
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <p class="text-sm font-medium text-gray-700 mb-2">
+            Comprobante de Pago
+          </p>
+          {% if 'image' in order.payment_proof_type %}
+          <div
+            class="relative group cursor-pointer"
+            onclick="window.open('{{ url_for('serve_image', table='orders', id=order.id) }}', '_blank')"
+          >
+            <img
+              src="{{ url_for('serve_image', table='orders', id=order.id) }}"
+              alt="Comprobante"
+              class="w-full h-48 object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
+            />
+            <div
+              class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <span
+                class="bg-black/50 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm"
+              >
+                Clic para ampliar
+              </span>
+            </div>
+          </div>
+          {% else %}
+          <a
+            href="{{ url_for('serve_image', table='orders', id=order.id) }}"
+            target="_blank"
+            class="flex items-center p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+          >
+            <span class="material-symbols-outlined mr-2">description</span>
+            <span class="text-sm font-medium">Ver Documento (PDF)</span>
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Admin Actions -->
+        {% if session.get('user_role') in ['admin', 'staff'] and order.status ==
+        'pending' %}
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <button
+            onclick="updateOrderStatus('{{ order.id }}', 'paid')"
+            class="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            Aprobar Pago
+          </button>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
+
+<script>
+  function updateOrderStatus(orderId, newStatus) {
+    if (!confirm("¿Confirmar que el pago ha sido verificado?")) return;
+
+    fetch(`/orders/update_status/${orderId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert("Error: " + data.message);
+        }
+      });
+  }
+</script>

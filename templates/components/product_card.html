@@ -7,18 +7,12 @@
     class="aspect-square bg-gray-100 relative overflow-hidden cursor-pointer"
     onclick="openProductModal({{ product | tojson }})"
   >
-    {% if product.image_url %}
     <img
-      src="{{ url_for('static', filename='image/products/' + product.image_url) }}"
+      src="{{ url_for('serve_image', table='products', id=product.id) }}"
       alt="{{ product.name }}"
       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-      onerror="this.src='{{ url_for('static', filename='uploads/' + product.image_url) }}'"
+      onerror="this.src='{{ url_for('static', filename='image/default_product.png') }}'"
     />
-    {% else %}
-    <div class="w-full h-full flex items-center justify-center text-gray-300">
-      <span class="material-symbols-outlined text-6xl">shopping_bag</span>
-    </div>
-    {% endif %}
 
     <!-- Quick View Overlay -->
     <div

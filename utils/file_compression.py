@@ -7,6 +7,7 @@ from PIL import Image
 import io
 import os
 from typing import Tuple, Optional
+from PyPDF2 import PdfReader, PdfWriter
 
 def get_mime_type(filename: str) -> str:
     """
@@ -102,18 +103,29 @@ def compress_pdf(file) -> Tuple[bytes, str]:
         Tuple of (compressed_bytes, mime_type)
     """
     try:
-        # For now, just read the PDF as-is
-        # PyPDF2 compression can be added later if needed
+        # Basic PDF compression/optimization using PyPDF2
+        # This re-writes the PDF which can remove unused objects and optimize structure
         file.seek(0)
-        pdf_bytes = file.read()
+        reader = PdfReader(file)
+        writer = PdfWriter()
         
-        # TODO: Implement actual PDF compression with PyPDF2
-        # This would require more complex logic to compress images within PDFs
+        for page in reader.pages:
+            writer.add_page(page)
+            
+        # Compress streams if possible (PyPDF2 default behavior often does this)
+        for page in writer.pages:
+            page.compress_content_streams()
+            
+        output = io.BytesIO()
+        writer.write(output)
+        output.seek(0)
         
-        return pdf_bytes, 'application/pdf'
+        return output.read(), 'application/pdf'
         
     except Exception as e:
-        raise Exception(f"Error processing PDF: {str(e)}")
+        print(f"PDF compression failed, using original: {str(e)}")
+        file.seek(0)
+        return file.read(), 'application/pdf'
 
 
 def get_file_size_mb(data: bytes) -> float:

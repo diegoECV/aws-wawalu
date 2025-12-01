@@ -70,7 +70,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-900">
                             {% if pension.receipt_url %}
-                            <a href="{{ url_for('static', filename='uploads/receipts/' + pension.receipt_url) if pension.receipt_url else '#' }}" target="_blank" class="flex items-center">
+                            <a href="{{ url_for('download_file', file_type='receipt', id=pension.id) }}" target="_blank" class="flex items-center">
                                 <span class="material-symbols-outlined text-lg mr-1">receipt</span>
                                 Ver
                             </a>

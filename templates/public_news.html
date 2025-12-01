@@ -67,11 +67,12 @@ block extra_css %}
     >
       <!-- Image -->
       <div class="h-56 overflow-hidden relative bg-gray-100">
-        {% if item.image_url %}
+        {% if item.image_url or item.has_image %}
         <img
-          src="{{ url_for('static', filename='image/galery/' + item.image_url) if item.image_url else url_for('static', filename='image/default_news.png') }}"
+          src="{{ url_for('serve_image', table='news', id=item.id) }}"
           alt="{{ item.title }}"
           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          onerror="this.src='{{ url_for('static', filename='image/default_news.png') }}'"
         />
         {% else %}
         <div

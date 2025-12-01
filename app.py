@@ -10,25 +10,28 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 from datetime import datetime
+from utils.file_compression import compress_image, compress_pdf, get_mime_type
+from flask import send_file
+import io
 
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # Cambia esto por una clave segura en producción
 
 # Configuración de subida de archivos
-UPLOAD_FOLDER = 'static/uploads'
+# UPLOAD_FOLDER = 'static/uploads' # Deprecated: Using DB storage
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Asegurarse de que existe el directorio de uploads
-os.makedirs(os.path.join(app.root_path, UPLOAD_FOLDER), exist_ok=True)
+# os.makedirs(os.path.join(app.root_path, UPLOAD_FOLDER), exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Configuración de la base de datos
-DB_HOST = os.getenv('DB_HOST', 'wawalu-aws.c506266wsgbx.us-east-1.rds.amazonaws.com')
+DB_HOST = os.getenv('DB_HOST', 'aws.c506266wsgbx.us-east-1.rds.amazonaws.com')
 DB_USER = os.getenv('DB_USER', 'root')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'diego1416')
 DB_NAME = os.getenv('DB_NAME', 'wawalu_db')
@@ -52,6 +55,149 @@ def init_db():
         print("Base de datos conectada y flujo de datos realizada")
     except Exception as e:
         print(f"Conexión con la base de datos error: {e}")
+
+
+# --- Rutas para servir archivos desde BD ---
+@app.route('/serve_image/<table>/<int:id>')
+def serve_image(table, id):
+    """Serve image from database or fallback to filesystem/default"""
+    allowed_tables = ['users', 'products', 'galery_items', 'news', 'students', 'pensions', 'orders']
+    
+    if table not in allowed_tables:
+        return "Invalid table", 400
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Determine column names based on table
+            if table == 'users':
+                query = 'SELECT profile_image_data as data, profile_image_type as type, profile_image as legacy_url FROM users WHERE id = %s'
+            elif table == 'products':
+                query = 'SELECT image_data as data, image_type as type, image_url as legacy_url FROM products WHERE id = %s'
+            elif table == 'galery_items':
+                query = 'SELECT image_data as data, image_type as type, image_url as legacy_url FROM galery_items WHERE id = %s'
+            elif table == 'news':
+                query = 'SELECT image_data as data, image_type as type, image_url as legacy_url FROM news WHERE id = %s'
+            elif table == 'students':
+                query = 'SELECT student_photo_data as data, student_photo_type as type, student_photo as legacy_url FROM students WHERE id = %s'
+            elif table == 'pensions':
+                query = 'SELECT receipt_data as data, receipt_type as type, receipt_url as legacy_url FROM pensions WHERE id = %s'
+            elif table == 'orders':
+                query = 'SELECT payment_proof_data as data, payment_proof_type as type, NULL as legacy_url FROM orders WHERE id = %s'
+                
+            cursor.execute(query, (id,))
+            result = cursor.fetchone()
+            
+            if result and result['data']:
+                return send_file(
+                    io.BytesIO(result['data']),
+                    mimetype=result['type'] or 'image/jpeg',
+                    as_attachment=False
+                )
+            elif result and result['legacy_url']:
+                # Fallback to legacy filesystem path (now in static/image)
+                if table == 'products':
+                    return redirect(url_for('static', filename='image/products/' + result['legacy_url']))
+                elif table == 'users':
+                    return redirect(url_for('static', filename='image/profiles/' + result['legacy_url']))
+                elif table == 'galery_items':
+                    return redirect(url_for('static', filename='image/galery/' + result['legacy_url']))
+                elif table == 'news':
+                    return redirect(url_for('static', filename='image/news/' + result['legacy_url']))
+                elif table == 'students':
+                    return redirect(url_for('static', filename='image/students/' + result['legacy_url']))
+            
+            # Fallback to default images if not found in DB or legacy
+            if table == 'users':
+                return redirect(url_for('static', filename='image/default_profile.png'))
+            elif table == 'products':
+                return redirect(url_for('static', filename='image/default_product.png'))
+            elif table == 'galery_items':
+                return redirect(url_for('static', filename='image/default_gallery.png'))
+            elif table == 'students':
+                return redirect(url_for('static', filename='image/default_profile.png'))
+            
+            return "Image not found", 404
+    finally:
+        conn.close()
+
+@app.route('/download/<file_type>/<int:id>')
+def download_file(file_type, id):
+    """Download file from database"""
+    allowed_types = ['report', 'document', 'assignment', 'submission', 'receipt']
+    
+    if file_type not in allowed_types:
+        return "Invalid file type", 400
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            if file_type == 'report':
+                cursor.execute('SELECT file_data, file_type, title, file_url FROM student_reports WHERE id = %s', (id,))
+                result = cursor.fetchone()
+                
+                if result and result['file_data']:
+                    # Use original filename if available, otherwise title
+                    filename = result['file_url'] if result['file_url'] else f"{result['title']}.pdf"
+                    
+                    return send_file(
+                        io.BytesIO(result['file_data']),
+                        mimetype=result['file_type'] or 'application/pdf',
+                        as_attachment=True,
+                        download_name=filename
+                    )
+            elif file_type == 'document':
+                cursor.execute('SELECT file_data, file_type, title, file_url FROM student_documents WHERE id = %s', (id,))
+                result = cursor.fetchone()
+                
+                if result and result['file_data']:
+                    filename = result['file_url'] if result['file_url'] else f"{result['title']}.pdf"
+                    return send_file(
+                        io.BytesIO(result['file_data']),
+                        mimetype=result['file_type'] or 'application/pdf',
+                        as_attachment=True,
+                        download_name=filename
+                    )
+            elif file_type == 'assignment':
+                cursor.execute('SELECT file_data, file_type, title, file_url FROM assignments WHERE id = %s', (id,))
+                result = cursor.fetchone()
+                
+                if result and result['file_data']:
+                    filename = result['file_url'] if result['file_url'] else f"{result['title']}.pdf"
+                    return send_file(
+                        io.BytesIO(result['file_data']),
+                        mimetype=result['file_type'] or 'application/pdf',
+                        as_attachment=True,
+                        download_name=filename
+                    )
+            elif file_type == 'submission':
+                cursor.execute('SELECT file_data, file_type, file_url FROM submissions WHERE id = %s', (id,))
+                result = cursor.fetchone()
+                
+                if result and result['file_data']:
+                    filename = result['file_url'] if result['file_url'] else f"submission_{id}.pdf"
+                    return send_file(
+                        io.BytesIO(result['file_data']),
+                        mimetype=result['file_type'] or 'application/pdf',
+                        as_attachment=True,
+                        download_name=filename
+                    )
+            elif file_type == 'receipt':
+                cursor.execute('SELECT receipt_data, receipt_type, receipt_url FROM pensions WHERE id = %s', (id,))
+                result = cursor.fetchone()
+                
+                if result and result['receipt_data']:
+                    filename = result['receipt_url'] if result['receipt_url'] else f"receipt_{id}.pdf"
+                    return send_file(
+                        io.BytesIO(result['receipt_data']),
+                        mimetype=result['receipt_type'] or 'application/pdf',
+                        as_attachment=True,
+                        download_name=filename
+                    )
+            
+            return "File not found", 404
+    finally:
+        conn.close()
 
 # --- Funciones de Correo ---
 def send_credentials_email(to_email, name, password):
@@ -211,7 +357,13 @@ def public_shop():
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM products ORDER BY created_at DESC')
+            cursor.execute('''
+                SELECT id, name, description, price, image_url, category, stock, 
+                       material, usage_info, dimensions, sizes, created_at,
+                       (image_data IS NOT NULL) as has_image
+                FROM products 
+                ORDER BY created_at DESC
+            ''')
             products = cursor.fetchall()
     finally:
         conn.close()
@@ -233,17 +385,24 @@ def public_news():
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM news ORDER BY created_at DESC')
+            cursor.execute('''
+                SELECT id, title, content, created_at, image_url, 
+                (image_data IS NOT NULL) as has_image 
+                FROM news 
+                ORDER BY created_at DESC
+            ''')
             news = cursor.fetchall()
     finally:
         conn.close()
-    return render_template('public_news.html', news=news)
+    return render_template('public_news.html', news_items=news)
 
 @app.route('/public/cart')
 def public_cart():
     cart_items = session.get('cart', [])
+    # Filter out None or invalid items
+    cart_items = [item for item in cart_items if isinstance(item, dict)]
     # Calculate total without modifying session objects
-    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in cart_items if isinstance(item, dict))
+    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in cart_items)
     return render_template('public_cart.html', cart_items=cart_items, total=total)
 
 @app.route('/cart/add/<int:product_id>', methods=['POST'])
@@ -259,6 +418,9 @@ def add_to_cart(product_id):
             if product:
                 if 'cart' not in session:
                     session['cart'] = []
+                
+                # Filter out None items first to avoid errors
+                session['cart'] = [item for item in session['cart'] if isinstance(item, dict)]
                 
                 # Check if item exists
                 existing_item = next((item for item in session['cart'] if item['id'] == product_id), None)
@@ -312,7 +474,12 @@ def news_detail(news_id):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM news WHERE id = %s', (news_id,))
+            cursor.execute('''
+                SELECT id, title, content, created_at, image_url, 
+                (image_data IS NOT NULL) as has_image 
+                FROM news 
+                WHERE id = %s
+            ''', (news_id,))
             news_item = cursor.fetchone()
     finally:
         conn.close()
@@ -496,7 +663,8 @@ def login():
                     session['user_name'] = user['name']
                     session['user_email'] = user['email']
                     session['user_role'] = user['role']
-                    session['profile_image'] = user.get('profile_image')
+                    # Check if user has a profile image (either path or BLOB)
+                    session['profile_image'] = True if (user.get('profile_image') or user.get('profile_image_data')) else None
                     
                     cursor.execute('UPDATE users SET last_login = NOW() WHERE id = %s', (user['id'],))
                     conn.commit()
@@ -633,22 +801,15 @@ def profile():
                     if file and file.filename != '':
                         if allowed_file(file.filename):
                             try:
-                                filename = secure_filename(file.filename)
-                                # Generar nombre único para evitar conflictos
-                                filename = f"profile_{session['user_id']}_{int(time.time())}_{filename}"
+                                # Comprimir imagen
+                                compressed_data, mime_type = compress_image(file, max_width=400, max_height=400, quality=80)
                                 
-                                # Asegurar que la carpeta existe
-                                upload_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-                                os.makedirs(upload_path, exist_ok=True)
+                                # Actualizar base de datos con la imagen BLOB
+                                cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s, profile_image_data = %s, profile_image_type = %s WHERE id = %s',
+                                             (name, phone, address, compressed_data, mime_type, session['user_id']))
                                 
-                                # Guardar el archivo
-                                file_path = os.path.join(upload_path, filename)
-                                file.save(file_path)
-                                
-                                # Actualizar base de datos con la imagen
-                                cursor.execute('UPDATE users SET name = %s, phone = %s, address = %s, profile_image = %s WHERE id = %s',
-                                             (name, phone, address, filename, session['user_id']))
-                                session['profile_image'] = filename
+                                # Update session to reflect new image
+                                session['profile_image'] = True
                                 flash('Perfil e imagen actualizados exitosamente', 'success')
                             except Exception as e:
                                 flash(f'Error al subir la imagen: {str(e)}', 'error')
@@ -682,6 +843,7 @@ def profile():
         conn.close()
     
     return render_template('dashboard/profile.html', user=user)
+
 
 
 # ========================================
@@ -770,7 +932,8 @@ def matricula():
                         file = request.files['student_photo']
                         if file and file.filename and allowed_file(file.filename):
                             filename = secure_filename(f"student_photo_{session['user_id']}_{int(time.time())}_{file.filename}")
-                            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                            # Compress and get data
+                            student_photo_data, student_photo_type = compress_image(file, max_width=400, max_height=400, quality=80)
                             student_photo_file = filename
                     
                     # Verificar que todos los archivos fueron subidos
@@ -785,11 +948,11 @@ def matricula():
                 # Crear estudiante con documentos
                 cursor.execute('''INSERT INTO students 
                     (parent_id, first_name, last_name, dob, gender, allergies, medical_info,
-                     parent_id_front, parent_id_back, birth_certificate, student_photo)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''',
+                     parent_id_front, parent_id_back, birth_certificate, student_photo, student_photo_data, student_photo_type)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''',
                     (session['user_id'], student_first_name, student_last_name, 
                      student_dob, student_gender, allergies, medical_info,
-                     parent_id_front_file, parent_id_back_file, birth_certificate_file, student_photo_file))
+                     parent_id_front_file, parent_id_back_file, birth_certificate_file, student_photo_file, student_photo_data, student_photo_type))
                 
                 student_id = cursor.lastrowid
                 
@@ -1133,8 +1296,11 @@ def cart():
         return redirect(url_for('login'))
     
     cart_items = session.get('cart', [])
+    # Filter out None or invalid items
+    cart_items = [item for item in cart_items if isinstance(item, dict)]
+    
     # Calculate total
-    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in cart_items if isinstance(item, dict))
+    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in cart_items)
     
     # Calculate subtotals for display if needed (though template might do it)
     for item in cart_items:
@@ -1203,6 +1369,10 @@ def checkout():
     if 'cart' not in session or len(session['cart']) == 0:
         flash('Tu carrito está vacío', 'error')
         return redirect(url_for('shop'))
+        
+    # Filter out None items
+    session['cart'] = [item for item in session['cart'] if isinstance(item, dict)]
+    session.modified = True
     
     if request.method == 'POST':
         shipping_name = request.form.get('shipping_name')
@@ -1214,15 +1384,29 @@ def checkout():
         
         total_amount = sum(item['price'] * item['quantity'] for item in session['cart'])
         
+        payment_proof_data = None
+        payment_proof_type = None
+        
+        if 'payment_proof' in request.files:
+            file = request.files['payment_proof']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file_ext = filename.rsplit('.', 1)[1].lower()
+                
+                if file_ext == 'pdf':
+                    payment_proof_data, payment_proof_type = compress_pdf(file)
+                else:
+                    payment_proof_data, payment_proof_type = compress_image(file, max_width=1200, max_height=1200, quality=85)
+
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
                 cursor.execute('''INSERT INTO orders 
                     (user_id, total_amount, status, payment_method, shipping_address, shipping_phone, 
-                     shipping_name, shipping_lastname, shipping_email)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)''',
+                     shipping_name, shipping_lastname, shipping_email, payment_proof_data, payment_proof_type)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''',
                     (session['user_id'], total_amount, 'pending', payment_method, shipping_address,
-                     shipping_phone, shipping_name, shipping_lastname, shipping_email))
+                     shipping_phone, shipping_name, shipping_lastname, shipping_email, payment_proof_data, payment_proof_type))
                 
                 order_id = cursor.lastrowid
                 
@@ -1297,8 +1481,12 @@ def order_detail(order_id):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM orders WHERE id = %s AND user_id = %s', 
-                         (order_id, session['user_id']))
+            if session.get('user_role') in ['admin', 'staff']:
+                cursor.execute('SELECT * FROM orders WHERE id = %s', (order_id,))
+            else:
+                cursor.execute('SELECT * FROM orders WHERE id = %s AND user_id = %s', 
+                             (order_id, session['user_id']))
+            
             order = cursor.fetchone()
             
             if not order:
@@ -1724,6 +1912,98 @@ def manage_galery():
     else:
         return render_template('dashboard/staff/manage_galery.html', galery_items=galery_items)
 
+@app.route('/galery/add', methods=['GET', 'POST'])
+def add_gallery_item():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        category = request.form.get('category')
+        description = request.form.get('description')
+        file = request.files.get('image')
+        
+        if file and file.filename:
+            # Compress and save image
+            image_data, image_type = compress_image(file)
+            
+            conn = get_db_connection()
+            try:
+                with conn.cursor() as cursor:
+                    cursor.execute('INSERT INTO galery_items (title, category, description, image_data, image_type) VALUES (%s, %s, %s, %s, %s)',
+                                 (title, category, description, image_data, image_type))
+                    conn.commit()
+                    flash('Foto agregada exitosamente', 'success')
+                    return redirect(url_for('manage_galery'))
+            except Exception as e:
+                flash(f'Error al agregar foto: {str(e)}', 'error')
+            finally:
+                conn.close()
+        else:
+            flash('Debe seleccionar una imagen', 'error')
+            
+    return render_template('dashboard/admin/gallery_form.html', item=None)
+
+@app.route('/galery/upload', methods=['POST'])
+def upload_galery():
+    """Alias for quick upload from gallery page"""
+    return add_gallery_item()
+
+@app.route('/galery/edit/<int:item_id>', methods=['GET', 'POST'])
+def edit_galery_item(item_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            if request.method == 'POST':
+                title = request.form.get('title')
+                category = request.form.get('category')
+                description = request.form.get('description')
+                file = request.files.get('image')
+                
+                if file and file.filename:
+                    image_data, image_type = compress_image(file)
+                    cursor.execute('UPDATE galery_items SET title=%s, category=%s, description=%s, image_data=%s, image_type=%s WHERE id=%s',
+                                 (title, category, description, image_data, image_type, item_id))
+                else:
+                    cursor.execute('UPDATE galery_items SET title=%s, category=%s, description=%s WHERE id=%s',
+                                 (title, category, description, item_id))
+                                 
+                conn.commit()
+                flash('Foto actualizada exitosamente', 'success')
+                return redirect(url_for('manage_galery'))
+            
+            cursor.execute('SELECT * FROM galery_items WHERE id = %s', (item_id,))
+            item = cursor.fetchone()
+            
+            if not item:
+                flash('Foto no encontrada', 'error')
+                return redirect(url_for('manage_galery'))
+                
+            return render_template('dashboard/admin/gallery_form.html', item=item)
+    finally:
+        conn.close()
+
+@app.route('/galery/delete/<int:item_id>')
+def delete_gallery_item(item_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM galery_items WHERE id = %s', (item_id,))
+            conn.commit()
+            flash('Foto eliminada exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar foto: {str(e)}', 'error')
+    finally:
+        conn.close()
+        
+    return redirect(request.referrer or url_for('manage_galery'))
+
 # ========================================
 # GESTIÓN DE NOTICIAS (ADMIN/STAFF)
 # ========================================
@@ -1745,6 +2025,96 @@ def manage_news():
         return render_template('dashboard/admin/manage_news.html', news=news)
     else:
         return render_template('dashboard/staff/manage_news.html', news=news)
+
+@app.route('/news/add', methods=['GET', 'POST'])
+def add_news():
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        file = request.files.get('image')
+        
+        print(f"DEBUG: add_news request.files keys: {request.files.keys()}")
+        print(f"DEBUG: add_news file object: {file}")
+        if file:
+            print(f"DEBUG: add_news filename: {file.filename}")
+        
+        image_data = None
+        image_type = None
+        
+        if file and file.filename:
+            image_data, image_type = compress_image(file)
+            
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('INSERT INTO news (title, content, image_data, image_type) VALUES (%s, %s, %s, %s)',
+                             (title, content, image_data, image_type))
+                conn.commit()
+                flash('Noticia agregada exitosamente', 'success')
+                return redirect(url_for('manage_news'))
+        except Exception as e:
+            flash(f'Error al agregar noticia: {str(e)}', 'error')
+        finally:
+            conn.close()
+            
+    return render_template('dashboard/admin/news_form.html', news=None)
+
+@app.route('/news/edit/<int:news_id>', methods=['GET', 'POST'])
+def edit_news(news_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            if request.method == 'POST':
+                title = request.form.get('title')
+                content = request.form.get('content')
+                file = request.files.get('image')
+                
+                if file and file.filename:
+                    image_data, image_type = compress_image(file)
+                    cursor.execute('UPDATE news SET title=%s, content=%s, image_data=%s, image_type=%s WHERE id=%s',
+                                 (title, content, image_data, image_type, news_id))
+                else:
+                    cursor.execute('UPDATE news SET title=%s, content=%s WHERE id=%s',
+                                 (title, content, news_id))
+                                 
+                conn.commit()
+                flash('Noticia actualizada exitosamente', 'success')
+                return redirect(url_for('manage_news'))
+            
+            cursor.execute('SELECT * FROM news WHERE id = %s', (news_id,))
+            news_item = cursor.fetchone()
+            
+            if not news_item:
+                flash('Noticia no encontrada', 'error')
+                return redirect(url_for('manage_news'))
+                
+            return render_template('dashboard/admin/news_form.html', news=news_item)
+    finally:
+        conn.close()
+
+@app.route('/news/delete/<int:news_id>')
+def delete_news(news_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
+        return redirect(url_for('login'))
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute('DELETE FROM news WHERE id = %s', (news_id,))
+            conn.commit()
+            flash('Noticia eliminada exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar noticia: {str(e)}', 'error')
+    finally:
+        conn.close()
+        
+    return redirect(request.referrer or url_for('manage_news'))
 
 # ========================================
 # GESTIÓN DE MATRÍCULAS (ADMIN/STAFF)
@@ -1896,19 +2266,22 @@ def add_product():
         description = request.form.get('description')
         image = request.files.get('image')
         
-        image_filename = None
+        image_data = None
+        image_type = None
+        
         if image and image.filename:
-            filename = secure_filename(image.filename)
-            base, ext = os.path.splitext(filename)
-            filename = f"{base}_{int(time.time())}{ext}"
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'products', filename))
-            image_filename = filename
+            try:
+                # Comprimir imagen (800x800, 85%)
+                image_data, image_type = compress_image(image, max_width=800, max_height=800, quality=85)
+            except Exception as e:
+                flash(f'Error al procesar imagen: {str(e)}', 'error')
+                return render_template('dashboard/admin/product_form.html', product=None)
             
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO products (name, price, stock, category, description, image_url) VALUES (%s, %s, %s, %s, %s, %s)',
-                             (name, price, stock, category, description, image_filename))
+                cursor.execute('INSERT INTO products (name, price, stock, category, description, image_data, image_type) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                             (name, price, stock, category, description, image_data, image_type))
                 conn.commit()
                 flash('Producto agregado exitosamente', 'success')
                 return redirect(url_for('manage_products'))
@@ -1930,30 +2303,6 @@ def edit_product(product_id):
             if request.method == 'POST':
                 name = request.form.get('name')
                 price = request.form.get('price')
-                stock = request.form.get('stock')
-                category = request.form.get('category')
-                description = request.form.get('description')
-                image = request.files.get('image')
-                
-                # Get current image
-                cursor.execute('SELECT image_url FROM products WHERE id = %s', (product_id,))
-                current_product = cursor.fetchone()
-                image_filename = current_product['image_url']
-                
-                if image and image.filename:
-                    filename = secure_filename(image.filename)
-                    base, ext = os.path.splitext(filename)
-                    filename = f"{base}_{int(time.time())}{ext}"
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'products', filename))
-                    image_filename = filename
-                    
-                cursor.execute('UPDATE products SET name = %s, price = %s, stock = %s, category = %s, description = %s, image_url = %s WHERE id = %s',
-                             (name, price, stock, category, description, image_filename, product_id))
-                conn.commit()
-                flash('Producto actualizado exitosamente', 'success')
-                return redirect(url_for('manage_products'))
-            
-            cursor.execute('SELECT * FROM products WHERE id = %s', (product_id,))
             product = cursor.fetchone()
             
             if not product:
@@ -1984,574 +2333,6 @@ def delete_product(product_id):
 
 @app.route('/add_product_staff', methods=['GET', 'POST'])
 def add_product_staff():
-    if 'user_id' not in session or session.get('user_role') != 'staff':
-        return redirect(url_for('login'))
-    # Staff can use the same add_product function as admin
-    return add_product()
-
-@app.route('/news/add', methods=['GET', 'POST'])
-def add_news():
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
-        return redirect(url_for('login'))
-    
-    if request.method == 'POST':
-        title = request.form.get('title')
-        content = request.form.get('content')
-        image = request.files.get('image')
-        
-        image_filename = None
-        if image and image.filename:
-            filename = secure_filename(image.filename)
-            # Ensure unique filename
-            base, ext = os.path.splitext(filename)
-            filename = f"{base}_{int(time.time())}{ext}"
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            image_filename = filename
-            
-        conn = get_db_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO news (title, content, image_url) VALUES (%s, %s, %s)',
-                             (title, content, image_filename))
-                conn.commit()
-                flash('Noticia publicada exitosamente', 'success')
-        except Exception as e:
-            flash(f'Error al publicar noticia: {str(e)}', 'error')
-        finally:
-            conn.close()
-            
-        return redirect(url_for('manage_news'))
-        
-    return render_template('dashboard/admin/news_form.html', news=None)
-
-@app.route('/news/edit/<int:news_id>', methods=['GET', 'POST'])
-def edit_news(news_id):
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM news WHERE id = %s', (news_id,))
-            news = cursor.fetchone()
-            
-            if not news:
-                flash('Noticia no encontrada', 'error')
-                return redirect(url_for('manage_news'))
-                
-            if request.method == 'POST':
-                title = request.form.get('title')
-                content = request.form.get('content')
-                image = request.files.get('image')
-                
-                image_filename = news['image_url']
-                if image and image.filename:
-                    filename = secure_filename(image.filename)
-                    base, ext = os.path.splitext(filename)
-                    filename = f"{base}_{int(time.time())}{ext}"
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    image_filename = filename
-                    
-                cursor.execute('UPDATE news SET title = %s, content = %s, image_url = %s WHERE id = %s',
-                             (title, content, image_filename, news_id))
-                conn.commit()
-                flash('Noticia actualizada exitosamente', 'success')
-                return redirect(url_for('manage_news'))
-                
-    finally:
-        conn.close()
-        
-    return render_template('dashboard/admin/news_form.html', news=news)
-
-@app.route('/news/delete/<int:news_id>')
-def delete_news(news_id):
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('DELETE FROM news WHERE id = %s', (news_id,))
-            conn.commit()
-            flash('Noticia eliminada exitosamente', 'success')
-    except Exception as e:
-        flash(f'Error al eliminar noticia: {str(e)}', 'error')
-    finally:
-        conn.close()
-        
-    return redirect(url_for('manage_news'))
-
-# ========================================
-# INTERACCIÓN (DASHBOARD ESTUDIANTE)
-# ========================================
-
-@app.route('/dashboard/assignments')
-def student_assignments():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            # Obtener estudiantes asociados al padre
-            cursor.execute('SELECT * FROM students WHERE parent_id = %s', (session['user_id'],))
-            students = cursor.fetchall()
-            
-            # Por defecto mostrar el primer estudiante o el seleccionado
-            student_id = request.args.get('student_id')
-            if not student_id and students:
-                student_id = students[0]['id']
-            
-            assignments = []
-            if student_id:
-                cursor.execute('''
-                    SELECT a.*, c.name as course_name, s.status as submission_status, s.grade, s.file_url as submission_file
-                    FROM assignments a
-                    JOIN courses c ON a.course_id = c.id
-                    JOIN enrollments e ON c.program_id = e.program_id
-                    LEFT JOIN submissions s ON a.id = s.assignment_id AND s.student_id = %s
-                    WHERE e.student_id = %s
-                    ORDER BY a.due_date ASC
-                ''', (student_id, student_id))
-                assignments = cursor.fetchall()
-                
-    finally:
-        conn.close()
-    
-    return render_template('dashboard/assignments.html', students=students, assignments=assignments, current_student_id=int(student_id) if student_id else None)
-
-@app.route('/dashboard/assignments/submit/<int:assignment_id>', methods=['POST'])
-def submit_assignment(assignment_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-        
-    student_id = request.form.get('student_id')
-    file = request.files.get('file')
-    comments = request.form.get('comments')
-    
-    if not file:
-        flash('Debes subir un archivo', 'error')
-        return redirect(url_for('student_assignments', student_id=student_id))
-        
-    filename = secure_filename(file.filename)
-    base, ext = os.path.splitext(filename)
-    filename = f"submission_{student_id}_{assignment_id}_{int(time.time())}{ext}"
-    
-    # Ensure directory exists
-    os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'submissions'), exist_ok=True)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'submissions', filename))
-    
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('''
-                INSERT INTO submissions (assignment_id, student_id, file_url, comments, status)
-                VALUES (%s, %s, %s, %s, 'submitted')
-                ON DUPLICATE KEY UPDATE file_url = VALUES(file_url), comments = VALUES(comments), status = 'submitted', submission_date = CURRENT_TIMESTAMP
-            ''', (assignment_id, student_id, filename, comments))
-            conn.commit()
-            flash('Tarea entregada exitosamente', 'success')
-    except Exception as e:
-        flash(f'Error al entregar tarea: {str(e)}', 'error')
-    finally:
-        conn.close()
-        
-    return redirect(url_for('student_assignments', student_id=student_id))
-
-@app.route('/dashboard/messages')
-def student_messages():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            # Get received messages
-            cursor.execute('''
-                SELECT m.*, u.name as sender_name, u.role as sender_role
-                FROM internal_messages m
-                JOIN users u ON m.sender_id = u.id
-                WHERE m.recipient_id = %s
-                ORDER BY m.created_at DESC
-            ''', (session['user_id'],))
-            received_messages = cursor.fetchall()
-            
-            # Get sent messages
-            cursor.execute('''
-                SELECT m.*, u.name as recipient_name
-                FROM internal_messages m
-                JOIN users u ON m.recipient_id = u.id
-                WHERE m.sender_id = %s
-                ORDER BY m.created_at DESC
-            ''', (session['user_id'],))
-            sent_messages = cursor.fetchall()
-            
-            # Get potential recipients (admins and staff)
-            cursor.execute("SELECT id, name, role FROM users WHERE role IN ('admin', 'staff')")
-            recipients = cursor.fetchall()
-            
-    finally:
-        conn.close()
-        
-    return render_template('dashboard/messages.html', received_messages=received_messages, sent_messages=sent_messages, recipients=recipients)
-
-@app.route('/dashboard/messages/view/<int:message_id>')
-def view_message(message_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            # Get message details
-            cursor.execute('''
-                SELECT m.*, 
-                       sender.name as sender_name, sender.role as sender_role,
-                       recipient.name as recipient_name, recipient.role as recipient_role
-                FROM internal_messages m
-                JOIN users sender ON m.sender_id = sender.id
-                JOIN users recipient ON m.recipient_id = recipient.id
-                WHERE m.id = %s AND (m.sender_id = %s OR m.recipient_id = %s)
-            ''', (message_id, session['user_id'], session['user_id']))
-            message = cursor.fetchone()
-            
-            if not message:
-                flash('Mensaje no encontrado', 'error')
-                return redirect(url_for('student_messages'))
-            
-            # Mark as read if user is recipient
-            if message['recipient_id'] == session['user_id'] and not message['is_read']:
-                cursor.execute('UPDATE internal_messages SET is_read = TRUE WHERE id = %s', (message_id,))
-                conn.commit()
-                
-            return render_template('dashboard/message_detail.html', message=message)
-            
-    finally:
-        conn.close()
-
-@app.route('/dashboard/messages/send', methods=['POST'])
-def send_message():
-    # Handle internal message sending
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-        
-    recipient_id = request.form.get('recipient_id')
-    subject = request.form.get('subject')
-    content = request.form.get('content')
-    
-    if not all([recipient_id, subject, content]):
-        flash('Todos los campos son requeridos', 'error')
-        return redirect(url_for('student_messages'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('''
-                INSERT INTO internal_messages (sender_id, recipient_id, subject, content)
-                VALUES (%s, %s, %s, %s)
-            ''', (session['user_id'], recipient_id, subject, content))
-            conn.commit()
-            flash('Mensaje enviado exitosamente', 'success')
-            
-    except Exception as e:
-        flash(f'Error al enviar mensaje: {str(e)}', 'error')
-    finally:
-        conn.close()
-        
-    return redirect(url_for('student_messages'))
-
-
-@app.route('/add_galery_staff', methods=['GET', 'POST'])
-def add_galery_staff():
-    if 'user_id' not in session or session.get('user_role') != 'staff':
-        return redirect(url_for('login'))
-    # Staff can use the same add_gallery_item function as admin
-    return add_gallery_item()
-
-@app.route('/galery/add', methods=['GET', 'POST'])
-def add_gallery_item():
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
-        return redirect(url_for('login'))
-    
-    if request.method == 'POST':
-        title = request.form.get('title')
-        category = request.form.get('category')
-        description = request.form.get('description')
-        image = request.files.get('image')
-        
-        image_filename = None
-        if image and image.filename:
-            filename = secure_filename(image.filename)
-            base, ext = os.path.splitext(filename)
-            filename = f"{base}_{int(time.time())}{ext}"
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'galery', filename))
-            image_filename = filename
-            
-        conn = get_db_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO galery_items (title, category, description, image_url) VALUES (%s, %s, %s, %s)',
-                             (title, category, description, image_filename))
-                conn.commit()
-                flash('Foto agregada exitosamente', 'success')
-                return redirect(url_for('manage_galery'))
-        except Exception as e:
-            flash(f'Error al agregar foto: {str(e)}', 'error')
-        finally:
-            conn.close()
-            
-    return render_template('dashboard/admin/gallery_form.html', item=None)
-
-@app.route('/galery/edit/<int:item_id>', methods=['GET', 'POST'])
-def edit_galery_item(item_id):
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            if request.method == 'POST':
-                title = request.form.get('title')
-                category = request.form.get('category')
-                description = request.form.get('description')
-                image = request.files.get('image')
-                
-                # Get current image
-                cursor.execute('SELECT image_url FROM galery_items WHERE id = %s', (item_id,))
-                current_item = cursor.fetchone()
-                image_filename = current_item['image_url']
-                
-                if image and image.filename:
-                    filename = secure_filename(image.filename)
-                    base, ext = os.path.splitext(filename)
-                    filename = f"{base}_{int(time.time())}{ext}"
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], 'galery', filename))
-                    image_filename = filename
-                    
-                cursor.execute('UPDATE galery_items SET title = %s, category = %s, description = %s, image_url = %s WHERE id = %s',
-                             (title, category, description, image_filename, item_id))
-                conn.commit()
-                flash('Foto actualizada exitosamente', 'success')
-                return redirect(url_for('manage_galery'))
-            
-            cursor.execute('SELECT * FROM galery_items WHERE id = %s', (item_id,))
-            item = cursor.fetchone()
-            
-            if not item:
-                flash('Foto no encontrada', 'error')
-                return redirect(url_for('manage_galery'))
-                
-            return render_template('dashboard/admin/gallery_form.html', item=item)
-    finally:
-        conn.close()
-
-@app.route('/galery/delete/<int:item_id>')
-def delete_gallery_item(item_id):
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('DELETE FROM galery_items WHERE id = %s', (item_id,))
-            conn.commit()
-            flash('Foto eliminada exitosamente', 'success')
-    except Exception as e:
-        flash(f'Error al eliminar foto: {str(e)}', 'error')
-    finally:
-        conn.close()
-        
-    return redirect(url_for('manage_galery'))
-
-@app.route('/add_enrollment_staff', methods=['GET', 'POST'])
-def add_enrollment_staff():
-    if 'user_id' not in session or session.get('user_role') != 'staff':
-        return redirect(url_for('login'))
-    
-    if request.method == 'POST':
-        student_id = request.form.get('student_id')
-        program_id = request.form.get('program_id')
-        status = request.form.get('status', 'active')
-        
-        conn = get_db_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO enrollments (student_id, program_id, status) VALUES (%s, %s, %s)',
-                             (student_id, program_id, status))
-                conn.commit()
-                flash('Matrícula creada exitosamente', 'success')
-                return redirect(url_for('manage_enrollments'))
-        except Exception as e:
-            flash(f'Error al crear matrícula: {str(e)}', 'error')
-        finally:
-            conn.close()
-    
-    # Get students and programs for the form
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM students')
-            students = cursor.fetchall()
-            cursor.execute('SELECT * FROM programs WHERE is_active = TRUE')
-            programs = cursor.fetchall()
-    finally:
-        conn.close()
-    
-    return render_template('dashboard/staff/enrollment_form.html', students=students, programs=programs)
-
-@app.route('/add_admission_staff', methods=['GET', 'POST'])
-def add_admission_staff():
-    if 'user_id' not in session or session.get('user_role') != 'staff':
-        return redirect(url_for('login'))
-    
-    if request.method == 'POST':
-        # Parent Info
-        parent_name = request.form.get('parent_name')
-        parent_lastname = request.form.get('parent_lastname')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        doc_type = request.form.get('doc_type')
-        doc_number = request.form.get('doc_number')
-        
-        # Child Info
-        child_name = request.form.get('child_name')
-        child_lastname = request.form.get('child_lastname')
-        child_dob = request.form.get('child_dob')
-        child_gender = request.form.get('child_gender')
-        
-        # Academic Info
-        program = request.form.get('program')
-        status = request.form.get('status')
-        
-        conn = get_db_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute('''
-                    INSERT INTO admissions (
-                        parent_name, parent_lastname, email, phone, doc_type, doc_number,
-                        child_name, child_lastname, child_dob, child_gender,
-                        program, status
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ''', (parent_name, parent_lastname, email, phone, doc_type, doc_number,
-                      child_name, child_lastname, child_dob, child_gender,
-                      program, status))
-                conn.commit()
-                flash('Admisión creada exitosamente', 'success')
-                return redirect(url_for('manage_admissions'))
-        except Exception as e:
-            flash(f'Error al crear admisión: {str(e)}', 'error')
-        finally:
-            conn.close()
-            
-    return render_template('dashboard/staff/admission_form.html', admission=None)
-
-@app.route('/edit_admission_staff/<int:admission_id>', methods=['GET', 'POST'])
-def edit_admission_staff(admission_id):
-    if 'user_id' not in session or session.get('user_role') != 'staff':
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            if request.method == 'POST':
-                # Parent Info
-                parent_name = request.form.get('parent_name')
-                parent_lastname = request.form.get('parent_lastname')
-                email = request.form.get('email')
-                phone = request.form.get('phone')
-                doc_type = request.form.get('doc_type')
-                doc_number = request.form.get('doc_number')
-                
-                # Child Info
-                child_name = request.form.get('child_name')
-                child_lastname = request.form.get('child_lastname')
-                child_dob = request.form.get('child_dob')
-                child_gender = request.form.get('child_gender')
-                
-                # Academic Info
-                program = request.form.get('program')
-                status = request.form.get('status')
-                
-                cursor.execute('''
-                    UPDATE admissions SET
-                        parent_name=%s, parent_lastname=%s, email=%s, phone=%s, doc_type=%s, doc_number=%s,
-                        child_name=%s, child_lastname=%s, child_dob=%s, child_gender=%s,
-                        program=%s, status=%s
-                    WHERE id=%s
-                ''', (parent_name, parent_lastname, email, phone, doc_type, doc_number,
-                      child_name, child_lastname, child_dob, child_gender,
-                      program, status, admission_id))
-                conn.commit()
-                flash('Admisión actualizada exitosamente', 'success')
-                return redirect(url_for('manage_admissions'))
-            
-            cursor.execute('SELECT * FROM admissions WHERE id = %s', (admission_id,))
-            admission = cursor.fetchone()
-            if not admission:
-                flash('Admisión no encontrada', 'error')
-                return redirect(url_for('manage_admissions'))
-                
-            return render_template('dashboard/staff/admission_form.html', admission=admission)
-    finally:
-        conn.close()
-
-@app.route('/delete_admission_staff/<int:admission_id>')
-def delete_admission_staff(admission_id):
-    if 'user_id' not in session or session.get('user_role') != 'staff':
-        return redirect(url_for('login'))
-        
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('DELETE FROM admissions WHERE id = %s', (admission_id,))
-            conn.commit()
-            flash('Admisión eliminada exitosamente', 'success')
-    except Exception as e:
-        flash(f'Error al eliminar admisión: {str(e)}', 'error')
-    finally:
-        conn.close()
-    return redirect(url_for('manage_admissions'))
-
-@app.route('/add_report', methods=['POST'])
-def add_report():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    title = request.form.get('title')
-    student_name = request.form.get('student_name')
-    file = request.files.get('file')
-    
-    if not file or not file.filename:
-        flash('Debe seleccionar un archivo PDF', 'error')
-        return redirect(url_for('reports'))
-    
-    filename = secure_filename(file.filename)
-    base, ext = os.path.splitext(filename)
-    filename = f"{base}_{int(time.time())}{ext}"
-    
-    # Ensure directory exists
-    upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'reports')
-    os.makedirs(upload_dir, exist_ok=True)
-    
-    file.save(os.path.join(upload_dir, filename))
-    
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            # For parents/students, use their user_id for both student_id and user_id
-            cursor.execute('INSERT INTO student_reports (student_id, user_id, title, file_url) VALUES (%s, %s, %s, %s)',
-                         (session['user_id'], session['user_id'], title, filename))
-            conn.commit()
-            flash('Reporte subido exitosamente', 'success')
-    except Exception as e:
-        flash(f'Error al subir reporte: {str(e)}', 'error')
-    finally:
-        conn.close()
-    
-    return redirect(url_for('reports'))
-
-@app.route('/download_report/<filename>')
-def download_report(filename):
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -2578,10 +2359,14 @@ def manage_reports():
                 ORDER BY r.created_at DESC
             ''')
             reports = cursor.fetchall()
+            
+            # Fetch students for the upload modal
+            cursor.execute("SELECT id, name, email FROM users WHERE role != 'admin' ORDER BY name")
+            students = cursor.fetchall()
     finally:
         conn.close()
     
-    return render_template('dashboard/admin/manage_reports.html', reports=reports)
+    return render_template('dashboard/admin/manage_reports.html', reports=reports, students=students)
 
 @app.route('/reports/upload', methods=['GET', 'POST'])
 def upload_report():
@@ -2596,20 +2381,21 @@ def upload_report():
                 title = request.form.get('title')
                 description = request.form.get('description')
                 file = request.files.get('report_file')
+                print(f"DEBUG: request.files keys: {request.files.keys()}")
+                print(f"DEBUG: file object: {file}")
+                if file:
+                    print(f"DEBUG: filename: {file.filename}")
                 
                 if file and file.filename:
                     filename = secure_filename(file.filename)
                     base, ext = os.path.splitext(filename)
                     filename = f"{base}_{int(time.time())}{ext}"
                     
-                    # Ensure directory exists
-                    upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'reports')
-                    os.makedirs(upload_dir, exist_ok=True)
+                    # Compress and prepare for DB
+                    file_data, file_type = compress_pdf(file)
                     
-                    file.save(os.path.join(upload_dir, filename))
-                    
-                    cursor.execute('INSERT INTO student_reports (student_id, title, description, file_url) VALUES (%s, %s, %s, %s)',
-                                 (student_id, title, description, filename))
+                    cursor.execute('INSERT INTO student_reports (student_id, user_id, title, content, file_url, file_data, file_type) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                                 (student_id, student_id, title, description, filename, file_data, file_type))
                     conn.commit()
                     flash('Reporte subido exitosamente', 'success')
                     return redirect(url_for('manage_reports'))
@@ -2844,26 +2630,51 @@ def manage_assignments_admin():
     
     return render_template('dashboard/admin/manage_assignments.html', assignments=assignments, courses=courses)
 
+@app.route('/dashboard/assignments/submit/<int:assignment_id>', methods=['POST'])
+def submit_assignment(assignment_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    student_id = request.form.get('student_id')
+    comments = request.form.get('comments')
+    file = request.files.get('file')
+    
+    if not file:
+        flash('Debe subir un archivo', 'error')
+        return redirect(request.referrer or url_for('student_grades')) # Fallback redirect
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Verify enrollment/student belongs to parent? (Optional but good for security)
+            
+            filename = secure_filename(file.filename)
+            file_data, file_type = compress_pdf(file) # Assuming PDF submissions mostly
+            
+            cursor.execute('''INSERT INTO submissions (assignment_id, student_id, file_url, file_data, file_type, comments, status)
+                            VALUES (%s, %s, %s, %s, %s, %s, 'submitted')
+                            ON DUPLICATE KEY UPDATE 
+                            file_url = VALUES(file_url), 
+                            file_data = VALUES(file_data), 
+                            file_type = VALUES(file_type),
+                            comments = VALUES(comments),
+                            submission_date = CURRENT_TIMESTAMP,
+                            status = 'submitted'
+                            ''',
+                         (assignment_id, student_id, filename, file_data, file_type, comments))
+            conn.commit()
+            flash('Tarea entregada exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al entregar tarea: {str(e)}', 'error')
+    finally:
+        conn.close()
+        
+    return redirect(request.referrer or url_for('student_grades'))
+
 @app.route('/assignments/add_admin', methods=['POST'])
 def add_assignment_admin():
     if 'user_id' not in session or session.get('user_role') not in ['admin', 'staff']:
         return redirect(url_for('login'))
-    
-    course_id = request.form.get('course_id')
-    title = request.form.get('title')
-    description = request.form.get('description')
-    due_date = request.form.get('due_date')
-    
-    conn = get_db_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute('INSERT INTO assignments (course_id, title, description, due_date) VALUES (%s, %s, %s, %s)',
-                         (course_id, title, description, due_date))
-            conn.commit()
-            flash('Tarea creada exitosamente', 'success')
-    except Exception as e:
-        flash(f'Error al crear tarea: {str(e)}', 'error')
-    finally:
         conn.close()
     
     return redirect(url_for('manage_assignments_admin'))
